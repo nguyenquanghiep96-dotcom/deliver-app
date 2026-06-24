@@ -6,7 +6,7 @@ import { Bell, ChevronRight, User, Info, Clock, LogOut, CheckCircle2, AlertCircl
 import { cn, cleanStopType } from './lib/utils';
 
 import imgUserImage from './assets/3271fc3a53481ca6ba5eb96b8724359f747c54a3.png';
-import imgCompanyLogo from '../icon/Logo/Powered by shedpro.svg';
+import imgCompanyLogo from '../icon/Logo/Powered by ShedPro.svg';
 import imgNotificationIcon from '../icon/ic-notification.svg';
 import imgNavigateIcon from '../icon/ic-navigate.svg';
 import imgPhoneCallIcon from '../icon/ic-phone-call.svg';
