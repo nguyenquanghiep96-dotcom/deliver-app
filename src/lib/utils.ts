@@ -10,3 +10,9 @@ export function cleanStopType(type: string): string {
   return type.split(/[-—]/)[0]?.trim() || type;
 }
 
+
+export const getStopHeader = (stop: any) => {
+  const typeStr = cleanStopType(stop.type);
+  const unitStr = stop.shedDetails?.serial ? ` - Unit #${stop.shedDetails.serial}` : '';
+  return typeStr + unitStr;
+};

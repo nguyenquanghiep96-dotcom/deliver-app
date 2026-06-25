@@ -3,7 +3,7 @@ import { useLocation, Link } from 'react-router';
 import { useDriver } from './DriverContext';
 import { StopCard } from './components/StopCard';
 import { Bell, ChevronRight, User, Info, Clock, LogOut, CheckCircle2, AlertCircle, Phone } from 'lucide-react';
-import { cn, cleanStopType } from './lib/utils';
+import { cn, cleanStopType, getStopHeader } from './lib/utils';
 import { TagBadge, StatusBadge } from './components/Badges';
 
 import imgUserImage from './assets/3271fc3a53481ca6ba5eb96b8724359f747c54a3.png';
@@ -193,15 +193,19 @@ export default function Home() {
                                 <div className="bg-[#71727a] w-[36px] h-[36px] rounded-[21px] flex items-center justify-center text-white font-bold text-[14px] shrink-0 font-['Proxima_Nova']">
                                   {activeStop.num}
                                 </div>
-                                <span className="text-[16px] font-semibold text-white truncate flex-1 font-['Google_Sans_Flex']">{activeStop.address}</span>
+                                <span className="text-[16px] font-semibold text-white truncate flex-1 font-['Google_Sans_Flex']">{getStopHeader(activeStop)}</span>
                               </div>
                               
-                              <div className="flex items-center gap-[8px] flex-wrap select-none w-full">
-                                <TagBadge text={cleanStopType(activeStop.type)} />
-                                <div className="flex items-center gap-[2px] truncate text-white text-[12px] font-medium font-['Google_Sans_Flex'] max-w-[130px]">
-                                  <img src={imgUserIcon} className="w-[12px] h-[12px] filter brightness-0 invert" alt="user" /> {activeStop.customerName}
+                              <div className="flex flex-col gap-1.5 w-full">
+                                <div className="text-[13px] text-white/80 font-['Google_Sans_Flex'] leading-snug w-full pr-4">
+                                  {activeStop.address}
                                 </div>
-                                <StatusBadge status={activeStop.status === 'Servicing' ? 'Arrived' : activeStop.status} className="ml-auto" />
+                                <div className="flex items-center justify-between w-full mt-0.5">
+                                  <div className="flex items-center gap-[4px] text-white/90 text-[12px] font-medium font-['Google_Sans_Flex']">
+                                    <img src={imgUserIcon} className="w-[12px] h-[12px] filter brightness-0 invert opacity-90" alt="user" /> {activeStop.customerName}
+                                  </div>
+                                  <StatusBadge status={activeStop.status === 'Servicing' ? 'Arrived' : activeStop.status} />
+                                </div>
                               </div>
                               
                               <div className="flex items-start gap-[6px] opacity-60 rounded-[5px] w-full mt-1">
@@ -236,19 +240,23 @@ export default function Home() {
                                   <div className="bg-[#e8e9f1] w-[36px] h-[36px] rounded-[21px] flex items-center justify-center text-[#71727a] font-bold text-[14px] shrink-0 font-['Proxima_Nova']">
                                     {immediateNextStop.num}
                                   </div>
-                                  <span className="text-[16px] font-semibold text-[#2f3036] truncate flex-1 font-['Google_Sans_Flex']">{immediateNextStop.address}</span>
+                                  <span className="text-[16px] font-semibold text-[#2f3036] truncate flex-1 font-['Google_Sans_Flex']">{getStopHeader(immediateNextStop)}</span>
                                   <Link to={`/stop/${immediateNextStop.id}`} className="text-[#71727a] hover:text-[#2f3036] shrink-0 w-[16px] h-[16px] flex items-center justify-center">
                                     <ChevronRight size={16} strokeWidth={3} />
                                   </Link>
                                 </div>
 
                                 {/* Status */}
-                                <div className="flex items-center gap-[8px] flex-wrap select-none w-full">
-                                  <TagBadge text={cleanStopType(immediateNextStop.type)} />
-                                  <div className="flex items-center gap-[2px] truncate text-[#71727a] text-[12px] font-medium font-['Google_Sans_Flex'] flex-1">
-                                    <img src={imgUserIcon} className="w-[12px] h-[12px]" alt="user" /> {immediateNextStop.customerName}
+                                <div className="flex flex-col gap-1.5 w-full">
+                                  <div className="text-[13px] text-[#71727a] font-['Google_Sans_Flex'] leading-snug w-full pr-4">
+                                    {immediateNextStop.address}
                                   </div>
-                                  <StatusBadge status={immediateNextStop.status} />
+                                  <div className="flex items-center justify-between w-full mt-0.5">
+                                    <div className="flex items-center gap-[4px] text-[#71727a] text-[12px] font-medium font-['Google_Sans_Flex']">
+                                      <img src={imgUserIcon} className="w-[12px] h-[12px] opacity-70" alt="user" /> {immediateNextStop.customerName}
+                                    </div>
+                                    <StatusBadge status={immediateNextStop.status} />
+                                  </div>
                                 </div>
 
                                 {/* Note */}
@@ -298,7 +306,7 @@ export default function Home() {
                                     <div className="bg-[#e8e9f1] w-[36px] h-[36px] rounded-[21px] flex items-center justify-center text-[#71727a] font-bold text-[14px] shrink-0 font-['Proxima_Nova']">
                                       {stop.num}
                                     </div>
-                                    <span className="text-[16px] font-semibold text-[#2f3036] truncate flex-1 font-['Google_Sans_Flex']">{stop.address}</span>
+                                    <span className="text-[16px] font-semibold text-[#2f3036] truncate flex-1 font-['Google_Sans_Flex']">{getStopHeader(stop)}</span>
                                     <Link to={`/stop/${stop.id}`} className="text-[#71727a] hover:text-[#2f3036] shrink-0 w-[16px] h-[16px] flex items-center justify-center">
                                       <ChevronRight size={16} strokeWidth={3} />
                                     </Link>
