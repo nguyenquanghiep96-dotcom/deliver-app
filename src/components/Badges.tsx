@@ -12,13 +12,15 @@ export function TagBadge({ text, className }: { text: string; className?: string
 export function StatusBadge({ status, className }: { status: string; className?: string }) {
   const getColors = () => {
     switch (status) {
-      case 'Pending': return 'text-[#D99424] bg-[#FEF1D3] border-[#D99424]';
-      case 'Arrived': return 'text-[#4C7BEC] bg-[#DBE7FF] border-[#4C7BEC]';
-      case 'Servicing': return 'text-[#8467C8] bg-[#EAE1FB] border-[#8467C8]';
-      case 'Done': return 'text-[#419D38] bg-[#DBF1D8] border-[#419D38]';
-      case 'Skipped': return 'text-[#8A8D91] bg-[#ECECEE] border-[#8A8D91]';
-      case 'Failed': return 'text-[#E0454A] bg-[#FCE1E1] border-[#E0454A]';
-      default: return 'text-[#8A8D91] bg-[#ECECEE] border-[#8A8D91]';
+      case 'Pending': return 'text-[#F09A11] bg-[#F09A11]/25 border-[#F09A11]/25';
+      case 'Arrived': return 'text-[#3B82F6] bg-[#3B82F6]/25 border-[#3B82F6]/25';
+      case 'Servicing': return 'text-[#6A65D5] bg-[#6A65D5]/25 border-[#6A65D5]/25';
+      case 'Done': 
+      case 'Completed': return 'text-[#2FA301] bg-[#2FA301]/25 border-[#2FA301]/25';
+      case 'Shipped':
+      case 'Skipped': return 'text-[#7E8590] bg-[#7E8590]/25 border-[#7E8590]/25';
+      case 'Failed': return 'text-[#F12428] bg-[#F12428]/25 border-[#F12428]/25';
+      default: return 'text-[#7E8590] bg-[#7E8590]/25 border-[#7E8590]/25';
     }
   };
 

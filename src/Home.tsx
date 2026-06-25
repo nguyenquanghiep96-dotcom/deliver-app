@@ -197,15 +197,11 @@ export default function Home() {
                               </div>
                               
                               <div className="flex items-center gap-[8px] flex-wrap select-none w-full">
-                                <div className="bg-[#e8e9f1] px-[8px] py-[3px] rounded-[6px] text-[11px] font-semibold text-[#2f3036] shrink-0 font-['Proxima_Nova'] border border-[#e8e9f1]">
-                                  {cleanStopType(activeStop.type)}
-                                </div>
+                                <TagBadge text={cleanStopType(activeStop.type)} />
                                 <div className="flex items-center gap-[2px] truncate text-white text-[12px] font-medium font-['Google_Sans_Flex'] max-w-[130px]">
                                   <img src={imgUserIcon} className="w-[12px] h-[12px] filter brightness-0 invert" alt="user" /> {activeStop.customerName}
                                 </div>
-                                <div className="ml-auto bg-[rgba(59,130,246,0.2)] text-[#3b82f6] px-[8px] py-[3px] rounded-[6px] text-[10px] font-medium shrink-0 font-['Google_Sans_Flex'] border border-[#3b82f6]">
-                                  Arrived
-                                </div>
+                                <StatusBadge status={activeStop.status === 'Servicing' ? 'Arrived' : activeStop.status} className="ml-auto" />
                               </div>
                               
                               <div className="flex items-start gap-[6px] opacity-60 rounded-[5px] w-full mt-1">
