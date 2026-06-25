@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useDriver } from './DriverContext';
 import { cleanStopType } from './lib/utils';
+import { cn } from './lib/utils';
+import { TagBadge, StatusBadge } from './components/Badges';
 
 import svgPaths from "./StopDetailsExport/svg-uh1w3x0b6s";
 
@@ -122,10 +124,7 @@ function StopInfoContainer({ stop }: any) {
 function StopStatusIndicator({ stop }: any) {
   return (
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative" data-name="Stop Status Indicator">
-      <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
-        <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">{cleanStopType(stop.type)}</p>
-      </div>
+      <TagBadge text={cleanStopType(stop.type)} />
       <StopUserContainer stop={stop} />
       <StopInfoContainer stop={stop} />
     </div>
@@ -143,9 +142,7 @@ function StopStatusContainer({ stop }: any) {
 function AddressContainer({ stop }: any) {
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full" data-name="Address Container">
-      <div className={"px-[8px] py-[3px] rounded-[6px] text-[10px] font-medium shrink-0 font-['Google_Sans_Flex'] border w-fit " + (stop.status === 'Done' ? "bg-[#DCFCE7] text-[#16A34A] border-[#BBF7D0]" : stop.status === 'Servicing' ? "bg-[rgba(59,130,246,0.2)] text-[#3b82f6] border-[#3b82f6]" : "bg-[#FFF5E5] text-[#F59E0B] border-[#FDE68A]")}>
-        {stop.status === 'Done' ? 'Completed' : stop.status === 'Servicing' ? 'Arrived' : 'Pending'}
-      </div>
+      <StatusBadge status={stop.status} />
       <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex'] font-semibold justify-center leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[30px] w-full">
         <p className="leading-[normal]">{stop.address}</p>
       </div>

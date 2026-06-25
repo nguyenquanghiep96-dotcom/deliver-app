@@ -116,7 +116,7 @@ export default function DriverLayout() {
 
         {/* Bottom Tab Navigation */}
         {showBottomNav && (
-          <div className="absolute bottom-0 left-0 w-[393px] h-[97px] bg-white border-t border-black/[0.03] flex gap-[5px] items-start pt-[6px] px-[16px] z-40 select-none">
+          <div className="absolute bottom-0 left-0 w-full h-[97px] bg-white border-t border-black/[0.03] flex gap-[5px] items-start pt-[6px] px-[16px] z-40 select-none">
             
             {/* Home Tab Button */}
             <Link

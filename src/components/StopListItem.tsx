@@ -1,7 +1,7 @@
-import React from 'react';
 import { Link } from 'react-router';
 import { ChevronRight } from 'lucide-react';
 import imgUserIcon from '../../icon/ic-user.svg';
+import { TagBadge, StatusBadge } from './Badges';
 
 export const cleanStopType = (type: string) => {
   if (type === 'Delivery & Install') return 'Delivery & Install';
@@ -9,10 +9,6 @@ export const cleanStopType = (type: string) => {
 };
 
 export default function StopListItem({ stop }: { stop: any }) {
-  const isDone = stop.status === 'Done';
-  const statusColor = isDone ? "bg-[#DCFCE7] text-[#16A34A] border-[#BBF7D0]" : "bg-[rgba(240,154,17,0.2)] text-[#f09a11] border-[rgba(240,154,17,0.2)]";
-  const statusText = isDone ? "Completed" : "Pending";
-
   return (
     <div className="bg-white rounded-[24px] p-[12px] w-full border border-transparent shadow-[0px_4px_15px_rgba(0,0,0,0.05)]">
       <div className="flex flex-col gap-[10px]">
@@ -26,15 +22,11 @@ export default function StopListItem({ stop }: { stop: any }) {
           </Link>
         </div>
         <div className="flex items-center gap-[8px] flex-wrap select-none w-full">
-          <div className="bg-[#e8e9f1] px-[8px] py-[3px] rounded-[6px] text-[11px] font-semibold text-[#2f3036] shrink-0 font-['Proxima_Nova'] border border-[#e8e9f1]">
-            {cleanStopType(stop.type)}
-          </div>
+          <TagBadge text={cleanStopType(stop.type)} />
           <div className="flex items-center gap-[2px] truncate text-[#71727a] text-[12px] font-medium font-['Google_Sans_Flex'] flex-1">
             <img src={imgUserIcon} className="w-[12px] h-[12px]" alt="user" /> {stop.customerName}
           </div>
-          <div className={`px-[8px] py-[3px] rounded-[6px] text-[10px] font-semibold shrink-0 font-['Google_Sans_Flex'] border ${statusColor}`}>
-            {statusText}
-          </div>
+          <StatusBadge status={stop.status} />
         </div>
       </div>
     </div>

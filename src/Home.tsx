@@ -4,6 +4,7 @@ import { useDriver } from './DriverContext';
 import { StopCard } from './components/StopCard';
 import { Bell, ChevronRight, User, Info, Clock, LogOut, CheckCircle2, AlertCircle, Phone } from 'lucide-react';
 import { cn, cleanStopType } from './lib/utils';
+import { TagBadge, StatusBadge } from './components/Badges';
 
 import imgUserImage from './assets/3271fc3a53481ca6ba5eb96b8724359f747c54a3.png';
 import imgCompanyLogo from '../icon/Logo/Powered by ShedPro.svg';
@@ -247,15 +248,11 @@ export default function Home() {
 
                                 {/* Status */}
                                 <div className="flex items-center gap-[8px] flex-wrap select-none w-full">
-                                  <div className="bg-[#e8e9f1] px-[8px] py-[3px] rounded-[6px] text-[11px] font-semibold text-[#2f3036] shrink-0 font-['Proxima_Nova'] border border-[#e8e9f1]">
-                                    {cleanStopType(immediateNextStop.type)}
-                                  </div>
+                                  <TagBadge text={cleanStopType(immediateNextStop.type)} />
                                   <div className="flex items-center gap-[2px] truncate text-[#71727a] text-[12px] font-medium font-['Google_Sans_Flex'] flex-1">
                                     <img src={imgUserIcon} className="w-[12px] h-[12px]" alt="user" /> {immediateNextStop.customerName}
                                   </div>
-                                  <div className="bg-[rgba(240,154,17,0.2)] text-[#f09a11] px-[8px] py-[3px] rounded-[6px] text-[10px] font-semibold shrink-0 font-['Google_Sans_Flex'] border border-[rgba(240,154,17,0.2)]">
-                                    Pending
-                                  </div>
+                                  <StatusBadge status={immediateNextStop.status} />
                                 </div>
 
                                 {/* Note */}
@@ -313,15 +310,11 @@ export default function Home() {
 
                                   {/* Status */}
                                   <div className="flex items-center gap-[8px] flex-wrap select-none w-full">
-                                    <div className="bg-[#e8e9f1] px-[8px] py-[3px] rounded-[6px] text-[11px] font-semibold text-[#2f3036] shrink-0 font-['Proxima_Nova'] border border-[#e8e9f1]">
-                                      {cleanStopType(stop.type)}
-                                    </div>
+                                    <TagBadge text={cleanStopType(stop.type)} />
                                     <div className="flex items-center gap-[2px] truncate text-[#71727a] text-[12px] font-medium font-['Google_Sans_Flex'] flex-1">
                                       <img src={imgUserIcon} className="w-[12px] h-[12px]" alt="user" /> {stop.customerName}
                                     </div>
-                                    <div className="bg-[rgba(240,154,17,0.2)] text-[#f09a11] px-[8px] py-[3px] rounded-[6px] text-[10px] font-semibold shrink-0 font-['Google_Sans_Flex'] border border-[rgba(240,154,17,0.2)]">
-                                      Pending
-                                    </div>
+                                    <StatusBadge status={immediateNextStop.status} />
                                   </div>
 
                                 </div>
@@ -357,9 +350,7 @@ export default function Home() {
 
                                   {/* Status */}
                                   <div className="flex items-center gap-[8px] flex-wrap select-none w-full">
-                                    <div className="bg-[#F2F4F7] px-[8px] py-[3px] rounded-[6px] text-[11px] font-semibold text-[#2f3036] shrink-0 font-['Proxima_Nova'] border border-[#F2F4F7]">
-                                      {cleanStopType(stop.type)}
-                                    </div>
+                                    <TagBadge text={cleanStopType(stop.type)} />
                                     <div className="flex items-center gap-[2px] truncate text-[#71727a] text-[12px] font-medium font-['Google_Sans_Flex'] max-w-[130px]">
                                       <img src={imgUserIcon} className="w-[12px] h-[12px]" alt="user" /> {stop.customerName}
                                     </div>
