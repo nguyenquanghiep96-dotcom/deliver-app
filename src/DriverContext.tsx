@@ -12,6 +12,7 @@ interface DriverContextType {
   toggleTask: (routeId: string, stopId: string, taskId: string) => void;
   updateStopStatus: (routeId: string, stopId: string, status: Stop['status']) => void;
   addPhoto: (routeId: string, stopId: string, photoDataUrl: string) => void;
+  removePhoto: (routeId: string, stopId: string, photoIndex: number) => void;
   saveSignature: (routeId: string, stopId: string, signatureDataUrl: string) => void;
   saveDriverSignature: (routeId: string, stopId: string, signatureDataUrl: string) => void;
   addComment: (routeId: string, stopId: string, comment: string) => void;
@@ -43,7 +44,32 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const saved = localStorage.getItem('opshub_driver_routes');
     if (saved) {
       try {
-        return JSON.parse(saved) as RouteData[];
+        const savedRoutes = JSON.parse(saved) as RouteData[];
+        // Merge saved progress into initialRoutes so new updates to metadata load immediately
+        return initialRoutes.map(initialRoute => {
+          const savedRoute = savedRoutes.find(r => r.id === initialRoute.id);
+          if (!savedRoute) return initialRoute;
+          return {
+            ...initialRoute,
+            status: savedRoute.status,
+            stops: initialRoute.stops.map(initialStop => {
+              // Try to find by id first, fallback to stop number
+              const savedStop = savedRoute.stops.find(s => s.id === initialStop.id) || 
+                                savedRoute.stops.find(s => s.num === initialStop.num);
+              if (!savedStop) return initialStop;
+              return {
+                ...initialStop,
+                status: savedStop.status,
+                comments: savedStop.comments || initialStop.comments,
+                signature: savedStop.signature || initialStop.signature,
+                driverSignature: savedStop.driverSignature || initialStop.driverSignature,
+                photos: savedStop.photos || initialStop.photos,
+                gpsMarked: savedStop.gpsMarked || initialStop.gpsMarked,
+                gpsCoords: savedStop.gpsCoords || initialStop.gpsCoords,
+              };
+            })
+          };
+        });
       } catch (e) {
         console.error('Failed to parse routes', e);
       }
@@ -147,6 +173,22 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           stops: route.stops.map(stop => {
             if (stop.id !== stopId) return stop;
             const photos = stop.photos ? [...stop.photos, photoDataUrl] : [photoDataUrl];
+            return { ...stop, photos };
+          })
+        };
+      })
+    );
+  };
+
+  const removePhoto = (routeId: string, stopId: string, photoIndex: number) => {
+    setRoutes(prevRoutes =>
+      prevRoutes.map(route => {
+        if (route.id !== routeId) return route;
+        return {
+          ...route,
+          stops: route.stops.map(stop => {
+            if (stop.id !== stopId) return stop;
+            const photos = stop.photos ? stop.photos.filter((_: string, i: number) => i !== photoIndex) : [];
             return { ...stop, photos };
           })
         };
@@ -304,6 +346,7 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         toggleTask,
         updateStopStatus,
         addPhoto,
+        removePhoto,
         saveSignature,
         saveDriverSignature,
         addComment,

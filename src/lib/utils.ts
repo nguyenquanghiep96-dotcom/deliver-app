@@ -13,6 +13,6 @@ export function cleanStopType(type: string): string {
 
 export const getStopHeader = (stop: any) => {
   const typeStr = cleanStopType(stop.type);
-  const unitStr = stop.shedDetails?.serial ? ` - Unit #${stop.shedDetails.serial}` : '';
+  const unitStr = stop.unitInfo?.serial ? ` - Unit #${stop.unitInfo.serial}` : '';
   return typeStr + unitStr;
 };

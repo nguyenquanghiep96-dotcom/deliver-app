@@ -11,16 +11,21 @@ export interface Stop {
   address: string;
   status: 'Done' | 'Servicing' | 'Pending';
   notes: string;
+  deliveryInstruction?: string;
+  buildingOrientation?: string;
   tasks: Task[];
   customerName: string;
   customerPhone: string;
   unitInfo: {
-    size: string;
+    size: string;      // e.g. "10 x 16"
+    modelName?: string; // e.g. "SilverCreek – 2 Story Gable"
     base: string;
     trim: string;
     roof: string;
     serial: string;
     amount?: string;
+    material?: string;  // e.g. "LP Smart"
+    dimensions?: string; // e.g. "10' W x 16' L x 7' H"
   };
   comments?: string[];
   signature?: string; // Data URL of drawn signature
@@ -42,6 +47,12 @@ export interface RouteData {
   status: 'En Route' | 'Planned' | 'Completed';
   stripeColor: string;
   stops: Stop[];
+  endTime?: string;
+  startDate?: string;
+  endDate?: string;
+  startingAddress?: string;
+  routeNote?: string;
+  dispatcherPhone?: string;
 }
 
 export interface Driver {
@@ -85,12 +96,18 @@ export const initialRoutes: RouteData[] = [
   {
     id: 'R-001',
     name: 'Fort Worth',
-    startTime: '08:00 AM',
+    startTime: '09:00 AM',
+    endTime: '07:00 PM',
     date: 'Today',
+    startDate: 'Jul 8',
+    endDate: 'Jul 9',
     stopsCount: 5,
     dealerName: 'Store A',
     status: 'En Route',
-    stripeColor: '#3b82f6', // blue
+    stripeColor: '#FF7048', // orange
+    startingAddress: '123 Main St, Dallas, TX 75201',
+    routeNote: 'Take I-35 detour due to heavy construction on Main St. Ensure you have the heavy-duty jack for Stop #3.',
+    dispatcherPhone: '+18005550100',
     stops: [
       {
         id: 'S-101',
@@ -98,7 +115,7 @@ export const initialRoutes: RouteData[] = [
         type: 'Delivery Items',
         address: '123 Oak Street, Fort Worth TX',
         status: 'Done',
-        notes: 'Delivery of standard gable shed. Customer wants it aligned with the fence line. Inspect ground level before placing.',
+        notes: 'Delivery of standard gable shed. Customer wants it aligned with the fence line.',
         tasks: [
           { id: 'T-101-1', text: 'Inspect exterior condition', done: true },
           { id: 'T-101-2', text: 'Photo documentation', done: true },
@@ -106,15 +123,8 @@ export const initialRoutes: RouteData[] = [
         ],
         customerName: 'Jason Smith',
         customerPhone: '714-345-4909',
-        unitInfo: {
-          size: '14 x 20 x 7',
-          base: 'Redwood',
-          trim: 'Blue',
-          roof: 'Black',
-          serial: 'SH-4420',
-          amount: '$6,482.80'
-        },
-        comments: ['Delivery completed successfully. Ground was slightly uneven but block leveling resolved it.'],
+        unitInfo: { size: '14 x 20', modelName: 'SilverCreek – Classic Gable', base: 'Redwood', trim: 'Blue', roof: 'Black', serial: 'SH-4420', amount: '$6,482.80', material: 'LP Smart', dimensions: "14' W x 20' L x 7' H" },
+        comments: ['Delivery completed successfully.'],
         gpsMarked: true,
         gpsCoords: { lat: 32.7555, lng: -97.3308 }
       },
@@ -123,103 +133,75 @@ export const initialRoutes: RouteData[] = [
         num: 2,
         type: 'Welfare Check',
         address: '456 Elm Ave, Fort Worth TX',
-        status: 'Servicing',
-        notes: 'Check condition of unit #SH-4421. Report any exterior damage with photos. Verify double doors operate smoothly.',
+        status: 'Done',
+        notes: 'Check condition of unit #SH-4421.',
         tasks: [
           { id: 'T-102-1', text: 'Inspect exterior condition', done: true },
-          { id: 'T-102-2', text: 'Photo documentation', done: false },
-          { id: 'T-102-3', text: 'Verify doors alignment', done: false }
+          { id: 'T-102-2', text: 'Photo documentation', done: true },
+          { id: 'T-102-3', text: 'Verify doors alignment', done: true }
         ],
         customerName: 'Jason Smith',
         customerPhone: '714-345-4909',
-        unitInfo: {
-          size: '14 x 20 x 7',
-          base: 'Redwood',
-          trim: 'Blue',
-          roof: 'Black',
-          serial: 'SH-4421',
-          amount: '$0.00 (Warranty)'
-        }
+        unitInfo: { size: '14 x 20', modelName: 'SilverCreek – Classic Gable', base: 'Redwood', trim: 'Blue', roof: 'Black', serial: 'SH-4421', amount: '$0.00 (Warranty)', material: 'LP Smart', dimensions: "14' W x 20' L x 7' H" }
       },
       {
-        id: 'S-103',
+        id: 'SM-3456',
         num: 3,
         type: 'Repo',
-        address: '789 Pine Rd, Arlington TX',
+        address: '1234 Maple Street, Springfield, IL 62704',
         status: 'Pending',
-        notes: 'Repossession of unit #INV-0091. Owner is aware of repossession. If gates are locked, call dispatcher immediately.',
+        notes: 'Call before arrival. Use south gate. Place shed on gravel pad behind barn. Watch for power lines. Customer must be present during delivery.',
+        deliveryInstruction: 'Repossession of unit #INV-0091. Owner is aware of repossession. If gates are locked, call dispatcher immediately.',
+        buildingOrientation: 'Door toward rear of trailer',
         tasks: [
           { id: 'T-103-1', text: 'Confirm unit serial number', done: false },
           { id: 'T-103-2', text: 'Inspect unit structure', done: false },
           { id: 'T-103-3', text: 'Secure load on flatbed', done: false }
         ],
-        customerName: 'Roy Buchanan',
-        customerPhone: '704-555-2938',
-        unitInfo: {
-          size: '10 x 16 x 7',
-          base: 'White',
-          trim: 'Gray',
-          roof: 'Charcoal',
-          serial: 'INV-0091',
-          amount: '$4,200.00'
-        }
+        customerName: 'James Carter Athour',
+        customerPhone: '020 2888 4943',
+        unitInfo: { size: '10 x 16', modelName: 'SilverCreek – 2 Story Gable', base: 'Burnished Slate', trim: 'White', roof: 'White', serial: '73-112025', amount: '$4,200.00', material: 'LP Smart', dimensions: "10' W x 16' L x 7' H" }
       },
       {
         id: 'S-104',
         num: 4,
-        type: 'Lot Transfer',
-        address: '101 Cedar Blvd, Euless TX → Warehouse B',
+        type: 'Repair',
+        address: '4567 Oak Avenue, Rivertown, CA 90210',
         status: 'Pending',
-        notes: 'Transfer minor damage unit to Warehouse B for refurbishing. Structural frame is sound.',
-        tasks: [
-          { id: 'T-104-1', text: 'Attach red flag to overhang', done: false },
-          { id: 'T-104-2', text: 'Take photo of damages', done: false }
-        ],
-        customerName: 'ShedPro Warehouse B',
-        customerPhone: '800-555-0122',
-        unitInfo: {
-          size: '8 x 12 x 7',
-          base: 'Brown',
-          trim: 'Beige',
-          roof: 'Brown',
-          serial: 'WD-8122',
-          amount: '$0.00'
-        }
+        notes: '',
+        tasks: [{ id: 'T-104-1', text: 'Inspect and repair', done: false }],
+        customerName: 'Hiep Nguyen',
+        customerPhone: '020 2888 4943',
+        unitInfo: { size: '10 x 16 SilverCreek – 2 Story Gable', base: 'White', trim: 'Gray', roof: 'Charcoal', serial: 'WD-8122', amount: '$0.00' }
       },
       {
         id: 'S-105',
         num: 5,
-        type: 'Delivery Items',
-        address: '222 Maple Dr, Garland TX',
+        type: 'Lot Transfer',
+        address: '7890 Pine Lane, Lakeview, TX 75001',
         status: 'Pending',
-        notes: 'Standard storage shed delivery. Site prep completed by customer. Place near patio.',
-        tasks: [
-          { id: 'T-105-1', text: 'Verify site foundation', done: false },
-          { id: 'T-105-2', text: 'Install ramp accessories', done: false },
-          { id: 'T-105-3', text: 'Obtain signature', done: false }
-        ],
-        customerName: 'Sarah Jenkins',
-        customerPhone: '214-555-9011',
-        unitInfo: {
-          size: '12 x 16 x 8',
-          base: 'Gray',
-          trim: 'White',
-          roof: 'Silver',
-          serial: 'SH-4433',
-          amount: '$5,150.00'
-        }
+        notes: '',
+        tasks: [{ id: 'T-105-1', text: 'Transfer verification', done: false }],
+        customerName: 'Khiet Vo',
+        customerPhone: '(415) 763-8291',
+        unitInfo: { size: '12 x 16 x 8', base: 'Gray', trim: 'White', roof: 'Silver', serial: 'SH-4433', amount: '$5,150.00' }
       }
     ]
   },
   {
     id: 'R-002',
     name: 'Dallas North',
-    startTime: '02:00 PM',
-    date: 'Today',
+    startTime: '09:00 AM',
+    endTime: '06:00 PM',
+    date: 'Tomorrow',
+    startDate: 'Jul 10',
+    endDate: 'Jul 11',
     stopsCount: 2,
     dealerName: 'Store A',
     status: 'Planned',
-    stripeColor: '#10b981', // green
+    stripeColor: '#3B82F6', // blue
+    startingAddress: '456 Commerce St, Dallas, TX 75202',
+    dispatcherPhone: '+18005550100',
     stops: [
       {
         id: 'S-201',
@@ -227,21 +209,14 @@ export const initialRoutes: RouteData[] = [
         type: 'Delivery Items',
         address: '990 Preston Rd, Plano TX',
         status: 'Pending',
-        notes: 'Verify clearance of trees before backup. Backyard access is tight.',
+        notes: 'Verify clearance of trees before backup.',
         tasks: [
           { id: 'T-201-1', text: 'Verify side width clearance', done: false },
           { id: 'T-201-2', text: 'Structural inspection post-placement', done: false }
         ],
         customerName: 'David Miller',
         customerPhone: '972-555-0144',
-        unitInfo: {
-          size: '10 x 12 x 7',
-          base: 'Redwood',
-          trim: 'White',
-          roof: 'Green',
-          serial: 'SH-4450',
-          amount: '$3,800.00'
-        }
+        unitInfo: { size: '10 x 12 x 7', base: 'Redwood', trim: 'White', roof: 'Green', serial: 'SH-4450', amount: '$3,800.00' }
       },
       {
         id: 'S-202',
@@ -249,21 +224,14 @@ export const initialRoutes: RouteData[] = [
         type: 'Repo',
         address: '1432 Coit Rd, Richardson TX',
         status: 'Pending',
-        notes: 'Verify serial number carefully. Ground is concrete.',
+        notes: 'Verify serial number carefully.',
         tasks: [
           { id: 'T-202-1', text: 'Verify serial number', done: false },
           { id: 'T-202-2', text: 'Repossession checklist', done: false }
         ],
         customerName: 'Emily Davis',
         customerPhone: '972-555-0188',
-        unitInfo: {
-          size: '8.5 x 10 x 7',
-          base: 'Gray',
-          trim: 'White',
-          roof: 'Gray',
-          serial: 'INV-0095',
-          amount: '$2,900.00'
-        }
+        unitInfo: { size: '8.5 x 10 x 7', base: 'Gray', trim: 'White', roof: 'Gray', serial: 'INV-0095', amount: '$2,900.00' }
       }
     ]
   },
@@ -271,37 +239,49 @@ export const initialRoutes: RouteData[] = [
     id: 'R-003',
     name: 'Houston South',
     startTime: '09:00 AM',
-    date: 'Apr 22',
-    dayOfMonth: '22',
-    monthName: 'APR',
+    endTime: '05:00 PM',
+    date: 'Jul 14',
+    startDate: 'Jul 14',
+    endDate: 'Jul 15',
+    dayOfMonth: '14',
+    monthName: 'JUL',
     stopsCount: 4,
-    dealerName: 'MFR',
+    dealerName: 'MFR A',
     status: 'Planned',
-    stripeColor: '#f59e0b', // amber
+    stripeColor: '#2FA301', // green
+    startingAddress: '3635 Almeda Genoa Rd, Houston, TX, 77047',
     stops: []
   },
   {
     id: 'R-004',
     name: 'Austin West',
     startTime: '08:30 AM',
-    date: 'Apr 23',
-    dayOfMonth: '23',
-    monthName: 'APR',
+    endTime: '05:30 PM',
+    date: 'Jul 17',
+    startDate: 'Jul 17',
+    endDate: 'Jul 17',
+    dayOfMonth: '17',
+    monthName: 'JUL',
     stopsCount: 3,
     dealerName: 'Store B',
     status: 'Planned',
-    stripeColor: '#8b5cf6', // purple
+    stripeColor: '#8B5CF6', // purple
     stops: []
   },
   {
     id: 'R-005',
     name: 'Irving Lot',
     startTime: '06:00 AM',
-    date: 'Today',
+    endTime: '03:00 PM',
+    date: 'Jul 5',
+    startDate: 'Jul 5',
+    endDate: 'Jul 6',
+    dayOfMonth: '5',
+    monthName: 'JUL',
     stopsCount: 3,
     dealerName: 'Company B',
     status: 'Completed',
-    stripeColor: '#6366f1', // indigo
+    stripeColor: '#F09A11', // amber
     stops: [
       {
         id: 'S-501',
@@ -313,14 +293,7 @@ export const initialRoutes: RouteData[] = [
         tasks: [{ id: 'T-501-1', text: 'Delivery verification', done: true }],
         customerName: 'Robert Vance',
         customerPhone: '469-555-3211',
-        unitInfo: {
-          size: '10 x 14 x 7',
-          base: 'Blue',
-          trim: 'White',
-          roof: 'Black',
-          serial: 'SH-4210',
-          amount: '$4,100.00'
-        }
+        unitInfo: { size: '10 x 14 x 7', base: 'Blue', trim: 'White', roof: 'Black', serial: 'SH-4210', amount: '$4,100.00' }
       },
       {
         id: 'S-502',
@@ -332,14 +305,7 @@ export const initialRoutes: RouteData[] = [
         tasks: [{ id: 'T-502-1', text: 'Delivery verification', done: true }],
         customerName: 'Stanley Hudson',
         customerPhone: '469-555-8755',
-        unitInfo: {
-          size: '12 x 12 x 7',
-          base: 'Green',
-          trim: 'Beige',
-          roof: 'Green',
-          serial: 'SH-4211',
-          amount: '$4,500.00'
-        }
+        unitInfo: { size: '12 x 12 x 7', base: 'Green', trim: 'Beige', roof: 'Green', serial: 'SH-4211', amount: '$4,500.00' }
       },
       {
         id: 'S-503',
@@ -351,14 +317,7 @@ export const initialRoutes: RouteData[] = [
         tasks: [{ id: 'T-503-1', text: 'Transfer verification', done: true }],
         customerName: 'Company B Dealer',
         customerPhone: '469-555-0900',
-        unitInfo: {
-          size: '14 x 24 x 8',
-          base: 'Gray',
-          trim: 'Gray',
-          roof: 'Charcoal',
-          serial: 'INV-0072',
-          amount: '$8,200.00'
-        }
+        unitInfo: { size: '14 x 24 x 8', base: 'Gray', trim: 'Gray', roof: 'Charcoal', serial: 'INV-0072', amount: '$8,200.00' }
       }
     ]
   }

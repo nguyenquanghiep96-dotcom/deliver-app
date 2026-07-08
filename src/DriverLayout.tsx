@@ -47,7 +47,7 @@ export default function DriverLayout() {
       <div className="w-[393px] h-[852px] bg-white rounded-[50px] shadow-2xl overflow-hidden relative border-[8px] border-black flex flex-col">
         
         {/* iOS Status Bar */}
-        <div className="absolute top-0 left-0 right-0 h-[54px] z-50 flex items-center justify-between px-7 pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 h-[54px] z-[60] flex items-center justify-between px-7 pointer-events-none">
           {/* Time */}
           <span 
             className="text-[16px] font-semibold text-black tracking-[-0.3px] mt-1 ml-1" 
@@ -108,68 +108,99 @@ export default function DriverLayout() {
         {/* Main Content Area */}
         <div 
           id="scroll-container"
-          className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 relative bg-cover bg-center bg-no-repeat no-scrollbar"
-          style={{ backgroundImage: `url("${imgAppBackground}")` }}
+          className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 relative bg-[#E8E9F1] no-scrollbar"
         >
           <Outlet />
         </div>
 
-        {/* Bottom Tab Navigation */}
+        {/* Bottom Tab Navigation — Figma: button */}
         {showBottomNav && (
-          <div className="absolute bottom-0 left-0 w-full h-[97px] bg-white border-t border-black/[0.03] flex gap-[5px] items-start pt-[6px] px-[16px] z-40 select-none">
+          <div className="absolute bottom-0 left-0 w-full bg-white flex gap-[5px] items-center px-[6px] pt-[6px] pb-[40px] z-40 select-none" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.16)' }}>
             
-            {/* Home Tab Button */}
+            {/* Home */}
             <Link
               to="/home?tab=home"
               className={cn(
-                "flex-[1_0_0] h-[51px] min-w-px flex flex-col gap-1 items-center justify-center relative rounded-[16px] transition-all duration-200 decoration-none",
-                isHomeActive ? "bg-[#ff7048] text-white" : "text-[#71727A] hover:bg-gray-50"
+                "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
+                isHomeActive 
+                  ? "px-[8px] rounded-[15px] text-white" 
+                  : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
               )}
+              style={isHomeActive ? {
+                background: '#FF7048',
+                outline: '1px solid #FAA087',
+                outlineOffset: '-1px',
+              } : undefined}
             >
               <img src={imgNavHome} className="w-[16px] h-[16px] shrink-0" style={{ filter: isHomeActive ? 'brightness(0) invert(1)' : 'brightness(0) saturate(100%) invert(48%) sepia(8%) saturate(301%) hue-rotate(201deg) brightness(95%) contrast(87%)' }} alt="Home" />
-              <span className="font-medium leading-[normal] text-[11px] text-center font-['Google_Sans_Flex']">Home</span>
+              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Home</span>
             </Link>
 
-            {/* Calendar Tab Button */}
+            {/* Calendar */}
             <Link
               to="/home?tab=calendar"
               className={cn(
-                "flex-[1_0_0] h-[51px] min-w-px flex flex-col gap-1 items-center justify-center relative rounded-[16px] transition-all duration-200 decoration-none",
-                isCalendarActive ? "bg-[#ff7048] text-white" : "text-[#71727A] hover:bg-gray-50"
+                "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
+                isCalendarActive 
+                  ? "px-[8px] rounded-[15px] text-white" 
+                  : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
               )}
+              style={isCalendarActive ? {
+                background: '#FF7048',
+                outline: '1px solid #FAA087',
+                outlineOffset: '-1px',
+              } : undefined}
             >
               <img src={imgNavCalendar} className="w-[16px] h-[16px] shrink-0" style={{ filter: isCalendarActive ? 'brightness(0) invert(1)' : 'brightness(0) saturate(100%) invert(48%) sepia(8%) saturate(301%) hue-rotate(201deg) brightness(95%) contrast(87%)' }} alt="Calendar" />
-              <span className="font-medium leading-[normal] text-[11px] text-center font-['Google_Sans_Flex']">Calendar</span>
+              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Calendar</span>
             </Link>
 
-            {/* Routes Tab Button */}
+            {/* Routes */}
             <Link
               to="/home?tab=routes"
               className={cn(
-                "flex-[1_0_0] h-[51px] min-w-px flex flex-col gap-1 items-center justify-center relative rounded-[16px] transition-all duration-200 decoration-none",
-                isRoutesActive ? "bg-[#ff7048] text-white" : "text-[#71727A] hover:bg-gray-50"
+                "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
+                isRoutesActive 
+                  ? "px-[8px] rounded-[15px] text-white" 
+                  : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
               )}
+              style={isRoutesActive ? {
+                background: '#FF7048',
+                outline: '1px solid #FAA087',
+                outlineOffset: '-1px',
+              } : undefined}
             >
               <img src={imgNavRoutes} className="w-[16px] h-[16px] shrink-0" style={{ filter: isRoutesActive ? 'brightness(0) invert(1)' : 'brightness(0) saturate(100%) invert(48%) sepia(8%) saturate(301%) hue-rotate(201deg) brightness(95%) contrast(87%)' }} alt="Routes" />
-              <span className="font-medium leading-[normal] text-[11px] text-center font-['Google_Sans_Flex']">Routes</span>
+              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Routes</span>
             </Link>
 
-            {/* Profile Tab Button */}
+            {/* Profile */}
             <Link
               to="/home?tab=profile"
               className={cn(
-                "flex-[1_0_0] h-[51px] min-w-px flex flex-col gap-1 items-center justify-center relative rounded-[16px] transition-all duration-200 decoration-none",
-                isProfileActive ? "bg-[#ff7048] text-white" : "text-[#71727A] hover:bg-gray-50"
+                "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
+                isProfileActive 
+                  ? "px-[8px] rounded-[15px] text-white" 
+                  : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
               )}
+              style={isProfileActive ? {
+                background: '#FF7048',
+                outline: '1px solid #FAA087',
+                outlineOffset: '-1px',
+              } : undefined}
             >
-              <img src={imgNavProfile} className="w-[16px] h-[16px] shrink-0" style={{ filter: isProfileActive ? 'brightness(0) invert(1)' : 'brightness(0) saturate(100%) invert(48%) sepia(8%) saturate(301%) hue-rotate(201deg) brightness(95%) contrast(87%)' }} alt="Profile" />
-              <span className="font-medium leading-[normal] text-[11px] text-center font-['Google_Sans_Flex']">Profile</span>
+              {/* Profile tab — inline SVG icon */}
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+                <path d="M10.6953 9.33301H5.30467C4.42854 9.33396 3.5886 9.64762 2.96908 10.2052C2.34957 10.7627 2.00106 11.5187 2 12.3072V15.333H14V12.3072C13.9989 11.5187 13.6504 10.7627 13.0309 10.2052C12.4114 9.64762 11.5715 9.33396 10.6953 9.33301Z" fill={isProfileActive ? 'white' : '#71727A'}/>
+                <path d="M8 8C10.2091 8 12 6.20914 12 4C12 1.79086 10.2091 0 8 0C5.79086 0 4 1.79086 4 4C4 6.20914 5.79086 8 8 8Z" fill={isProfileActive ? 'white' : '#71727A'}/>
+              </svg>
+              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Profile</span>
             </Link>
           </div>
         )}
 
         {/* Virtual iOS Home Indicator */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-black rounded-full z-50 pointer-events-none"></div>
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[144px] h-[5px] bg-black rounded-full z-50 pointer-events-none"></div>
       </div>
     </div>
   );
