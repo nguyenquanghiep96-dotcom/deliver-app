@@ -8,6 +8,24 @@
   --font-google-sans: 'Google Sans Flex', sans-serif;
 }
 
+/* Force light mode — prevent dark mode from OS/browser preference */
+:root {
+  color-scheme: light only;
+}
+
+html, body {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+/* Disable Tailwind dark mode variants from applying */
+@media (prefers-color-scheme: dark) {
+  html, body {
+    background-color: #f3f4f6 !important;
+    color: #111827 !important;
+  }
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
