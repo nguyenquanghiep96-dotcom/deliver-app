@@ -61,135 +61,7 @@ const getRemainingDistance = (routeId: string, stops: any[]) => {
   return `${(remaining * 4.2).toFixed(1)} mi`;
 };
 
-// ─── Inline Stop Card ────────────────────────────────────────────────────────
-
-function StopCard({ stop }: { stop: any }) {
-  const isServicing = stop.status === "Servicing";
-  const isCompleted = stop.status === "Done";
-
-  // Status badge
-  let statusBg = "rgba(239,154,16,0.2)";
-  let statusText = "#F09A11";
-  let statusBorder = "1px solid rgba(239,154,16,0.2)";
-  let statusLabel = "Pending";
-
-  if (isServicing) {
-    statusBg = "rgba(59,130,246,0.2)";
-    statusText = "#3B82F6";
-    statusBorder = "1px solid #3B82F6";
-    statusLabel = "Arrived";
-  } else if (isCompleted) {
-    statusBg = "rgba(47,163,1,0.2)";
-    statusText = "#2FA301";
-    statusBorder = "1px solid rgba(47,163,1,0.2)";
-    statusLabel = "Done";
-  }
-
-  // Stop circle
-  let circleBg = "#E8E9F1";
-  let circleColor = "#71727A";
-  let circleOutline = "none";
-
-  if (isServicing) {
-    circleBg = "#FF7048";
-    circleColor = "#FFFFFF";
-    circleOutline = "2px solid #FFAC95";
-  } else if (isCompleted) {
-    circleBg = "rgba(47,163,1,0.2)";
-    circleColor = "#2FA301";
-  }
-
-  return (
-    <div
-      className="bg-white rounded-[24px] p-[12px] flex flex-col gap-[9px] active:scale-[0.98] transition-transform"
-      style={{ boxShadow: "0px 8px 40px rgba(0,0,0,0.10)", outline: "2px solid white", outlineOffset: "-2px" }}
-    >
-      {/* Card Header */}
-      <div className="pb-[10px] border-b border-[#E8E9F1] flex items-center gap-[8px]">
-        <div
-          className="flex items-center justify-center shrink-0 size-[32px] rounded-full font-bold text-[14px] font-['Google_Sans_Flex']"
-          style={{ background: circleBg, color: circleColor, outline: circleOutline, outlineOffset: "2px" }}
-        >
-          {stop.num}
-        </div>
-        <div className="flex-1 flex items-center gap-[12px] min-w-0">
-          <span className="font-semibold text-[14px] text-[#2F3036] font-['Google_Sans_Flex'] truncate">
-            {cleanStopType(stop.type)}
-          </span>
-          <div
-            className="px-[6px] py-[3px] rounded-[6px] flex items-center justify-center shrink-0"
-            style={{ background: statusBg, outline: statusBorder, outlineOffset: "-1px" }}
-          >
-            <span className="text-[10px] font-semibold font-['Google_Sans_Flex']" style={{ color: statusText }}>
-              {statusLabel}
-            </span>
-          </div>
-        </div>
-        <ChevronRight size={16} className="text-[#71727A] shrink-0" />
-      </div>
-
-      {/* Card Body */}
-      <div className="flex flex-col gap-[8px]">
-        {/* Address — single line truncate */}
-        <div className="flex items-center gap-[5px]">
-          <div className="shrink-0"><IconLocation /></div>
-          <span className="flex-1 text-[16px] font-semibold text-[#2F3036] font-['Google_Sans_Flex'] truncate">
-            {stop.address}
-          </span>
-        </div>
-
-        {/* Unit info */}
-        {stop.unitInfo && (stop.unitInfo.serial || stop.unitInfo.size) && (
-          <span className="text-[14px] font-semibold text-[#FF7048] font-['Google_Sans_Flex'] truncate">
-            #{stop.unitInfo.serial}{stop.unitInfo.size ? ` • ${stop.unitInfo.size}` : ""}
-          </span>
-        )}
-
-        {/* Notes */}
-        {stop.notes && (
-          <div className="bg-[#FFF7EE] rounded-[16px] px-[10px] py-[8px] flex items-start gap-[6px]">
-            <div className="shrink-0 mt-[1px]"><IconNote /></div>
-            <p className="flex-1 text-[14px] text-[#71727A] font-['Google_Sans_Flex'] leading-[1.4] line-clamp-2">
-              {stop.notes}
-            </p>
-          </div>
-        )}
-
-        {/* Footer: customer + phone + navigate */}
-        <div className="flex items-center gap-[16px] pt-1">
-          <div className="flex-1 flex items-center gap-[6px] min-w-0">
-            <div className="shrink-0"><IconUser /></div>
-            <span className="flex-1 font-medium text-[12px] text-[#71727A] font-['Google_Sans_Flex'] truncate">
-              {stop.customerName}
-            </span>
-          </div>
-          {stop.customerPhone && (
-            <a
-              href={`tel:${stop.customerPhone}`}
-              onClick={(e) => e.stopPropagation()}
-              className="px-[8px] py-[8px] rounded-[10px] flex items-center justify-center gap-[6px] shrink-0 no-underline"
-              style={{ outline: "1px solid #C5C6CC", outlineOffset: "-1px" }}
-            >
-              <IconPhone />
-              <span className="font-medium text-[12px] text-[#71727A] font-['Google_Sans_Flex']">
-                {stop.customerPhone}
-              </span>
-            </a>
-          )}
-          <a
-            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(stop.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="size-[40px] bg-[#2F3036] rounded-[46px] flex items-center justify-center shrink-0 no-underline active:scale-95 transition-transform"
-          >
-            <IconNavigate />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { StopCard } from "./components/StopCard";
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 
@@ -432,8 +304,13 @@ export default function RouteDetail() {
             <h3 className="font-semibold text-[16px] text-[#2F3036] font-['Google_Sans_Flex']">Stops</h3>
             <div className="flex flex-col gap-[16px]">
               {activeStops.map((stop) => (
-                <Link key={stop.id} to={`/stop/${stop.id}`} className="block no-underline">
-                  <StopCard stop={stop} />
+                <Link key={stop.id} to={`/route/${route.id}/stop/${stop.id}`} className="block no-underline">
+                  <StopCard 
+                    number={stop.num} 
+                    address={stop.address} 
+                    workOrders={stop.workOrders || []} 
+                    status={stop.status} 
+                  />
                 </Link>
               ))}
             </div>
@@ -457,8 +334,14 @@ export default function RouteDetail() {
             <h3 className="font-semibold text-[16px] text-[#2F3036] font-['Google_Sans_Flex']">Completed</h3>
             <div className="flex flex-col gap-[16px]">
               {completedStopsList.map((stop) => (
-                <Link key={stop.id} to={`/stop/${stop.id}`} className="block no-underline">
-                  <StopCard stop={stop} />
+                <Link key={stop.id} to={`/route/${route.id}/stop/${stop.id}`} className="block no-underline">
+                  <StopCard 
+                    number={stop.num} 
+                    address={stop.address} 
+                    workOrders={stop.workOrders || []} 
+                    status={stop.status} 
+                    isCompleted={true}
+                  />
                 </Link>
               ))}
             </div>

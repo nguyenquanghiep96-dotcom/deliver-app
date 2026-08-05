@@ -1,5 +1,5 @@
 import { ChevronLeft } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, useSearchParams } from 'react-router';
 import { useDriver } from './DriverContext';
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -21,24 +21,27 @@ const IconDeliveryInstruction = () => (
 
 export default function BuildingDetail() {
   const { stopId } = useParams();
+  const [searchParams] = useSearchParams();
+  const woId = searchParams.get('woId');
   const navigate = useNavigate();
   const { routes } = useDriver();
 
   const currentRoute = routes.find(r => r.stops.some(s => s.id === stopId));
   const stop = currentRoute?.stops.find(s => s.id === stopId);
+  const workOrder = stop?.workOrders.find(wo => wo.id === woId);
 
-  if (!stop) {
+  if (!stop || !workOrder) {
     return (
       <div
         className="flex-1 flex items-center justify-center p-8 text-center"
         style={{ background: '#E8E9F1', fontFamily: "'Google Sans Flex', sans-serif" }}
       >
-        <span style={{ fontSize: 16, color: '#71727A' }}>Stop Not Found</span>
+        <span style={{ fontSize: 16, color: '#71727A' }}>Work Order Not Found</span>
       </div>
     );
   }
 
-  const unit = stop.unitInfo;
+  const unit = workOrder.unitInfo;
 
   // Derive model name: prefer explicit modelName, otherwise parse from size
   const modelName = unit.modelName || unit.size;

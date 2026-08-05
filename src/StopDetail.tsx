@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router';
 import { useDriver } from './DriverContext';
+import { WorkOrderCard } from './components/WorkOrderCard';
 import { cleanStopType } from './lib/utils';
 
 // ─── Custom SVG Icons (Figma-aligned) ────────────────────────────────────────
@@ -128,11 +129,18 @@ export default function StopDetail() {
   const otherServiceStop = currentRoute.stops.find(s => s.id !== stop.id && s.status === 'Servicing');
   const arrivedDisabled = isPending && !!otherServiceStop; // disabled if another stop is being serviced
 
-  const primaryLabel = isPending ? "I'm Arrived" : isServicing ? 'Mark Stop Done' : 'Completed';
   const handlePrimary = () => {
     if (arrivedDisabled) return;
     if (isPending) updateStopStatus(currentRoute.id, stop.id, 'Servicing');
-    else if (isServicing) {
+  };
+
+  const handleCompleteWorkOrder = (woId: string) => {
+    updateWorkOrderStatus(currentRoute.id, stop.id, woId, 'Completed');
+    
+    // Check if all work orders are now completed (including this one, which might not be updated in state yet)
+    const updatedWorkOrders = stop.workOrders.map(wo => wo.id === woId ? { ...wo, status: 'Completed' } : wo);
+    const allDone = updatedWorkOrders.every(wo => wo.status === 'Completed' || wo.status === 'Failed');
+    if (allDone) {
       updateStopStatus(currentRoute.id, stop.id, 'Done');
       navigate(`/route/${currentRoute.id}`);
     }
@@ -243,7 +251,7 @@ export default function StopDetail() {
         </div>
 
         {/* Primary Action Button */}
-        {!isDone && (
+        {isPending && (
           <>
             <button
               onClick={handlePrimary}
@@ -256,9 +264,9 @@ export default function StopDetail() {
                 cursor: arrivedDisabled ? 'not-allowed' : 'pointer',
               }}
             >
-              {isPending && !arrivedDisabled && <IconArrived />}
+              {!arrivedDisabled && <IconArrived />}
               <span style={{ color: arrivedDisabled ? '#71727A' : 'white', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
-                {primaryLabel}
+                I'm Arrived
               </span>
             </button>
             {arrivedDisabled && otherServiceStop && (
@@ -274,157 +282,24 @@ export default function StopDetail() {
           </>
         )}
 
-        {/* Notes */}
-        {stop.notes && (
-          <div className="flex items-start gap-[6px] rounded-[16px] p-[10px]" style={{ background: '#FFF7EE' }}>
-            <div className="shrink-0 mt-[2px]"><IconNote /></div>
-            <p className="flex-1 m-0" style={{ color: '#71727A', fontSize: 14, fontWeight: 400, fontFamily: 'Google Sans Flex', lineHeight: 1.5 }}>
-              {stop.notes}
-            </p>
+        {/* Work Orders List */}
+        {!isPending && (
+          <div className="flex flex-col gap-3 mt-4">
+            <h3 className="text-[16px] font-semibold text-[#2F3036] font-['Google_Sans_Flex'] m-0">
+              Tasks
+            </h3>
+            {stop.workOrders.map((wo) => (
+              <WorkOrderCard
+                key={wo.id}
+                workOrder={wo}
+                routeId={currentRoute.id}
+                stopId={stop.id}
+                onComplete={handleCompleteWorkOrder}
+                stopStatus={stop.status}
+              />
+            ))}
           </div>
         )}
-
-        {/* Building Orientation */}
-        {stop.buildingOrientation && (
-          <div className="flex flex-col gap-[6px]">
-            <div className="flex items-center gap-[4px]">
-              <div className="shrink-0"><IconBuildingOrientation /></div>
-              <span style={{ color: '#2F3036', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Building Orientation</span>
-            </div>
-            <p className="m-0" style={{ color: '#71727A', fontSize: 14, fontWeight: 400, fontFamily: 'Google Sans Flex', lineHeight: 1.5 }}>
-              {stop.buildingOrientation}
-            </p>
-          </div>
-        )}
-
-        {/* Delivery Instruction */}
-        {stop.deliveryInstruction && (
-          <div className="flex flex-col gap-[6px]">
-            <div className="flex items-center gap-[4px]">
-              <div className="shrink-0"><IconDeliveryInstruction /></div>
-              <span style={{ color: '#2F3036', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Delivery Instruction</span>
-            </div>
-            <p className="m-0" style={{ color: '#71727A', fontSize: 14, fontWeight: 400, fontFamily: 'Google Sans Flex', lineHeight: 1.5 }}>
-              {stop.deliveryInstruction}
-            </p>
-          </div>
-        )}
-
-        {/* Unit Info Card */}
-        <div
-          className="flex items-stretch overflow-hidden rounded-[16px] cursor-pointer active:scale-[0.99] transition-transform mt-[8px]"
-          style={{ background: 'white', boxShadow: '0px 8px 20px rgba(0,0,0,0.06)' }}
-          onClick={() => navigate(`/stop/${stop.id}/building`)}
-        >
-          {/* Left: unit thumbnail — first building photo */}
-          <div
-            className="shrink-0 overflow-hidden"
-            style={{ width: 114, alignSelf: 'stretch', background: 'rgba(108,110,122,0.15)' }}
-          >
-            <img
-              src="/Building Image 1.jpg"
-              alt="Unit"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const t = e.target as HTMLImageElement;
-                t.style.display = 'none';
-              }}
-            />
-          </div>
-
-          {/* Right: unit details */}
-          <div className="flex-1 px-[10px] py-[20px] flex items-center justify-between gap-[12px] min-w-0">
-            <div className="flex flex-col gap-[2px] min-w-0 flex-1">
-              <div style={{ color: '#FF7048', fontSize: 11, fontWeight: 500, fontFamily: 'Google Sans Flex' }}>
-                Serial# :{stop.unitInfo.serial}
-              </div>
-              {/* Full product name — allow wrap, not truncate */}
-              <div style={{ color: '#2F3036', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex', lineHeight: 1.4 }}>
-                {stop.unitInfo.size}{stop.unitInfo.modelName ? ` ${stop.unitInfo.modelName}` : ''}
-              </div>
-            </div>
-            <ChevronRight size={16} className="text-[#71727A] shrink-0" />
-          </div>
-        </div>
-
-        {/* Action Rows */}
-        <div
-          className="flex flex-col px-[16px] rounded-[24px] overflow-hidden mt-[8px]"
-          style={{ background: 'white', boxShadow: '0px 8px 40px rgba(0,0,0,0.06)' }}
-        >
-          {/* Add Photo */}
-          <div
-            onClick={() => navigate(`/stop/${stop.id}/photos`)}
-            className="flex items-center justify-between py-[16px] cursor-pointer active:opacity-70 transition-opacity"
-            style={{ borderBottom: '1px solid #E8E9F1' }}
-          >
-            <div className="flex items-center gap-[10px]">
-              <IconCamera />
-              <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Add Photo</span>
-            </div>
-            <div className="flex items-center gap-[8px]">
-              {stop.photos && stop.photos.length > 0 && (
-                <span className="text-white px-2 py-0.5 rounded-full" style={{ background: '#FF7048', fontSize: 12, fontWeight: 600 }}>
-                  {stop.photos.length}
-                </span>
-              )}
-              <ChevronRight size={16} className="text-[#71727A]" />
-            </div>
-          </div>
-
-
-          <div
-            onClick={() => navigate(`/stop/${stop.id}/signature`)}
-            className="flex items-center justify-between py-[16px] cursor-pointer active:opacity-70 transition-opacity"
-            style={{ borderBottom: '1px solid #E8E9F1' }}
-          >
-            <div className="flex items-center gap-[10px]">
-              <IconSignature />
-              <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Delivery Signature</span>
-            </div>
-            <div className="flex items-center gap-[8px]">
-              {stop.signature ? (
-                <span className="flex items-center gap-1" style={{ color: '#2FA301', fontSize: 12, fontWeight: 600 }}>
-                  <Check size={14} /> Signed
-                </span>
-              ) : (
-                <ChevronRight size={16} className="text-[#71727A]" />
-              )}
-            </div>
-          </div>
-
-          {/* Payment */}
-          <div
-            onClick={() => alert('Payment feature coming soon!')}
-            className="flex items-center justify-between py-[16px] cursor-pointer active:opacity-70 transition-opacity"
-            style={{ borderBottom: '1px solid #E8E9F1' }}
-          >
-            <div className="flex items-center gap-[10px]">
-              <IconPayment />
-              <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Payment</span>
-            </div>
-            <ChevronRight size={16} className="text-[#71727A]" />
-          </div>
-
-          {/* Stop Notes */}
-          <div
-            onClick={() => navigate(`/stop/${stop.id}/notes`)}
-            className="flex items-center justify-between py-[16px] cursor-pointer active:opacity-70 transition-opacity"
-          >
-            <div className="flex items-center gap-[10px]">
-              <IconStopNotes />
-              <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Stop Notes</span>
-            </div>
-            <div className="flex items-center gap-[8px]">
-              {commentCount > 0 && (
-                <span className="text-white px-2 py-0.5 rounded-full" style={{ background: '#FF7048', fontSize: 12, fontWeight: 600 }}>
-                  {commentCount}
-                </span>
-              )}
-              <ChevronRight size={16} className="text-[#71727A]" />
-            </div>
-          </div>
-        </div>
 
       </main>
 

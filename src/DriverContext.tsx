@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { mockDrivers, initialRoutes } from './mockData';
-import type { RouteData, Driver, Stop } from './mockData';
+import type { RouteData, Driver, Stop, WorkOrder } from './mockData';
 
 interface DriverContextType {
   drivers: Driver[];
@@ -9,13 +9,13 @@ interface DriverContextType {
   isDriverActive: boolean;
   setDriverActive: (active: boolean) => void;
   switchDriver: (driverId: string) => void;
-  toggleTask: (routeId: string, stopId: string, taskId: string) => void;
   updateStopStatus: (routeId: string, stopId: string, status: Stop['status']) => void;
-  addPhoto: (routeId: string, stopId: string, photoDataUrl: string) => void;
-  removePhoto: (routeId: string, stopId: string, photoIndex: number) => void;
-  saveSignature: (routeId: string, stopId: string, signatureDataUrl: string) => void;
-  saveDriverSignature: (routeId: string, stopId: string, signatureDataUrl: string) => void;
-  addComment: (routeId: string, stopId: string, comment: string) => void;
+  updateWorkOrderStatus: (routeId: string, stopId: string, workOrderId: string, status: WorkOrder['status']) => void;
+  addPhoto: (routeId: string, stopId: string, workOrderId: string, photoDataUrl: string) => void;
+  removePhoto: (routeId: string, stopId: string, workOrderId: string, photoIndex: number) => void;
+  saveSignature: (routeId: string, stopId: string, workOrderId: string, signatureDataUrl: string) => void;
+  saveDriverSignature: (routeId: string, stopId: string, workOrderId: string, signatureDataUrl: string) => void;
+  addComment: (routeId: string, stopId: string, workOrderId: string, comment: string) => void;
   markGPS: (routeId: string, stopId: string) => void;
   skipStop: (routeId: string, stopId: string, reason: string) => void;
   reportIssue: (routeId: string, stopId: string, issue: string) => void;
@@ -45,7 +45,6 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (saved) {
       try {
         const savedRoutes = JSON.parse(saved) as RouteData[];
-        // Merge saved progress into initialRoutes so new updates to metadata load immediately
         return initialRoutes.map(initialRoute => {
           const savedRoute = savedRoutes.find(r => r.id === initialRoute.id);
           if (!savedRoute) return initialRoute;
@@ -53,19 +52,26 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             ...initialRoute,
             status: savedRoute.status,
             stops: initialRoute.stops.map(initialStop => {
-              // Try to find by id first, fallback to stop number
               const savedStop = savedRoute.stops.find(s => s.id === initialStop.id) || 
                                 savedRoute.stops.find(s => s.num === initialStop.num);
               if (!savedStop) return initialStop;
               return {
                 ...initialStop,
                 status: savedStop.status,
-                comments: savedStop.comments || initialStop.comments,
-                signature: savedStop.signature || initialStop.signature,
-                driverSignature: savedStop.driverSignature || initialStop.driverSignature,
-                photos: savedStop.photos || initialStop.photos,
                 gpsMarked: savedStop.gpsMarked || initialStop.gpsMarked,
                 gpsCoords: savedStop.gpsCoords || initialStop.gpsCoords,
+                workOrders: initialStop.workOrders.map(initialWo => {
+                  const savedWo = savedStop.workOrders?.find((w: any) => w.id === initialWo.id);
+                  if (!savedWo) return initialWo;
+                  return {
+                    ...initialWo,
+                    status: savedWo.status,
+                    notes: savedWo.notes || initialWo.notes,
+                    signature: savedWo.signature || initialWo.signature,
+                    driverSignature: savedWo.driverSignature || initialWo.driverSignature,
+                    photos: savedWo.photos || initialWo.photos,
+                  };
+                })
               };
             })
           };
@@ -100,263 +106,175 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setIsDriverActive(active);
   };
 
-  const toggleTask = (routeId: string, stopId: string, taskId: string) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-
-        const updatedStops = route.stops.map(stop => {
-          if (stop.id !== stopId) return stop;
-
-          const updatedTasks = stop.tasks.map(task => {
-            if (task.id !== taskId) return task;
-            return { ...task, done: !task.done };
-          });
-
-          return { ...stop, tasks: updatedTasks };
-        });
-
-        return { ...route, stops: updatedStops };
-      })
-    );
-  };
-
   const updateStopStatus = (routeId: string, stopId: string, status: Stop['status']) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-
-        let updatedStops = route.stops.map(stop => {
-          if (stop.id !== stopId) return stop;
-          
-          // If marking Done, make sure all tasks are also set to done
-          let tasks = stop.tasks;
-          if (status === 'Done') {
-            tasks = stop.tasks.map(t => ({ ...t, done: true }));
-          }
-
-          return { ...stop, status, tasks };
-        });
-
-        if (status === 'Done') {
-          const finishedStopNum = updatedStops.find(s => s.id === stopId)?.num || 0;
-          let nextStopToService = updatedStops.find(s => s.num === finishedStopNum + 1);
-          if (nextStopToService && nextStopToService.status === 'Pending') {
-            updatedStops = updatedStops.map(s => {
-              if (s.id === nextStopToService!.id) {
-                return { ...s, status: 'Servicing' as const };
-              }
-              return s;
-            });
-          }
+    setRoutes(prev => prev.map(r => {
+      if (r.id !== routeId) return r;
+      let allStopsDone = true;
+      const newStops = r.stops.map(s => {
+        if (s.id === stopId) {
+          if (status !== 'Done') allStopsDone = false;
+          return { ...s, status };
         }
-
-        // Check if all stops in this route are Done
-        const allStopsDone = updatedStops.every(s => s.status === 'Done');
-        const routeStatus = allStopsDone ? 'Completed' as const : 'En Route' as const;
-
-        return {
-          ...route,
-          status: routeStatus,
-          stops: updatedStops
-        };
-      })
-    );
+        if (s.status !== 'Done') allStopsDone = false;
+        return s;
+      });
+      return {
+        ...r,
+        stops: newStops,
+        status: allStopsDone ? 'Completed' : (r.status === 'Planned' && status === 'Servicing' ? 'En Route' : r.status)
+      };
+    }));
   };
 
-  const addPhoto = (routeId: string, stopId: string, photoDataUrl: string) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-        return {
-          ...route,
-          stops: route.stops.map(stop => {
-            if (stop.id !== stopId) return stop;
-            const photos = stop.photos ? [...stop.photos, photoDataUrl] : [photoDataUrl];
-            return { ...stop, photos };
-          })
-        };
-      })
-    );
+  const updateWorkOrderStatus = (routeId: string, stopId: string, workOrderId: string, status: WorkOrder['status']) => {
+    setRoutes(prev => prev.map(r => {
+      if (r.id !== routeId) return r;
+      return {
+        ...r,
+        stops: r.stops.map(s => {
+          if (s.id !== stopId) return s;
+          return {
+            ...s,
+            workOrders: s.workOrders.map(wo => wo.id === workOrderId ? { ...wo, status } : wo)
+          };
+        })
+      };
+    }));
   };
 
-  const removePhoto = (routeId: string, stopId: string, photoIndex: number) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-        return {
-          ...route,
-          stops: route.stops.map(stop => {
-            if (stop.id !== stopId) return stop;
-            const photos = stop.photos ? stop.photos.filter((_: string, i: number) => i !== photoIndex) : [];
-            return { ...stop, photos };
-          })
-        };
+  const addPhoto = (routeId: string, stopId: string, workOrderId: string, photoDataUrl: string) => {
+    setRoutes(prev => prev.map(r => r.id !== routeId ? r : {
+      ...r,
+      stops: r.stops.map(s => s.id !== stopId ? s : {
+        ...s,
+        workOrders: s.workOrders.map(wo => wo.id !== workOrderId ? wo : {
+          ...wo,
+          photos: [...(wo.photos || []), photoDataUrl]
+        })
       })
-    );
+    }));
   };
 
-  const saveSignature = (routeId: string, stopId: string, signatureDataUrl: string) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-        return {
-          ...route,
-          stops: route.stops.map(stop => {
-            if (stop.id !== stopId) return stop;
-            return { ...stop, signature: signatureDataUrl };
-          })
-        };
+  const removePhoto = (routeId: string, stopId: string, workOrderId: string, photoIndex: number) => {
+    setRoutes(prev => prev.map(r => r.id !== routeId ? r : {
+      ...r,
+      stops: r.stops.map(s => s.id !== stopId ? s : {
+        ...s,
+        workOrders: s.workOrders.map(wo => wo.id !== workOrderId ? wo : {
+          ...wo,
+          photos: (wo.photos || []).filter((_, i) => i !== photoIndex)
+        })
       })
-    );
+    }));
   };
 
-  const saveDriverSignature = (routeId: string, stopId: string, signatureDataUrl: string) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-        return {
-          ...route,
-          stops: route.stops.map(stop => {
-            if (stop.id !== stopId) return stop;
-            return { ...stop, driverSignature: signatureDataUrl };
-          })
-        };
+  const saveSignature = (routeId: string, stopId: string, workOrderId: string, signatureDataUrl: string) => {
+    setRoutes(prev => prev.map(r => r.id !== routeId ? r : {
+      ...r,
+      stops: r.stops.map(s => s.id !== stopId ? s : {
+        ...s,
+        workOrders: s.workOrders.map(wo => wo.id !== workOrderId ? wo : {
+          ...wo,
+          signature: signatureDataUrl
+        })
       })
-    );
+    }));
   };
 
-  const addComment = (routeId: string, stopId: string, comment: string) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-        return {
-          ...route,
-          stops: route.stops.map(stop => {
-            if (stop.id !== stopId) return stop;
-            const comments = stop.comments ? [...stop.comments, comment] : [comment];
-            return { ...stop, comments };
-          })
-        };
+  const saveDriverSignature = (routeId: string, stopId: string, workOrderId: string, signatureDataUrl: string) => {
+    setRoutes(prev => prev.map(r => r.id !== routeId ? r : {
+      ...r,
+      stops: r.stops.map(s => s.id !== stopId ? s : {
+        ...s,
+        workOrders: s.workOrders.map(wo => wo.id !== workOrderId ? wo : {
+          ...wo,
+          driverSignature: signatureDataUrl
+        })
       })
-    );
+    }));
+  };
+
+  const addComment = (routeId: string, stopId: string, workOrderId: string, comment: string) => {
+    setRoutes(prev => prev.map(r => r.id !== routeId ? r : {
+      ...r,
+      stops: r.stops.map(s => s.id !== stopId ? s : {
+        ...s,
+        workOrders: s.workOrders.map(wo => wo.id !== workOrderId ? wo : {
+          ...wo,
+          notes: wo.notes ? wo.notes + '\n\n' + comment : comment
+        })
+      })
+    }));
   };
 
   const markGPS = (routeId: string, stopId: string) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-        return {
-          ...route,
-          stops: route.stops.map(stop => {
-            if (stop.id !== stopId) return stop;
-            
-            const lat = 32.7767 + (Math.random() - 0.5) * 0.1;
-            const lng = -96.7970 + (Math.random() - 0.5) * 0.1;
-
-            return {
-              ...stop,
-              gpsMarked: true,
-              gpsCoords: { lat, lng }
-            };
-          })
-        };
+    setRoutes(prev => prev.map(r => r.id !== routeId ? r : {
+      ...r,
+      stops: r.stops.map(s => s.id !== stopId ? s : {
+        ...s,
+        gpsMarked: true,
+        gpsCoords: { lat: 32.7767, lng: -96.7970 } // Mock coordinates for Dallas
       })
-    );
+    }));
   };
 
   const skipStop = (routeId: string, stopId: string, reason: string) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-        return {
-          ...route,
-          stops: route.stops.map(stop => {
-            if (stop.id !== stopId) return stop;
-            const skipComment = `[SKIPPED STOP] Reason: ${reason}`;
-            const comments = stop.comments ? [...stop.comments, skipComment] : [skipComment];
-            return {
-              ...stop,
-              status: 'Pending' as const,
-              comments
-            };
-          })
-        };
+    setRoutes(prev => prev.map(r => r.id !== routeId ? r : {
+      ...r,
+      stops: r.stops.map(s => s.id !== stopId ? s : {
+        ...s,
+        status: 'Done',
+        workOrders: s.workOrders.map(wo => ({ ...wo, status: 'Failed', notes: reason }))
       })
-    );
+    }));
   };
 
   const reportIssue = (routeId: string, stopId: string, issue: string) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-        return {
-          ...route,
-          stops: route.stops.map(stop => {
-            if (stop.id !== stopId) return stop;
-            const issueComment = `[REPORTED ISSUE] ${issue}`;
-            const comments = stop.comments ? [...stop.comments, issueComment] : [issueComment];
-            return {
-              ...stop,
-              comments
-            };
-          })
-        };
+    // In a real app this would call an API
+    console.log(`Issue reported on route ${routeId}, stop ${stopId}: ${issue}`);
+    // Optional: add as a comment to the first work order
+    setRoutes(prev => prev.map(r => r.id !== routeId ? r : {
+      ...r,
+      stops: r.stops.map(s => s.id !== stopId ? s : {
+        ...s,
+        workOrders: s.workOrders.map((wo, index) => index === 0 ? {
+          ...wo,
+          notes: (wo.notes ? wo.notes + '\n' : '') + `ISSUE: ${issue}`
+        } : wo)
       })
-    );
+    }));
   };
 
   const startRoute = (routeId: string) => {
-    setRoutes(prevRoutes =>
-      prevRoutes.map(route => {
-        if (route.id !== routeId) return route;
-        const updatedStops = route.stops.map((stop, idx) => {
-          if (idx === 0 && stop.status === 'Pending') {
-            return { ...stop, status: 'Servicing' as const };
-          }
-          return stop;
-        });
-        return {
-          ...route,
-          status: 'En Route' as const,
-          stops: updatedStops
-        };
-      })
-    );
+    setRoutes(prev => prev.map(r => r.id === routeId ? { ...r, status: 'En Route' } : r));
   };
 
   const resetData = () => {
-    setRoutes(initialRoutes);
-    setIsDriverActive(true);
-    setActiveDriver(mockDrivers[0]);
     localStorage.removeItem('opshub_driver_routes');
-    localStorage.removeItem('opshub_driver_status');
-    localStorage.removeItem('opshub_driver_active');
+    setRoutes(initialRoutes);
   };
 
   return (
-    <DriverContext.Provider
-      value={{
-        drivers: mockDrivers,
-        activeDriver,
-        routes,
-        isDriverActive,
-        setDriverActive,
-        switchDriver,
-        toggleTask,
-        updateStopStatus,
-        addPhoto,
-        removePhoto,
-        saveSignature,
-        saveDriverSignature,
-        addComment,
-        markGPS,
-        skipStop,
-        reportIssue,
-        startRoute,
-        resetData
-      }}
-    >
+    <DriverContext.Provider value={{
+      drivers: mockDrivers,
+      activeDriver,
+      routes,
+      isDriverActive,
+      setDriverActive,
+      switchDriver,
+      updateStopStatus,
+      updateWorkOrderStatus,
+      addPhoto,
+      removePhoto,
+      saveSignature,
+      saveDriverSignature,
+      addComment,
+      markGPS,
+      skipStop,
+      reportIssue,
+      startRoute,
+      resetData
+    }}>
       {children}
     </DriverContext.Provider>
   );
@@ -364,7 +282,7 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
 export const useDriver = () => {
   const context = useContext(DriverContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useDriver must be used within a DriverProvider');
   }
   return context;

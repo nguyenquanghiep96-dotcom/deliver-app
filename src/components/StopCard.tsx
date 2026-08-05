@@ -1,36 +1,31 @@
 import { ChevronRight, User } from "lucide-react";
-import { cn, cleanStopType } from "../lib/utils";
+import { cn } from "../lib/utils";
+import type { WorkOrder } from "../mockData";
 
 interface StopCardProps {
   number: number;
   address: string;
-  type: string;
-  userName: string;
-  status: "Pending" | "Arrived" | "Done" | "En Route";
-  statusColor?: string;
-  statusBg?: string;
+  workOrders: WorkOrder[];
+  status: "Pending" | "Servicing" | "Done";
   isCompleted?: boolean;
 }
 
 export function StopCard({ 
   number, 
   address, 
-  type, 
-  userName, 
+  workOrders,
   status,
   isCompleted = false 
 }: StopCardProps) {
   
-  const getStatusStyles = () => {
-    switch (status) {
+  const getStatusStyles = (woStatus: string) => {
+    switch (woStatus) {
       case "Pending":
         return "text-[#f09a11] bg-[#f09a1133] border-[#f09a1133]";
-      case "Arrived":
-        return "text-[#3B82F6] bg-[#3B82F61A] border-[#3B82F6]";
-      case "Done":
+      case "Completed":
         return "text-[#2FA301] bg-[#2FA3011A] border-[#2FA301]";
-      case "En Route":
-        return "text-[#2FA301] bg-[#2FA3011A] border-[#2FA301]";
+      case "Failed":
+        return "text-[#FF3B30] bg-[#FF3B301A] border-[#FF3B30]";
       default:
         return "text-[#71727A] bg-[#E8E9F1] border-[#E8E9F1]";
     }
@@ -61,29 +56,31 @@ export function StopCard({
           </div>
         </div>
 
-        {/* Status Row */}
-        <div className="flex gap-[8px] items-center w-full">
-          <div className="flex flex-1 gap-[8px] items-center min-w-0">
-            <div className="bg-[#e8e9f1] px-[8px] py-[3px] rounded-[6px] border border-[#e8e9f1] shrink-0">
-              <p className="text-[#2f3036] text-[11px] font-semibold whitespace-nowrap">{cleanStopType(type)}</p>
-            </div>
-            
-            <div className="flex flex-1 gap-[2px] items-center min-w-0">
-              <User size={12} className="text-[#71727A] shrink-0" />
-              <p className="text-[#71727a] text-[12px] font-medium truncate font-['Google_Sans_Flex']" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
-                {userName}
-              </p>
-            </div>
-          </div>
+        {/* Work Orders List */}
+        <div className="flex flex-col gap-[6px] w-full">
+          {workOrders.map((wo) => (
+            <div key={wo.id} className="flex gap-[8px] items-center w-full">
+              <div className="bg-[#e8e9f1] px-[8px] py-[3px] rounded-[6px] border border-[#e8e9f1] shrink-0">
+                <p className="text-[#2f3036] text-[11px] font-semibold whitespace-nowrap">{wo.action}</p>
+              </div>
+              
+              <div className="flex flex-1 gap-[2px] items-center min-w-0">
+                <User size={12} className="text-[#71727A] shrink-0" />
+                <p className="text-[#71727a] text-[12px] font-medium truncate font-['Google_Sans_Flex']" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+                  {wo.customerName}
+                </p>
+              </div>
 
-          <div className={cn(
-            "px-[8px] py-[3px] rounded-[6px] border border-solid shrink-0",
-            getStatusStyles()
-          )}>
-            <p className="text-[10px] font-semibold font-['Google_Sans_Flex']" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
-              {status}
-            </p>
-          </div>
+              <div className={cn(
+                "px-[8px] py-[3px] rounded-[6px] border border-solid shrink-0",
+                getStatusStyles(wo.status)
+              )}>
+                <p className="text-[10px] font-semibold font-['Google_Sans_Flex']" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+                  {wo.status}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

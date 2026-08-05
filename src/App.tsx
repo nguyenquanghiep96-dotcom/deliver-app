@@ -20,11 +20,11 @@ export default function App() {
             <Route index element={<Navigate to="/home" replace />} />
             <Route path="home" element={<Home />} />
             <Route path="route/:routeId" element={<RouteDetail />} />
-            <Route path="stop/:stopId" element={<StopDetail />} />
-            <Route path="stop/:stopId/building" element={<BuildingDetail />} />
-            <Route path="stop/:stopId/signature" element={<SignatureView />} />
-            <Route path="stop/:stopId/photos" element={<PhotosView />} />
-            <Route path="stop/:stopId/notes" element={<StopNotesView />} />
+            <Route path="route/:routeId/stop/:stopId" element={<StopDetail />} />
+            <Route path="route/:routeId/stop/:stopId/building" element={<BuildingDetail />} />
+            <Route path="route/:routeId/stop/:stopId/signature" element={<SignatureView />} />
+            <Route path="route/:routeId/stop/:stopId/photos" element={<PhotosView />} />
+            <Route path="route/:routeId/stop/:stopId/notes" element={<StopNotesView />} />
             <Route path="upcoming-stops" element={<UpcomingStopsList />} />
             <Route path="completed-stops" element={<CompletedStopsList />} />
             <Route path="*" element={<Navigate to="/home" replace />} />

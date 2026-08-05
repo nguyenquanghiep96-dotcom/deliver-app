@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, useSearchParams } from 'react-router';
 import { useDriver } from './DriverContext';
 
 // ─── Lightbox ────────────────────────────────────────────────────────────────
@@ -124,6 +124,8 @@ function Lightbox({
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PhotosView() {
   const { stopId } = useParams();
+  const [searchParams] = useSearchParams();
+  const woId = searchParams.get('woId');
   const navigate = useNavigate();
   const { routes, addPhoto, removePhoto } = useDriver();
 
@@ -132,19 +134,20 @@ export default function PhotosView() {
 
   const currentRoute = routes.find(r => r.stops.some(s => s.id === stopId));
   const stop = currentRoute?.stops.find(s => s.id === stopId);
+  const workOrder = stop?.workOrders.find(wo => wo.id === woId);
 
-  if (!currentRoute || !stop) {
+  if (!currentRoute || !stop || !workOrder) {
     return (
       <div
         className="flex-1 flex items-center justify-center p-8 text-center"
         style={{ background: '#E8E9F1', fontFamily: "'Google Sans Flex', sans-serif" }}
       >
-        <span style={{ fontSize: 16, color: '#71727A' }}>Stop Not Found</span>
+        <span style={{ fontSize: 16, color: '#71727A' }}>Work Order Not Found</span>
       </div>
     );
   }
 
-  const photos = stop.photos || [];
+  const photos = workOrder.photos || [];
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -152,7 +155,7 @@ export default function PhotosView() {
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === 'string') {
-          addPhoto(currentRoute.id, stop.id, reader.result);
+          addPhoto(currentRoute.id, stop.id, workOrder.id, reader.result);
         }
       };
       reader.readAsDataURL(file);
@@ -238,7 +241,7 @@ export default function PhotosView() {
                 <button
                   onClick={e => {
                     e.stopPropagation();
-                    removePhoto(currentRoute.id, stop.id, index);
+                    removePhoto(currentRoute.id, stop.id, workOrder.id, index);
                   }}
                   className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full border-none cursor-pointer active:scale-95 transition-transform"
                   style={{ background: 'rgba(0,0,0,0.55)', color: 'white', fontSize: 13, fontWeight: 700 }}

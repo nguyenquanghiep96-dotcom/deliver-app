@@ -13,6 +13,7 @@ import imgNavigateIcon from '../icon/ic-navigate.svg';
 import imgPhoneCallIcon from '../icon/ic-phone-call.svg';
 import imgUserIcon from '../icon/ic-user.svg';
 import imgNoteIcon from '../icon/Note Icon.svg';
+import imgMapOverview from './assets/map-overview.jpg';
 
 import imgNavHome from '../icon/ic-home.svg';
 import imgNavCalendar from '../icon/ic-calendar.svg';
@@ -155,73 +156,131 @@ export default function Home() {
                   const remainingDistanceStr = getRemainingDistance(activeRoute.id, stops);
 
                   return (
-                    /* Active Route Card — Figma: current-stop-container */
-                    <div 
-                      className="w-full bg-white rounded-[24px] overflow-hidden"
-                      style={{
-                        boxShadow: '0px 8px 40px rgba(0, 0, 0, 0.10)',
-                        outline: '2px solid white',
-                        outlineOffset: '-2px',
-                      }}
-                    >
-                      {/* Dark inner card — Figma: current-stop-details */}
+                    /* Active Route Wrapper */
+                    <div className="flex flex-col gap-[16px] w-full">
                       <div 
-                        className="bg-[#2f3036] rounded-[24px] overflow-hidden flex flex-col items-start p-[16px] gap-[10px]"
-                        style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.25)' }}
+                        className="w-full bg-white rounded-[24px] overflow-hidden"
+                        style={{
+                          boxShadow: '0px 8px 40px rgba(0, 0, 0, 0.10)',
+                          outline: '2px solid white',
+                          outlineOffset: '-2px',
+                        }}
                       >
-                        {/* Route Name + Status — Figma: current-stop-info-container */}
-                        <div className="self-stretch flex items-center gap-[6px]">
-                          <div className="flex-1 flex flex-col items-start justify-center min-w-0">
-                            <div className="font-semibold text-[22px] text-white font-['Google_Sans_Flex'] flex items-center truncate">{activeRoute.id} - {activeRoute.name}</div>
-                          </div>
-                          <div className="bg-[#2fa301] rounded-[6px] overflow-hidden flex items-center justify-center px-[6px] py-[2px] shrink-0">
-                            <span className="text-[12px] font-medium text-white font-['Google_Sans_Flex'] whitespace-nowrap">En Route</span>
-                          </div>
+                        {/* Map Overview */}
+                        <div className="w-full h-[140px] relative overflow-hidden">
+                          <img src={imgMapOverview} alt="Route Map" className="w-full h-full object-cover" />
                         </div>
-
-                        {/* Progress Bar — Figma: progress-container */}
-                        <div className="self-stretch flex items-center gap-[10px]">
-                          <div className="flex-1 flex flex-col items-end">
-                            <div className="self-stretch h-[6px] relative">
-                              <div className="absolute top-0 left-0 rounded-[10px] bg-white w-full h-[6px]" />
-                              <div className="absolute top-0 left-0 rounded-[10px] bg-[#ff7048] h-[6px] transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
+                        
+                        {/* Dark inner card — Figma: current-stop-details */}
+                        <div 
+                          className="bg-[#2f3036] rounded-b-[24px] overflow-hidden flex flex-col items-start p-[16px] gap-[10px]"
+                        >
+                          {/* Route Name + Status — Figma: current-stop-info-container */}
+                          <div className="self-stretch flex items-center gap-[6px]">
+                            <div className="flex-1 flex flex-col items-start justify-center min-w-0">
+                              <div className="font-semibold text-[22px] text-white font-['Google_Sans_Flex'] flex items-center truncate">{activeRoute.id} - {activeRoute.name}</div>
+                            </div>
+                            <div className="bg-[#2fa301] rounded-[6px] overflow-hidden flex items-center justify-center px-[6px] py-[2px] shrink-0">
+                              <span className="text-[12px] font-medium text-white font-['Google_Sans_Flex'] whitespace-nowrap">En Route</span>
                             </div>
                           </div>
-                          <span className="text-[12px] font-medium text-white text-center font-['Google_Sans_Flex']">{completedStopsCount}/{totalStops}</span>
-                        </div>
 
-                        {/* Stats — Figma: stats-container */}
-                        <div className="self-stretch flex items-start text-center text-[12px] text-[#c5c6cc]">
-                          <div className="flex-1 border-r border-[#71727a] flex flex-col items-start">
-                            <div className="self-stretch font-['Google_Sans_Flex']">Stops done</div>
-                            <div className="self-stretch text-[18px] font-semibold text-white font-['Google_Sans_Flex']">{completedStopsCount}/{totalStops}</div>
+                          {/* Progress Bar — Figma: progress-container */}
+                          <div className="self-stretch flex items-center gap-[10px]">
+                            <div className="flex-1 flex flex-col items-end">
+                              <div className="self-stretch h-[6px] relative">
+                                <div className="absolute top-0 left-0 rounded-[10px] bg-white w-full h-[6px]" />
+                                <div className="absolute top-0 left-0 rounded-[10px] bg-[#ff7048] h-[6px] transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
+                              </div>
+                            </div>
+                            <span className="text-[12px] font-medium text-white text-center font-['Google_Sans_Flex']">{completedStopsCount}/{totalStops}</span>
                           </div>
-                          <div className="flex-1 border-r border-[#71727a] flex flex-col items-start">
-                            <div className="self-stretch font-['Google_Sans_Flex']">Remaining</div>
-                            <div className="self-stretch text-[18px] font-semibold text-white font-['Google_Sans_Flex']">{remainingDistanceStr}</div>
-                          </div>
-                          <div className="flex-1 flex flex-col items-center">
-                            <div className="self-stretch font-['Google_Sans_Flex']">Est. done</div>
-                            <div className="self-stretch text-[18px] font-semibold text-white font-['Google_Sans_Flex']">{estCompletion}</div>
-                          </div>
-                        </div>
 
-                        {/* CTA — Figma: buttonfilled */}
-                        <div className="self-stretch flex flex-col items-start text-[16px] gap-[8px]">
-                          <Link 
-                            to={`/route/${activeRoute.id}`} 
-                            className="self-stretch rounded-[16px] overflow-hidden flex items-center justify-center py-[15.5px] px-[30px] gap-[6px] cursor-pointer decoration-none text-white font-['Google_Sans_Flex'] active:scale-[0.98] transition-transform"
-                            style={{
-                              background: '#ff7048',
-                              outline: '1px solid #faa087',
-                              outlineOffset: '-1px',
-                            }}
-                          >
-                            <span className="font-semibold">Continue Route</span>
-                            <svg width="16" height="16" viewBox="0 0 10.3833 10.1087" fill="none"><path d="M5.3833 0.108643L4.4758 1.01614L8.5008 5.04114H0.383301V6.29114H8.5008L4.4758 10.3161L5.3833 11.2236L10.9389 5.66802L5.3833 0.108643Z" fill="white"/></svg>
-                          </Link>
+                          {/* Stats — Figma: stats-container */}
+                          <div className="self-stretch flex items-start text-center text-[12px] text-[#c5c6cc]">
+                            <div className="flex-1 border-r border-[#71727a] flex flex-col items-start">
+                              <div className="self-stretch font-['Google_Sans_Flex']">Stops done</div>
+                              <div className="self-stretch text-[18px] font-semibold text-white font-['Google_Sans_Flex']">{completedStopsCount}/{totalStops}</div>
+                            </div>
+                            <div className="flex-1 border-r border-[#71727a] flex flex-col items-start">
+                              <div className="self-stretch font-['Google_Sans_Flex']">Remaining</div>
+                              <div className="self-stretch text-[18px] font-semibold text-white font-['Google_Sans_Flex']">{remainingDistanceStr}</div>
+                            </div>
+                            <div className="flex-1 flex flex-col items-center">
+                              <div className="self-stretch font-['Google_Sans_Flex']">Est. done</div>
+                              <div className="self-stretch text-[18px] font-semibold text-white font-['Google_Sans_Flex']">{estCompletion}</div>
+                            </div>
+                          </div>
+
+                          {/* CTA — Figma: buttonfilled */}
+                          <div className="self-stretch flex flex-col items-start text-[16px] gap-[8px] mt-2">
+                            <Link 
+                              to={`/route/${activeRoute.id}`} 
+                              className="self-stretch rounded-[16px] overflow-hidden flex items-center justify-center py-[15.5px] px-[30px] gap-[6px] cursor-pointer decoration-none text-white font-['Google_Sans_Flex'] active:scale-[0.98] transition-transform"
+                              style={{
+                                background: '#ff7048',
+                                outline: '1px solid #faa087',
+                                outlineOffset: '-1px',
+                              }}
+                            >
+                              <span className="font-semibold">Continue Route</span>
+                              <ChevronRight size={16} />
+                            </Link>
+                          </div>
                         </div>
                       </div>
+
+                      {/* Next Stop Card Preview */}
+                      {stops.find(s => s.status !== 'Done') && (() => {
+                        const nextStop = stops.find(s => s.status !== 'Done');
+                        if (!nextStop) return null;
+                        
+                        // Summary of work orders
+                        const tasksSummary = nextStop.workOrders.length === 1 
+                          ? `1 ${nextStop.workOrders[0].action}`
+                          : `${nextStop.workOrders.length} Tasks`;
+
+                        return (
+                          <div className="bg-white rounded-[24px] p-[16px] flex flex-col gap-[12px]" style={{ boxShadow: '0px 4px 15px rgba(0,0,0,0.05)' }}>
+                            <div className="flex justify-between items-center w-full">
+                              <h3 className="font-semibold text-[#2F3036] font-['Google_Sans_Flex'] m-0">Next Stop</h3>
+                              <div className="bg-[#E8E9F1] px-[8px] py-[4px] rounded-[6px]">
+                                <span className="text-[12px] font-semibold text-[#2F3036] font-['Google_Sans_Flex']">{tasksSummary}</span>
+                              </div>
+                            </div>
+                            <div className="flex gap-[12px] items-start w-full">
+                              <div className="bg-[#ff7048] size-[32px] rounded-[16px] flex items-center justify-center text-white shrink-0 mt-1">
+                                <span className="font-bold text-[14px]">{nextStop.num}</span>
+                              </div>
+                              <div className="flex flex-col gap-[4px] min-w-0 flex-1">
+                                <p className="text-[#2F3036] font-semibold text-[15px] m-0 leading-tight font-['Google_Sans_Flex'] truncate">{nextStop.address}</p>
+                                <div className="flex gap-[6px] items-center">
+                                  <User size={14} className="text-[#71727A]" />
+                                  <span className="text-[#71727A] text-[13px] font-['Google_Sans_Flex'] truncate">
+                                    {nextStop.workOrders.map(wo => wo.customerName).join(', ')}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex gap-[8px] mt-[4px]">
+                              <Link 
+                                to={`/route/${activeRoute.id}/stop/${nextStop.id}`}
+                                className="flex-1 bg-[#2F3036] text-white py-[12px] rounded-[12px] text-center font-semibold text-[14px] decoration-none font-['Google_Sans_Flex'] active:scale-95 transition-transform"
+                              >
+                                View Details
+                              </Link>
+                              <a 
+                                href={`https://maps.google.com/?q=${encodeURIComponent(nextStop.address)}`}
+                                target="_blank" rel="noreferrer"
+                                className="flex-1 bg-[#F9F5F0] border border-[#FF7048]/30 text-[#FF7048] flex items-center justify-center gap-[6px] py-[12px] rounded-[12px] font-semibold text-[14px] decoration-none font-['Google_Sans_Flex'] active:scale-95 transition-transform"
+                              >
+                                <MapPin size={16} />
+                                Navigate
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   );
                 })()

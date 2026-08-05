@@ -1,38 +1,38 @@
-export interface Task {
+export interface WorkOrder {
   id: string;
-  text: string;
-  done: boolean;
-}
-
-export interface Stop {
-  id: string;
-  num: number;
-  type: string;
-  address: string;
-  status: 'Done' | 'Servicing' | 'Pending';
-  notes: string;
-  deliveryInstruction?: string;
-  buildingOrientation?: string;
-  tasks: Task[];
+  type: 'Delivery' | 'Repo' | 'Repair' | 'Lot Transfer' | 'Welfare Check' | 'Private Move' | 'Payment Collection';
+  category: 'Move' | 'Service';
+  action: 'Pickup' | 'Dropoff' | 'Visit';
+  status: 'Pending' | 'Completed' | 'Failed';
   customerName: string;
   customerPhone: string;
   unitInfo: {
-    size: string;      // e.g. "10 x 16"
-    modelName?: string; // e.g. "SilverCreek – 2 Story Gable"
+    size: string;
+    modelName?: string;
     base: string;
     trim: string;
     roof: string;
     serial: string;
     amount?: string;
-    material?: string;  // e.g. "LP Smart"
-    dimensions?: string; // e.g. "10' W x 16' L x 7' H"
+    material?: string;
+    dimensions?: string;
   };
-  comments?: string[];
-  signature?: string; // Data URL of drawn signature
-  driverSignature?: string; // Data URL of drawn driver signature
-  photos?: string[]; // Data URLs or file names of uploaded check photos
+  signature?: string;
+  driverSignature?: string;
+  photos?: string[];
+  notes?: string;
+}
+
+export interface Stop {
+  id: string;
+  num: number;
+  address: string;
+  status: 'Done' | 'Servicing' | 'Pending';
+  deliveryInstruction?: string;
+  buildingOrientation?: string;
   gpsMarked?: boolean;
   gpsCoords?: { lat: number; lng: number };
+  workOrders: WorkOrder[];
 }
 
 export interface RouteData {
@@ -97,94 +97,122 @@ export const initialRoutes: RouteData[] = [
     id: 'R-001',
     name: 'Fort Worth',
     startTime: '09:00 AM',
-    endTime: '07:00 PM',
-    date: 'Today',
-    startDate: 'Jul 8',
-    endDate: 'Jul 9',
+    endTime: '05:00 PM',
+    date: 'Jun 23 - Jun 24',
+    dayOfMonth: '23-24',
+    monthName: 'Jun',
     stopsCount: 5,
     dealerName: 'Store A',
     status: 'En Route',
-    stripeColor: '#FF7048', // orange
+    stripeColor: '#FF7048',
+    startDate: 'Jun 23',
+    endDate: 'Jun 24',
     startingAddress: '123 Main St, Dallas, TX 75201',
     routeNote: 'Take I-35 detour due to heavy construction on Main St. Ensure you have the heavy-duty jack for Stop #3.',
     dispatcherPhone: '+18005550100',
     stops: [
       {
-        id: 'S-101',
+        id: '1',
         num: 1,
-        type: 'Delivery Items',
-        address: '123 Oak Street, Fort Worth TX',
+        address: '10915 E Lancaster Ave, Fort Worth, TX 76120',
         status: 'Done',
-        notes: 'Delivery of standard gable shed. Customer wants it aligned with the fence line.',
-        tasks: [
-          { id: 'T-101-1', text: 'Inspect exterior condition', done: true },
-          { id: 'T-101-2', text: 'Photo documentation', done: true },
-          { id: 'T-101-3', text: 'Obtain customer signature', done: true }
-        ],
-        customerName: 'Jason Smith',
-        customerPhone: '714-345-4909',
-        unitInfo: { size: '14 x 20', modelName: 'SilverCreek – Classic Gable', base: 'Redwood', trim: 'Blue', roof: 'Black', serial: 'SH-4420', amount: '$6,482.80', material: 'LP Smart', dimensions: "14' W x 20' L x 7' H" },
-        comments: ['Delivery completed successfully.'],
-        gpsMarked: true,
-        gpsCoords: { lat: 32.7555, lng: -97.3308 }
+        deliveryInstruction: 'Customer requested placement near the back fence.',
+        workOrders: [
+          {
+            id: 'WO-001',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Dropoff',
+            status: 'Completed',
+            customerName: 'Robert Johnson',
+            customerPhone: '555-0123',
+            unitInfo: { size: '10 x 16', modelName: 'SilverCreek - 2 Story Gable', base: 'Almond', trim: 'White', roof: 'Charcoal', serial: 'S-12345678', material: 'LP Smart', dimensions: "10' W x 16' L x 7' H" },
+            signature: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+          }
+        ]
       },
       {
-        id: 'S-102',
+        id: '2',
         num: 2,
-        type: 'Welfare Check',
-        address: '456 Elm Ave, Fort Worth TX',
+        address: '221B Baker St, Dallas, TX 75001',
         status: 'Done',
-        notes: 'Check condition of unit #SH-4421.',
-        tasks: [
-          { id: 'T-102-1', text: 'Inspect exterior condition', done: true },
-          { id: 'T-102-2', text: 'Photo documentation', done: true },
-          { id: 'T-102-3', text: 'Verify doors alignment', done: true }
-        ],
-        customerName: 'Jason Smith',
-        customerPhone: '714-345-4909',
-        unitInfo: { size: '14 x 20', modelName: 'SilverCreek – Classic Gable', base: 'Redwood', trim: 'Blue', roof: 'Black', serial: 'SH-4421', amount: '$0.00 (Warranty)', material: 'LP Smart', dimensions: "14' W x 20' L x 7' H" }
+        workOrders: [
+          {
+            id: 'WO-002',
+            type: 'Repair',
+            category: 'Service',
+            action: 'Visit',
+            status: 'Completed',
+            customerName: 'Sherlock Holmes',
+            customerPhone: '555-0456',
+            unitInfo: { size: '8 x 12', base: 'Grey', trim: 'Black', roof: 'Metal', serial: 'S-88889999' }
+          }
+        ]
       },
       {
-        id: 'SM-3456',
+        id: '3',
         num: 3,
-        type: 'Repo',
-        address: '1234 Maple Street, Springfield, IL 62704',
-        status: 'Pending',
-        notes: 'Call before arrival. Use south gate. Place shed on gravel pad behind barn. Watch for power lines. Customer must be present during delivery.',
-        deliveryInstruction: 'Repossession of unit #INV-0091. Owner is aware of repossession. If gates are locked, call dispatcher immediately.',
-        buildingOrientation: 'Door toward rear of trailer',
-        tasks: [
-          { id: 'T-103-1', text: 'Confirm unit serial number', done: false },
-          { id: 'T-103-2', text: 'Inspect unit structure', done: false },
-          { id: 'T-103-3', text: 'Secure load on flatbed', done: false }
-        ],
-        customerName: 'James Carter Athour',
-        customerPhone: '020 2888 4943',
-        unitInfo: { size: '10 x 16', modelName: 'SilverCreek – 2 Story Gable', base: 'Burnished Slate', trim: 'White', roof: 'White', serial: '73-112025', amount: '$4,200.00', material: 'LP Smart', dimensions: "10' W x 16' L x 7' H" }
+        address: '1600 Amphitheatre Parkway, Mountain View, CA 94043',
+        status: 'Done',
+        workOrders: [
+          {
+            id: 'WO-003',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Dropoff',
+            status: 'Completed',
+            customerName: 'John Doe',
+            customerPhone: '555-0789',
+            unitInfo: { size: '12 x 20', base: 'Red', trim: 'White', roof: 'Shingle', serial: 'S-11112222' }
+          }
+        ]
       },
       {
-        id: 'S-104',
+        id: '4',
         num: 4,
-        type: 'Repair',
-        address: '4567 Oak Avenue, Rivertown, CA 90210',
-        status: 'Pending',
-        notes: '',
-        tasks: [{ id: 'T-104-1', text: 'Inspect and repair', done: false }],
-        customerName: 'Hiep Nguyen',
-        customerPhone: '020 2888 4943',
-        unitInfo: { size: '10 x 16 SilverCreek – 2 Story Gable', base: 'White', trim: 'Gray', roof: 'Charcoal', serial: 'WD-8122', amount: '$0.00' }
+        address: '456 Elm St, Arlington, TX 76010',
+        status: 'Servicing',
+        buildingOrientation: 'Doors facing east',
+        workOrders: [
+          {
+            id: 'WO-004',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Dropoff',
+            status: 'Pending',
+            customerName: 'Alice Smith',
+            customerPhone: '555-1111',
+            unitInfo: { size: '10 x 10', modelName: 'Utility Shed', base: 'White', trim: 'White', roof: 'Galvanized', serial: 'S-33334444' }
+          },
+          {
+            id: 'WO-005',
+            type: 'Repo',
+            category: 'Move',
+            action: 'Pickup',
+            status: 'Pending',
+            customerName: 'Alice Smith',
+            customerPhone: '555-1111',
+            unitInfo: { size: '8 x 8', base: 'Green', trim: 'White', roof: 'Metal', serial: 'S-99990000' }
+          }
+        ]
       },
       {
-        id: 'S-105',
+        id: '5',
         num: 5,
-        type: 'Lot Transfer',
-        address: '7890 Pine Lane, Lakeview, TX 75001',
+        address: '789 Oak St, Plano, TX 75024',
         status: 'Pending',
-        notes: '',
-        tasks: [{ id: 'T-105-1', text: 'Transfer verification', done: false }],
-        customerName: 'Khiet Vo',
-        customerPhone: '(415) 763-8291',
-        unitInfo: { size: '12 x 16 x 8', base: 'Gray', trim: 'White', roof: 'Silver', serial: 'SH-4433', amount: '$5,150.00' }
+        workOrders: [
+          {
+            id: 'WO-006',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Dropoff',
+            status: 'Pending',
+            customerName: 'Bob Williams',
+            customerPhone: '555-2222',
+            unitInfo: { size: '12 x 24', base: 'Brown', trim: 'Tan', roof: 'Brown', serial: 'S-55556666' }
+          }
+        ]
       }
     ]
   },
@@ -193,45 +221,54 @@ export const initialRoutes: RouteData[] = [
     name: 'Dallas North',
     startTime: '09:00 AM',
     endTime: '06:00 PM',
-    date: 'Tomorrow',
-    startDate: 'Jul 10',
-    endDate: 'Jul 11',
+    date: 'Jul 10 - Jul 11',
+    dayOfMonth: '10-11',
+    monthName: 'Jul',
     stopsCount: 2,
     dealerName: 'Store A',
     status: 'Planned',
-    stripeColor: '#3B82F6', // blue
-    startingAddress: '456 Commerce St, Dallas, TX 75202',
-    dispatcherPhone: '+18005550100',
+    stripeColor: '#8E94F2',
+    startDate: 'Jul 10',
+    endDate: 'Jul 11',
+    startingAddress: '990 Preston Rd, Plano, TX 75093',
+    routeNote: 'Gate code at Stop 2 is 1234.',
+    dispatcherPhone: '+18005550200',
     stops: [
       {
-        id: 'S-201',
+        id: '1',
         num: 1,
-        type: 'Delivery Items',
-        address: '990 Preston Rd, Plano TX',
+        address: '990 Preston Rd, Plano, TX',
         status: 'Pending',
-        notes: 'Verify clearance of trees before backup.',
-        tasks: [
-          { id: 'T-201-1', text: 'Verify side width clearance', done: false },
-          { id: 'T-201-2', text: 'Structural inspection post-placement', done: false }
-        ],
-        customerName: 'David Miller',
-        customerPhone: '972-555-0144',
-        unitInfo: { size: '10 x 12 x 7', base: 'Redwood', trim: 'White', roof: 'Green', serial: 'SH-4450', amount: '$3,800.00' }
+        workOrders: [
+          {
+            id: 'WO-007',
+            type: 'Lot Transfer',
+            category: 'Move',
+            action: 'Pickup',
+            status: 'Pending',
+            customerName: 'Store A',
+            customerPhone: '555-9999',
+            unitInfo: { size: '10 x 20', base: 'Tan', trim: 'White', roof: 'Metal', serial: 'S-AAAA' }
+          }
+        ]
       },
       {
-        id: 'S-202',
+        id: '2',
         num: 2,
-        type: 'Repo',
-        address: '1432 Coit Rd, Richardson TX',
+        address: '1111 Duff Ave, Ames, IA',
         status: 'Pending',
-        notes: 'Verify serial number carefully.',
-        tasks: [
-          { id: 'T-202-1', text: 'Verify serial number', done: false },
-          { id: 'T-202-2', text: 'Repossession checklist', done: false }
-        ],
-        customerName: 'Emily Davis',
-        customerPhone: '972-555-0188',
-        unitInfo: { size: '8.5 x 10 x 7', base: 'Gray', trim: 'White', roof: 'Gray', serial: 'INV-0095', amount: '$2,900.00' }
+        workOrders: [
+          {
+            id: 'WO-007',
+            type: 'Lot Transfer',
+            category: 'Move',
+            action: 'Dropoff',
+            status: 'Pending',
+            customerName: 'Store B',
+            customerPhone: '555-8888',
+            unitInfo: { size: '10 x 20', base: 'Tan', trim: 'White', roof: 'Metal', serial: 'S-AAAA' }
+          }
+        ]
       }
     ]
   },
@@ -240,84 +277,86 @@ export const initialRoutes: RouteData[] = [
     name: 'Houston South',
     startTime: '09:00 AM',
     endTime: '05:00 PM',
-    date: 'Jul 14',
-    startDate: 'Jul 14',
-    endDate: 'Jul 15',
-    dayOfMonth: '14',
-    monthName: 'JUL',
-    stopsCount: 4,
+    date: 'Jul 14 - Jul 15',
+    dayOfMonth: '14-15',
+    monthName: 'Jul',
+    stopsCount: 0,
     dealerName: 'MFR A',
     status: 'Planned',
-    stripeColor: '#2FA301', // green
-    startingAddress: '3635 Almeda Genoa Rd, Houston, TX, 77047',
+    stripeColor: '#F582A8',
+    startDate: 'Jul 14',
+    endDate: 'Jul 15',
+    startingAddress: '123 Main St, Houston, TX',
+    routeNote: '',
+    dispatcherPhone: '+18005550300',
     stops: []
   },
   {
     id: 'R-004',
     name: 'Austin West',
-    startTime: '08:30 AM',
-    endTime: '05:30 PM',
-    date: 'Jul 17',
-    startDate: 'Jul 17',
-    endDate: 'Jul 17',
-    dayOfMonth: '17',
-    monthName: 'JUL',
+    startTime: '08:00 AM',
+    endTime: '04:00 PM',
+    date: 'Jun 22',
+    dayOfMonth: '22',
+    monthName: 'Jun',
     stopsCount: 3,
     dealerName: 'Store B',
-    status: 'Planned',
-    stripeColor: '#8B5CF6', // purple
-    stops: []
-  },
-  {
-    id: 'R-005',
-    name: 'Irving Lot',
-    startTime: '06:00 AM',
-    endTime: '03:00 PM',
-    date: 'Jul 5',
-    startDate: 'Jul 5',
-    endDate: 'Jul 6',
-    dayOfMonth: '5',
-    monthName: 'JUL',
-    stopsCount: 3,
-    dealerName: 'Company B',
     status: 'Completed',
-    stripeColor: '#F09A11', // amber
+    stripeColor: '#34A853',
     stops: [
       {
-        id: 'S-501',
+        id: '1',
         num: 1,
-        type: 'Delivery Items',
-        address: '555 Belt Line Rd, Irving TX',
+        address: '100 Congress Ave, Austin, TX',
         status: 'Done',
-        notes: 'Completed early morning.',
-        tasks: [{ id: 'T-501-1', text: 'Delivery verification', done: true }],
-        customerName: 'Robert Vance',
-        customerPhone: '469-555-3211',
-        unitInfo: { size: '10 x 14 x 7', base: 'Blue', trim: 'White', roof: 'Black', serial: 'SH-4210', amount: '$4,100.00' }
+        workOrders: [
+          {
+            id: 'WO-008',
+            type: 'Repair',
+            category: 'Service',
+            action: 'Visit',
+            status: 'Completed',
+            customerName: 'Charlie Brown',
+            customerPhone: '555-7777',
+            unitInfo: { size: '12 x 12', base: 'Blue', trim: 'White', roof: 'Shingle', serial: 'S-BBBB' }
+          }
+        ]
       },
       {
-        id: 'S-502',
+        id: '2',
         num: 2,
-        type: 'Delivery Items',
-        address: '662 MacArthur Blvd, Irving TX',
+        address: '200 Lamar Blvd, Austin, TX',
         status: 'Done',
-        notes: 'Level ground setup.',
-        tasks: [{ id: 'T-502-1', text: 'Delivery verification', done: true }],
-        customerName: 'Stanley Hudson',
-        customerPhone: '469-555-8755',
-        unitInfo: { size: '12 x 12 x 7', base: 'Green', trim: 'Beige', roof: 'Green', serial: 'SH-4211', amount: '$4,500.00' }
+        workOrders: [
+          {
+            id: 'WO-009',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Dropoff',
+            status: 'Completed',
+            customerName: 'Lucy Van Pelt',
+            customerPhone: '555-6666',
+            unitInfo: { size: '10 x 12', base: 'Yellow', trim: 'White', roof: 'Metal', serial: 'S-CCCC' }
+          }
+        ]
       },
       {
-        id: 'S-503',
+        id: '3',
         num: 3,
-        type: 'Lot Transfer',
-        address: '1200 Airport Fwy, Irving TX',
+        address: '300 Guadalupe St, Austin, TX',
         status: 'Done',
-        notes: 'Lot transfer completed.',
-        tasks: [{ id: 'T-503-1', text: 'Transfer verification', done: true }],
-        customerName: 'Company B Dealer',
-        customerPhone: '469-555-0900',
-        unitInfo: { size: '14 x 24 x 8', base: 'Gray', trim: 'Gray', roof: 'Charcoal', serial: 'INV-0072', amount: '$8,200.00' }
+        workOrders: [
+          {
+            id: 'WO-010',
+            type: 'Welfare Check',
+            category: 'Service',
+            action: 'Visit',
+            status: 'Completed',
+            customerName: 'Linus Van Pelt',
+            customerPhone: '555-5555',
+            unitInfo: { size: '8 x 10', base: 'White', trim: 'Blue', roof: 'Metal', serial: 'S-DDDD' }
+          }
+        ]
       }
     ]
   }

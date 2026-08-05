@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, useSearchParams } from 'react-router';
 import { useDriver } from './DriverContext';
 
 function getTimeAgo(index: number, total: number): string {
@@ -27,38 +27,41 @@ const IconSendDisabled = () => (
 
 export default function StopNotesView() {
   const { stopId } = useParams();
+  const [searchParams] = useSearchParams();
+  const woId = searchParams.get('woId');
   const navigate = useNavigate();
   const { routes, addComment } = useDriver();
 
   const currentRoute = routes.find(r => r.stops.some(s => s.id === stopId));
   const stop = currentRoute?.stops.find(s => s.id === stopId);
+  const workOrder = stop?.workOrders.find(wo => wo.id === woId);
 
   const [newComment, setNewComment] = useState('');
   const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const comments = workOrder?.notes ? workOrder.notes.split('\n\n') : [];
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [stop?.comments?.length]);
+  }, [comments.length]);
 
-  if (!currentRoute || !stop) {
+  if (!currentRoute || !stop || !workOrder) {
     return (
       <div
         className="flex-1 flex items-center justify-center p-8 text-center"
         style={{ background: '#E8E9F1', fontFamily: "'Google Sans Flex', sans-serif" }}
       >
-        <span style={{ fontSize: 16, color: '#71727A' }}>Stop Not Found</span>
+        <span style={{ fontSize: 16, color: '#71727A' }}>Work Order Not Found</span>
       </div>
     );
   }
 
-  const comments = stop.comments || [];
-
   const handleSubmit = () => {
     const text = newComment.trim();
     if (!text) return;
-    addComment(currentRoute.id, stop.id, text);
+    addComment(currentRoute.id, stop.id, workOrder.id, text);
     setNewComment('');
   };
 

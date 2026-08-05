@@ -1,21 +1,24 @@
 import React, { useState, useRef } from 'react';
 import { ChevronLeft } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, useSearchParams } from 'react-router';
 import { useDriver } from './DriverContext';
 
 export default function SignatureView() {
   const { stopId } = useParams();
+  const [searchParams] = useSearchParams();
+  const woId = searchParams.get('woId');
   const navigate = useNavigate();
   const { routes, saveSignature } = useDriver();
 
   const currentRoute = routes.find(r => r.stops.some(s => s.id === stopId));
   const stop = currentRoute?.stops.find(s => s.id === stopId);
+  const workOrder = stop?.workOrders.find(wo => wo.id === woId);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasStrokes, setHasStrokes] = useState(false);
 
-  if (!currentRoute || !stop) {
+  if (!currentRoute || !stop || !workOrder) {
     return (
       <div
         className="flex-1 flex items-center justify-center p-8 text-center"
@@ -84,7 +87,7 @@ export default function SignatureView() {
   const saveSig = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    saveSignature(currentRoute.id, stop.id, canvas.toDataURL());
+    saveSignature(currentRoute.id, stop.id, workOrder.id, canvas.toDataURL());
     navigate(-1);
   };
 
