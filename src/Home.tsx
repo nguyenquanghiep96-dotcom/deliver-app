@@ -152,7 +152,7 @@ export default function Home() {
                   const totalStops = stops.length;
                   const completedStopsCount = stops.filter(s => s.status === 'Done').length;
                   const progressPercentage = totalStops > 0 ? (completedStopsCount / totalStops) * 100 : 0;
-                  const estCompletion = activeRoute.id === 'R-001' ? '24 June' : activeRoute.id === 'R-002' ? '24 June' : 'TBD';
+                  const estCompletion = activeRoute.id === 'RT-1001' ? '27 July' : activeRoute.id === 'R-002' ? '27 July' : 'TBD';
                   const remainingDistanceStr = getRemainingDistance(activeRoute.id, stops);
 
                   return (

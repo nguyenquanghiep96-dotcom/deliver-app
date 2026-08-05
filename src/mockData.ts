@@ -2,7 +2,7 @@ export interface WorkOrder {
   id: string;
   type: 'Delivery' | 'Repo' | 'Repair' | 'Lot Transfer' | 'Welfare Check' | 'Private Move' | 'Payment Collection';
   category: 'Move' | 'Service';
-  action: 'Pickup' | 'Dropoff' | 'Visit';
+  action: 'Pickup' | 'Dropoff' | 'Visit' | 'Start' | 'End';
   status: 'Pending' | 'Completed' | 'Failed';
   customerName: string;
   customerPhone: string;
@@ -94,123 +94,140 @@ export const mockDrivers: Driver[] = [
 
 export const initialRoutes: RouteData[] = [
   {
-    id: 'R-001',
-    name: 'Fort Worth',
-    startTime: '09:00 AM',
+    id: 'RT-1001',
+    name: 'Harrisonburg Route',
+    startTime: '07:00 AM',
     endTime: '05:00 PM',
-    date: 'Jun 23 - Jun 24',
-    dayOfMonth: '23-24',
-    monthName: 'Jun',
+    date: 'Jul 27',
+    dayOfMonth: '27',
+    monthName: 'Jul',
     stopsCount: 5,
-    dealerName: 'Store A',
+    dealerName: 'Rose MNF (Demo Dev)',
     status: 'En Route',
     stripeColor: '#FF7048',
-    startDate: 'Jun 23',
-    endDate: 'Jun 24',
-    startingAddress: '123 Main St, Dallas, TX 75201',
-    routeNote: 'Take I-35 detour due to heavy construction on Main St. Ensure you have the heavy-duty jack for Stop #3.',
-    dispatcherPhone: '+18005550100',
+    startDate: 'Jul 27',
+    endDate: 'Jul 27',
+    startingAddress: '3210 S Main St, Harrisonburg, VA 22801',
+    routeNote: '--',
+    dispatcherPhone: '540-555-0110',
     stops: [
       {
         id: '1',
         num: 1,
-        address: '10915 E Lancaster Ave, Fort Worth, TX 76120',
+        address: '3210 S Main St, Harrisonburg, VA 22801',
         status: 'Done',
-        deliveryInstruction: 'Customer requested placement near the back fence.',
         workOrders: [
           {
-            id: 'WO-001',
-            type: 'Delivery',
+            id: 'WO-1000',
+            type: 'Lot Transfer',
             category: 'Move',
-            action: 'Dropoff',
+            action: 'Start',
             status: 'Completed',
-            customerName: 'Robert Johnson',
-            customerPhone: '555-0123',
-            unitInfo: { size: '10 x 16', modelName: 'SilverCreek - 2 Story Gable', base: 'Almond', trim: 'White', roof: 'Charcoal', serial: 'S-12345678', material: 'LP Smart', dimensions: "10' W x 16' L x 7' H" },
-            signature: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+            customerName: 'Start address',
+            customerPhone: '555-0000',
+            unitInfo: { size: '', base: '', trim: '', roof: '', serial: '' }
           }
         ]
       },
       {
         id: '2',
         num: 2,
-        address: '221B Baker St, Dallas, TX 75001',
-        status: 'Done',
+        address: '3210 S Main St, Harrisonburg, VA 22801',
+        status: 'Pending',
         workOrders: [
           {
-            id: 'WO-002',
-            type: 'Repair',
-            category: 'Service',
-            action: 'Visit',
-            status: 'Completed',
-            customerName: 'Sherlock Holmes',
-            customerPhone: '555-0456',
-            unitInfo: { size: '8 x 12', base: 'Grey', trim: 'Black', roof: 'Metal', serial: 'S-88889999' }
+            id: 'WO-1042',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Pickup',
+            status: 'Pending',
+            customerName: 'Dennis Sartain',
+            customerPhone: '555-1111',
+            unitInfo: { size: '10x12', modelName: 'Utility shed', base: 'Grey', trim: 'White', roof: 'Metal', serial: 'SN-927711' }
+          },
+          {
+            id: 'WO-1043',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Pickup',
+            status: 'Pending',
+            customerName: 'Marisol Reyes',
+            customerPhone: '555-2222',
+            unitInfo: { size: '12x16', modelName: 'Garden shed', base: 'Brown', trim: 'White', roof: 'Metal', serial: 'SN-927718' }
+          },
+          {
+            id: 'WO-1051',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Pickup',
+            status: 'Pending',
+            customerName: 'Grant Whitfield',
+            customerPhone: '555-3333',
+            unitInfo: { size: '8x10', modelName: 'Lean-to shed', base: 'White', trim: 'White', roof: 'Shingle', serial: 'SN-927774' }
           }
         ]
       },
       {
         id: '3',
         num: 3,
-        address: '1600 Amphitheatre Parkway, Mountain View, CA 94043',
-        status: 'Done',
+        address: '212 N Main St, Bridgewater, VA 22812',
+        status: 'Pending',
         workOrders: [
           {
-            id: 'WO-003',
+            id: 'WO-1042',
             type: 'Delivery',
             category: 'Move',
             action: 'Dropoff',
-            status: 'Completed',
-            customerName: 'John Doe',
-            customerPhone: '555-0789',
-            unitInfo: { size: '12 x 20', base: 'Red', trim: 'White', roof: 'Shingle', serial: 'S-11112222' }
+            status: 'Pending',
+            customerName: 'Dennis Sartain',
+            customerPhone: '555-1111',
+            unitInfo: { size: '10x12', modelName: 'Utility shed', base: 'Grey', trim: 'White', roof: 'Metal', serial: 'SN-927711' }
+          },
+          {
+            id: 'WO-1043',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Dropoff',
+            status: 'Pending',
+            customerName: 'Marisol Reyes',
+            customerPhone: '555-2222',
+            unitInfo: { size: '12x16', modelName: 'Garden shed', base: 'Brown', trim: 'White', roof: 'Metal', serial: 'SN-927718' }
           }
         ]
       },
       {
         id: '4',
         num: 4,
-        address: '456 Elm St, Arlington, TX 76010',
-        status: 'Servicing',
-        buildingOrientation: 'Doors facing east',
+        address: '116 W Beverley St, Staunton, VA 24401',
+        status: 'Pending',
         workOrders: [
           {
-            id: 'WO-004',
+            id: 'WO-1051',
             type: 'Delivery',
             category: 'Move',
             action: 'Dropoff',
             status: 'Pending',
-            customerName: 'Alice Smith',
-            customerPhone: '555-1111',
-            unitInfo: { size: '10 x 10', modelName: 'Utility Shed', base: 'White', trim: 'White', roof: 'Galvanized', serial: 'S-33334444' }
-          },
-          {
-            id: 'WO-005',
-            type: 'Repo',
-            category: 'Move',
-            action: 'Pickup',
-            status: 'Pending',
-            customerName: 'Alice Smith',
-            customerPhone: '555-1111',
-            unitInfo: { size: '8 x 8', base: 'Green', trim: 'White', roof: 'Metal', serial: 'S-99990000' }
+            customerName: 'Grant Whitfield',
+            customerPhone: '555-3333',
+            unitInfo: { size: '8x10', modelName: 'Lean-to shed', base: 'White', trim: 'White', roof: 'Shingle', serial: 'SN-927774' }
           }
         ]
       },
       {
         id: '5',
         num: 5,
-        address: '789 Oak St, Plano, TX 75024',
+        address: '3210 S Main St, Harrisonburg, VA 22801',
         status: 'Pending',
         workOrders: [
           {
-            id: 'WO-006',
-            type: 'Delivery',
+            id: 'WO-1001',
+            type: 'Lot Transfer',
             category: 'Move',
-            action: 'Dropoff',
+            action: 'End',
             status: 'Pending',
-            customerName: 'Bob Williams',
-            customerPhone: '555-2222',
-            unitInfo: { size: '12 x 24', base: 'Brown', trim: 'Tan', roof: 'Brown', serial: 'S-55556666' }
+            customerName: 'Back to start address',
+            customerPhone: '555-0000',
+            unitInfo: { size: '', base: '', trim: '', roof: '', serial: '' }
           }
         ]
       }

@@ -369,7 +369,7 @@ export default function RouteDetail() {
             </button>
           ) : route.status === "En Route" ? (
             <Link
-              to={nextStopId ? `/stop/${nextStopId}` : "#"}
+              to={nextStopId ? `/route/${route.id}/stop/${nextStopId}` : "#"}
               className="size-[54px] rounded-full bg-[#FF7048] flex items-center justify-center no-underline shadow-xl active:scale-95 transition-transform"
               style={{ boxShadow: "0px 8px 24px rgba(255,112,72,0.45)" }}
             >

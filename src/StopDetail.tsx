@@ -148,6 +148,12 @@ export default function StopDetail() {
 
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(stop.address)}`;
 
+  const primaryWO = stop.workOrders?.[0];
+  const stopType = primaryWO?.action || 'Stop';
+  const customerName = primaryWO?.customerName || 'Unknown Customer';
+  const customerPhone = primaryWO?.customerPhone || 'N/A';
+  const unitInfo = primaryWO?.unitInfo;
+
   return (
     <div
       className="relative flex-1 flex flex-col overflow-y-auto select-none h-full no-scrollbar"
@@ -185,7 +191,7 @@ export default function StopDetail() {
         {/* Stop type + status */}
         <div className="flex items-center gap-[10px]">
           <span style={{ color: '#2F3036', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
-            {cleanStopType(stop.type)}
+            {cleanStopType(stopType)}
           </span>
           <div
             className="px-[8px] py-[3px] rounded-[6px] flex items-center justify-center shrink-0"
@@ -203,28 +209,32 @@ export default function StopDetail() {
         </h2>
 
         {/* Unit line: size + model name */}
-        <div style={{ color: '#FF7048', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
-          {stop.unitInfo.size}{stop.unitInfo.modelName ? ` ${stop.unitInfo.modelName}` : ''}
-        </div>
+        {unitInfo && (
+          <div style={{ color: '#FF7048', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
+            {unitInfo.size}{unitInfo.modelName ? ` ${unitInfo.modelName}` : ''}
+          </div>
+        )}
 
         {/* Customer + Phone row */}
         <div className="flex items-center gap-[16px]">
           <div className="flex-1 flex items-center gap-[6px] min-w-0 overflow-hidden">
             <div className="shrink-0"><IconUser /></div>
             <span className="truncate" style={{ color: '#2F3036', fontSize: 12, fontWeight: 500, fontFamily: 'Google Sans Flex' }}>
-              {stop.customerName}
+              {customerName}
             </span>
           </div>
-          <a
-            href={`tel:${stop.customerPhone}`}
-            className="flex items-center gap-[6px] px-[8px] py-[8px] rounded-[10px] shrink-0 no-underline active:scale-95 transition-transform"
-            style={{ outline: '1px solid #C5C6CC', outlineOffset: '-1px' }}
-          >
-            <div className="shrink-0"><IconPhone /></div>
-            <span style={{ color: '#2F3036', fontSize: 12, fontWeight: 500, fontFamily: 'Google Sans Flex' }}>
-              {stop.customerPhone}
-            </span>
-          </a>
+          {customerPhone !== 'N/A' && (
+            <a
+              href={`tel:${customerPhone}`}
+              className="flex items-center gap-[6px] px-[8px] py-[8px] rounded-[10px] shrink-0 no-underline active:scale-95 transition-transform"
+              style={{ outline: '1px solid #C5C6CC', outlineOffset: '-1px' }}
+            >
+              <div className="shrink-0"><IconPhone /></div>
+              <span style={{ color: '#2F3036', fontSize: 12, fontWeight: 500, fontFamily: 'Google Sans Flex' }}>
+                {customerPhone}
+              </span>
+            </a>
+          )}
         </div>
 
         {/* Google Maps card */}
