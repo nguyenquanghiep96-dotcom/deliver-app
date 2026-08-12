@@ -100,7 +100,7 @@ export default function StopNotesView() {
         </button>
         <h1
           className="flex-1 m-0"
-          style={{ color: '#2F3036', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
+          style={{ color: '#2B3B63', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
         >
           Add Stop Notes
         </h1>
@@ -114,7 +114,7 @@ export default function StopNotesView() {
       >
         {comments.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center gap-3">
-            <p className="m-0" style={{ fontSize: 15, fontWeight: 600, color: '#2F3036', fontFamily: 'Google Sans Flex' }}>
+            <p className="m-0" style={{ fontSize: 15, fontWeight: 600, color: '#2B3B63', fontFamily: 'Google Sans Flex' }}>
               No Notes Yet
             </p>
             <p className="m-0" style={{ fontSize: 12, color: '#71727A', fontFamily: 'Google Sans Flex', maxWidth: 200 }}>
@@ -179,7 +179,7 @@ export default function StopNotesView() {
               fontSize: 14,
               fontWeight: 500,
               fontFamily: "'Proxima Nova', 'Google Sans Flex', sans-serif",
-              color: '#2F3036',
+              color: '#2B3B63',
             }}
           />
         </div>

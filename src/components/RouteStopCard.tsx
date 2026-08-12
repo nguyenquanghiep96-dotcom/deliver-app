@@ -60,7 +60,7 @@ export default function RouteStopCard({ stop }: { stop: any }) {
           </div>
           <div className="flex-1 flex flex-col justify-center items-start gap-[3px] min-w-0">
             <div className="flex items-center gap-[12px] w-full">
-              <span className="font-semibold text-[14px] text-[#2F3036] font-['Google_Sans_Flex'] truncate">
+              <span className="font-semibold text-[14px] text-[#2B3B63] font-['Google_Sans_Flex'] truncate">
                 {cleanStopType(stop.type)}
               </span>
               <div 
@@ -85,8 +85,8 @@ export default function RouteStopCard({ stop }: { stop: any }) {
           {/* Address */}
           <div className="self-stretch flex flex-col gap-[2px]">
             <div className="self-stretch flex items-center gap-[5px]">
-              <MapPin size={16} className="text-[#2F3036] shrink-0" />
-              <span className="flex-1 text-[16px] font-semibold text-[#2F3036] font-['Google_Sans_Flex'] leading-[1.25]">
+              <MapPin size={16} className="text-[#2B3B63] shrink-0" />
+              <span className="flex-1 text-[16px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex'] leading-[1.25]">
                 {stop.address}
               </span>
             </div>
@@ -145,7 +145,7 @@ export default function RouteStopCard({ stop }: { stop: any }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="size-[40px] bg-[#2F3036] rounded-[46px] flex items-center justify-center shrink-0 no-underline active:scale-95 transition-transform"
+              className="size-[40px] bg-[#2B3B63] rounded-[46px] flex items-center justify-center shrink-0 no-underline active:scale-95 transition-transform"
             >
               <Navigation size={18} className="text-white" fill="white" />
             </a>

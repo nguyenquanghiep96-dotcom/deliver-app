@@ -4,7 +4,7 @@ import svgPaths from "../imports/ButtonContainer/svg-tdy7ks0he1";
 
 export function BottomNav() {
   return (
-    <div className="absolute bottom-[20px] left-1/2 -translate-x-1/2 w-[361px] bg-[#2f3036] drop-shadow-[0px_0px_5px_rgba(0,0,0,0.16)] flex gap-[5px] items-center p-[6px] rounded-[24px] z-40">
+    <div className="absolute bottom-[20px] left-1/2 -translate-x-1/2 w-[361px] bg-[#2B3B63] drop-shadow-[0px_0px_5px_rgba(0,0,0,0.16)] flex gap-[5px] items-center p-[6px] rounded-[24px] z-40">
       <NavLink
         to="/"
         className={({ isActive }) =>

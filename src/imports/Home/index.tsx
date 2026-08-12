@@ -65,7 +65,7 @@ function GreetingContainer() {
       <p className="font-['Google_Sans_Flex:Medium',sans-serif] font-medium relative shrink-0 text-[#71727a] text-[12px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         Hi Hiep
       </p>
-      <p className="font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold relative shrink-0 text-[#2f3036] text-[18px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <p className="font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold relative shrink-0 text-[#2B3B63] text-[18px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         Driving safe!
       </p>
     </div>
@@ -292,7 +292,7 @@ function Frame() {
 function RouteToday() {
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full" data-name="Route Today">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[34px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[34px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Route Today</p>
       </div>
       <div className="drop-shadow-[0px_8px_20px_rgba(0,0,0,0.1)] relative rounded-[24px] shrink-0 w-full" style={{ backgroundImage: "linear-gradient(226.972deg, rgb(73, 74, 80) 2.3104%, rgb(31, 32, 36) 100.9%)" }} data-name="Current Stop Container">
@@ -308,7 +308,7 @@ function RouteToday() {
 function StopInfo() {
   return (
     <div className="content-stretch flex flex-col h-full items-start justify-center relative shrink-0 w-[291px]" data-name="Stop Info">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">123 William St, Manhattan, NY, 10038</p>
       </div>
     </div>
@@ -358,7 +358,7 @@ function StopStatus() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative" data-name="Stop Status">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer />
     </div>
@@ -443,7 +443,7 @@ function StopCardContainer({ className }: { className?: string }) {
 function NextStopsContainer() {
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full" data-name="Next Stops Container">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2f3036] text-[16px] w-[min-content]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2B3B63] text-[16px] w-[min-content]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Current Stop</p>
       </div>
       <StopCardContainer />
@@ -454,7 +454,7 @@ function NextStopsContainer() {
 function NextStopsTitleContainer() {
   return (
     <div className="[word-break:break-word] content-stretch flex gap-[10px] items-start leading-[0] not-italic relative shrink-0 w-full" data-name="Next Stops Title Container">
-      <div className="flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center min-w-px relative text-[#2f3036] text-[16px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center min-w-px relative text-[#2B3B63] text-[16px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Next Stops</p>
       </div>
       <div className="flex flex-col font-['Google_Sans_Flex:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#71727a] text-[14px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
@@ -467,7 +467,7 @@ function NextStopsTitleContainer() {
 function Frame9() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis text-left w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis text-left w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -552,7 +552,7 @@ function Frame21() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer1 />
     </div>
@@ -587,7 +587,7 @@ function Frame7() {
       <div className="overflow-clip relative shrink-0 size-[20px]" data-name="chat_info_24dp_E3E3E3_FILL1_wght400_GRAD0_opsz24 1">
         <div className="absolute inset-[8.33%_8.33%_14.14%_8.33%]" data-name="Vector">
           <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 16.6667 15.5049">
-            <path d={svgPaths.p3d535f00} fill="var(--fill-0, #2F3036)" id="Vector" />
+            <path d={svgPaths.p3d535f00} fill="var(--fill-0, #2B3B63)" id="Vector" />
           </svg>
         </div>
       </div>
@@ -616,11 +616,11 @@ function Frame8() {
             <div className="overflow-clip relative shrink-0 size-[16px]" data-name="Icon / Interface / Maps - Light">
               <div className="absolute inset-[13.02%_12.5%]" data-name="Vector">
                 <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 12 11.8333">
-                  <path d={svgPaths.p366a5600} fill="var(--fill-0, #2F3036)" id="Vector" />
+                  <path d={svgPaths.p366a5600} fill="var(--fill-0, #2B3B63)" id="Vector" />
                 </svg>
               </div>
             </div>
-            <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:Medium',sans-serif] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[16px] text-center whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+            <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:Medium',sans-serif] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[16px] text-center whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
               <p className="leading-[normal]">Map</p>
             </div>
           </div>
@@ -633,12 +633,12 @@ function Frame8() {
               <div className="absolute inset-[8.33%]" data-name="Vector">
                 <div className="absolute inset-[-5%]">
                   <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 14.6667 14.6667">
-                    <path d={svgPaths.p1acd0b80} id="Vector" stroke="var(--stroke-0, #2F3036)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" />
+                    <path d={svgPaths.p1acd0b80} id="Vector" stroke="var(--stroke-0, #2B3B63)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" />
                   </svg>
                 </div>
               </div>
             </div>
-            <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:Medium',sans-serif] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[16px] text-center whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+            <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:Medium',sans-serif] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[16px] text-center whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
               <p className="leading-[normal]">Call</p>
             </div>
           </div>
@@ -667,7 +667,7 @@ function NextStopsContainer1() {
 function UpcomingStopsTitleContainer() {
   return (
     <div className="content-stretch flex items-start relative shrink-0 w-full" data-name="Upcoming Stops Title Container">
-      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2f3036] text-[16px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2B3B63] text-[16px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Upcoming Stops</p>
       </div>
     </div>
@@ -677,7 +677,7 @@ function UpcomingStopsTitleContainer() {
 function Frame10() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -762,7 +762,7 @@ function Frame22() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer2 />
     </div>
@@ -801,7 +801,7 @@ function Frame16() {
 function Frame11() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -886,7 +886,7 @@ function Frame23() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer3 />
     </div>
@@ -947,7 +947,7 @@ function NextStopsContainer2() {
 function RecentCompletedTitleContainer() {
   return (
     <div className="content-stretch flex items-start relative shrink-0 w-full" data-name="Recent Completed Title Container">
-      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2f3036] text-[16px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2B3B63] text-[16px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Recent Completed</p>
       </div>
     </div>
@@ -957,7 +957,7 @@ function RecentCompletedTitleContainer() {
 function Frame12() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -1042,7 +1042,7 @@ function Frame25() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer4 />
     </div>
@@ -1094,7 +1094,7 @@ function RecentStopCardContainer() {
 function Frame13() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -1179,7 +1179,7 @@ function Frame28() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer5 />
     </div>
@@ -1429,7 +1429,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="absolute bg-[#2f3036] content-stretch drop-shadow-[0px_0px_5px_rgba(0,0,0,0.16)] flex gap-[5px] items-center left-[16px] p-[6px] rounded-[24px] top-[755px] w-[361px]" data-name="Button">
+      <div className="absolute bg-[#2B3B63] content-stretch drop-shadow-[0px_0px_5px_rgba(0,0,0,0.16)] flex gap-[5px] items-center left-[16px] p-[6px] rounded-[24px] top-[755px] w-[361px]" data-name="Button">
         <div className="bg-[#ff7048] flex-[1_0_0] min-w-px relative rounded-[19px]" data-name="Home">
           <div aria-hidden className="absolute border border-[#faa087] border-solid inset-0 pointer-events-none rounded-[19px]" />
           <div className="flex flex-col items-center justify-center size-full">

@@ -310,7 +310,7 @@ function Header() {
 
 function NextStopsCountContainer() {
   return (
-    <div className="bg-[#2f3036] content-stretch flex flex-col items-center justify-center overflow-clip px-[6px] relative rounded-[6px] shrink-0" data-name="Next Stops Count Container">
+    <div className="bg-[#2B3B63] content-stretch flex flex-col items-center justify-center overflow-clip px-[6px] relative rounded-[6px] shrink-0" data-name="Next Stops Count Container">
       <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[18px] text-white whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">6</p>
       </div>
@@ -321,7 +321,7 @@ function NextStopsCountContainer() {
 function NextStopsHeader() {
   return (
     <div className="content-stretch flex gap-[10px] items-center relative shrink-0 w-full" data-name="Next Stops Header">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[18px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[18px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Stops</p>
       </div>
       <NextStopsCountContainer />
@@ -340,7 +340,7 @@ function NextStopsHeaderContainer() {
 function Frame() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -425,7 +425,7 @@ function Frame12() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer />
     </div>
@@ -464,7 +464,7 @@ function Frame6() {
 function Frame1() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -549,7 +549,7 @@ function Frame13() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer1 />
     </div>
@@ -588,7 +588,7 @@ function Frame7() {
 function Frame2() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -673,7 +673,7 @@ function Frame14() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer2 />
     </div>
@@ -712,7 +712,7 @@ function Frame9() {
 function Frame3() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -797,7 +797,7 @@ function Frame16() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer3 />
     </div>
@@ -836,7 +836,7 @@ function Frame11() {
 function Frame4() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -921,7 +921,7 @@ function Frame19() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer4 />
     </div>

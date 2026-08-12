@@ -181,7 +181,7 @@ export default function PhotosView() {
         </button>
         <h1
           className="flex-1 m-0"
-          style={{ color: '#2F3036', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
+          style={{ color: '#2B3B63', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
         >
           Photos
         </h1>
@@ -207,7 +207,7 @@ export default function PhotosView() {
                 <path d="M12 17.5C13.25 17.5 14.3125 17.0625 15.1875 16.1875C16.0625 15.3125 16.5 14.25 16.5 13C16.5 11.75 16.0625 10.6875 15.1875 9.8125C14.3125 8.9375 13.25 8.5 12 8.5C10.75 8.5 9.6875 8.9375 8.8125 9.8125C7.9375 10.6875 7.5 11.75 7.5 13C7.5 14.25 7.9375 15.3125 8.8125 16.1875C9.6875 17.0625 10.75 17.5 12 17.5ZM4 21C3.45 21 2.97917 20.8042 2.5875 20.4125C2.19583 20.0208 2 19.55 2 19V7C2 6.45 2.19583 5.97917 2.5875 5.5875C2.97917 5.19583 3.45 5 4 5H7.15L9 3H15L16.85 5H20C20.55 5 21.0208 5.19583 21.4125 5.5875C21.8042 5.97917 22 6.45 22 7V19C22 19.55 21.8042 20.0208 21.4125 20.4125C21.0208 20.8042 20.55 21 20 21H4Z" fill="#C5C6CC"/>
               </svg>
             </div>
-            <p className="m-0" style={{ fontSize: 15, fontWeight: 600, color: '#2F3036', fontFamily: 'Google Sans Flex' }}>
+            <p className="m-0" style={{ fontSize: 15, fontWeight: 600, color: '#2B3B63', fontFamily: 'Google Sans Flex' }}>
               No Photos Yet
             </p>
             <p className="m-0" style={{ fontSize: 12, color: '#71727A', fontFamily: 'Google Sans Flex', maxWidth: 200 }}>

@@ -126,7 +126,7 @@ function Home({ className, property1 = "Default" }: HomeProps) {
 
 export default function ButtonContainer({ className }: { className?: string }) {
   return (
-    <div className={className || "bg-[#2f3036] content-stretch drop-shadow-[0px_0px_5px_rgba(0,0,0,0.16)] flex gap-[5px] items-center p-[6px] relative rounded-[24px] w-[361px]"} data-name="Button Container">
+    <div className={className || "bg-[#2B3B63] content-stretch drop-shadow-[0px_0px_5px_rgba(0,0,0,0.16)] flex gap-[5px] items-center p-[6px] relative rounded-[24px] w-[361px]"} data-name="Button Container">
       <Home className="flex-[1_0_0] min-w-px relative rounded-[30px]" />
       <Route className="flex-[1_0_0] min-w-px relative rounded-[30px]" />
       <Profile className="flex-[1_0_0] min-w-px relative rounded-[30px]" />

@@ -98,7 +98,7 @@ export default function BuildingDetail() {
 
         <h1
           className="flex-1 m-0"
-          style={{ color: '#2F3036', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
+          style={{ color: '#2B3B63', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
         >
           Building Details
         </h1>
@@ -110,7 +110,7 @@ export default function BuildingDetail() {
         {/* Model Name */}
         <h2
           className="m-0"
-          style={{ color: '#2F3036', fontSize: 26, fontWeight: 600, fontFamily: 'Google Sans Flex', lineHeight: 1.2 }}
+          style={{ color: '#2B3B63', fontSize: 26, fontWeight: 600, fontFamily: 'Google Sans Flex', lineHeight: 1.2 }}
         >
           {modelName}
         </h2>
@@ -123,7 +123,7 @@ export default function BuildingDetail() {
             <div className="flex flex-col gap-[6px] rounded-[5px]">
               <div className="flex items-center gap-[4px]">
                 <div className="shrink-0"><IconBuildingOrientation /></div>
-                <span style={{ color: '#2F3036', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
+                <span style={{ color: '#2B3B63', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
                   Building Orientation
                 </span>
               </div>
@@ -138,7 +138,7 @@ export default function BuildingDetail() {
             <div className="flex flex-col gap-[6px] rounded-[5px]">
               <div className="flex items-center gap-[4px]">
                 <div className="shrink-0"><IconDeliveryInstruction /></div>
-                <span style={{ color: '#2F3036', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
+                <span style={{ color: '#2B3B63', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
                   Delivery Instruction
                 </span>
               </div>
@@ -153,7 +153,7 @@ export default function BuildingDetail() {
         <div className="flex flex-col gap-[10px]">
           <h3
             className="m-0"
-            style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
+            style={{ color: '#2B3B63', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
           >
             Unit Information
           </h3>
@@ -178,7 +178,7 @@ export default function BuildingDetail() {
                 >
                   {row.label}
                 </span>
-                <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
+                <span style={{ color: '#2B3B63', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
                   {row.value}
                 </span>
               </div>
@@ -190,7 +190,7 @@ export default function BuildingDetail() {
         <div className="flex flex-col gap-[10px]">
           <h3
             className="m-0"
-            style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
+            style={{ color: '#2B3B63', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
           >
             Photos
           </h3>

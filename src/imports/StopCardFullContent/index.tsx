@@ -3,7 +3,7 @@ import svgPaths from "./svg-84od721ozj";
 function Frame() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">1323 Bedford Ave, Pikesville, MD, 21208</p>
       </div>
     </div>
@@ -88,7 +88,7 @@ function Frame3() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer />
     </div>

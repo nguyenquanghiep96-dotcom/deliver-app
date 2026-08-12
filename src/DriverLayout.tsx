@@ -4,10 +4,7 @@ import { cn } from './lib/utils';
 import svgPaths from './imports/ButtonContainer/svg-tdy7ks0he1';
 import imgAppBackground from './assets/app_background.jpg';
 
-import imgNavHome from '../icon/ic-home.svg';
-import imgNavCalendar from '../icon/ic-calendar.svg';
-import imgNavRoutes from '../icon/ic-routes.svg';
-import imgNavProfile from '../icon/ic-user.svg';
+import { Home, Calendar, Route } from 'lucide-react';
 
 export default function DriverLayout() {
   const location = useLocation();
@@ -33,21 +30,59 @@ export default function DriverLayout() {
   const currentTab = searchParams.get('tab') || 'home';
   
   // Decide which tab is active
-  const isHomeActive = location.pathname === '/home' && currentTab === 'home';
-  const isCalendarActive = location.pathname === '/home' && currentTab === 'calendar';
-  const isRoutesActive = (location.pathname === '/home' && currentTab === 'routes') || location.pathname.includes('/route/') || location.pathname.includes('/stop/');
+  const isDetailView = location.pathname.includes('/route/') || location.pathname.includes('/stop/');
+  const fromSchedule = location.state && (location.state as any).from?.includes('tab=schedule');
+
+  const isHomeActive = isDetailView ? !fromSchedule : (location.pathname === '/home' && currentTab === 'home');
+  const isScheduleActive = isDetailView ? !!fromSchedule : (location.pathname === '/home' && currentTab === 'schedule');
   const isProfileActive = location.pathname === '/home' && currentTab === 'profile';
 
   // Always show bottom nav
   const showBottomNav = true;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 select-none">
+    <div className="min-h-[100dvh] bg-[#4B5563] flex flex-col md:flex-row gap-6 items-center justify-center p-0 md:p-4 select-none">
       {/* iPhone Simulator Frame Container */}
-      <div className="w-[393px] h-[852px] bg-white rounded-[50px] shadow-2xl overflow-hidden relative border-[8px] border-black flex flex-col">
+      <div 
+        className="w-full h-[100dvh] md:w-[393px] md:h-[852px] bg-white md:rounded-[50px] shadow-2xl overflow-hidden relative md:border-[8px] md:border-black flex flex-col shrink-0"
+        style={{ transform: 'translateZ(0)' }}
+      >
         
         {/* iOS Status Bar */}
-        <div className="absolute top-0 left-0 right-0 h-[54px] z-[60] flex items-center justify-between px-7 pointer-events-none">
+        
+        {/* Mobile Version Toggle (Visible only on mobile) */}
+        <div className="md:hidden w-full bg-[#374151] p-2 flex gap-2 shadow-sm z-[100] absolute top-0 left-0 right-0 h-[48px] items-center justify-center">
+          <button 
+             onClick={() => {
+               const url = new URL(window.location.href);
+               url.searchParams.set('v', '1');
+               window.history.pushState({}, '', url);
+               window.dispatchEvent(new Event('popstate'));
+             }}
+             className={cn(
+               "flex-1 py-1.5 rounded-full text-[13px] font-bold transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none",
+               searchParams.get('v') !== '2' ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
+             )}
+          >
+            Version 1
+          </button>
+          <button 
+             onClick={() => {
+               const url = new URL(window.location.href);
+               url.searchParams.set('v', '2');
+               window.history.pushState({}, '', url);
+               window.dispatchEvent(new Event('popstate'));
+             }}
+             className={cn(
+               "flex-1 py-1.5 rounded-full text-[13px] font-bold transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none",
+               searchParams.get('v') === '2' ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
+             )}
+          >
+            Version 2
+          </button>
+        </div>
+
+        <div className="hidden md:flex absolute top-0 left-0 right-0 h-[54px] z-[60] items-center justify-between px-7 pointer-events-none">
           {/* Time */}
           <span 
             className="text-[16px] font-semibold text-black tracking-[-0.3px] mt-1 ml-1" 
@@ -113,94 +148,75 @@ export default function DriverLayout() {
           <Outlet />
         </div>
 
-        {/* Bottom Tab Navigation — Figma: button */}
+        {/* Bottom Tab Navigation */}
         {showBottomNav && (
           <div className="absolute bottom-0 left-0 w-full bg-white flex gap-[5px] items-center px-[6px] pt-[6px] pb-[40px] z-40 select-none" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.16)' }}>
             
-            {/* Home */}
+            {/* My Routes */}
             <Link
               to="/home?tab=home"
               className={cn(
                 "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
                 isHomeActive 
-                  ? "px-[8px] rounded-[15px] text-white" 
+                  ? "px-[8px] rounded-[15px] bg-[#f0f2f6] text-[#FF7048]" 
                   : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
               )}
-              style={isHomeActive ? {
-                background: '#FF7048',
-                outline: '1px solid #FAA087',
-                outlineOffset: '-1px',
-              } : undefined}
             >
-              <img src={imgNavHome} className="w-[16px] h-[16px] shrink-0" style={{ filter: isHomeActive ? 'brightness(0) invert(1)' : 'brightness(0) saturate(100%) invert(48%) sepia(8%) saturate(301%) hue-rotate(201deg) brightness(95%) contrast(87%)' }} alt="Home" />
-              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Home</span>
+              <Route size={20} strokeWidth={2.5} className={isHomeActive ? "text-[#FF7048]" : "text-[#71727A]"} />
+              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">My Routes</span>
             </Link>
 
-            {/* Calendar */}
+            {/* Schedule */}
             <Link
-              to="/home?tab=calendar"
+              to="/home?tab=schedule"
               className={cn(
                 "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
-                isCalendarActive 
-                  ? "px-[8px] rounded-[15px] text-white" 
+                isScheduleActive 
+                  ? "px-[8px] rounded-[15px] bg-[#f0f2f6] text-[#FF7048]" 
                   : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
               )}
-              style={isCalendarActive ? {
-                background: '#FF7048',
-                outline: '1px solid #FAA087',
-                outlineOffset: '-1px',
-              } : undefined}
             >
-              <img src={imgNavCalendar} className="w-[16px] h-[16px] shrink-0" style={{ filter: isCalendarActive ? 'brightness(0) invert(1)' : 'brightness(0) saturate(100%) invert(48%) sepia(8%) saturate(301%) hue-rotate(201deg) brightness(95%) contrast(87%)' }} alt="Calendar" />
-              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Calendar</span>
+              <Calendar size={20} strokeWidth={2.5} className={isScheduleActive ? "text-[#FF7048]" : "text-[#71727A]"} />
+              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Schedule</span>
             </Link>
 
-            {/* Routes */}
-            <Link
-              to="/home?tab=routes"
-              className={cn(
-                "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
-                isRoutesActive 
-                  ? "px-[8px] rounded-[15px] text-white" 
-                  : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
-              )}
-              style={isRoutesActive ? {
-                background: '#FF7048',
-                outline: '1px solid #FAA087',
-                outlineOffset: '-1px',
-              } : undefined}
-            >
-              <img src={imgNavRoutes} className="w-[16px] h-[16px] shrink-0" style={{ filter: isRoutesActive ? 'brightness(0) invert(1)' : 'brightness(0) saturate(100%) invert(48%) sepia(8%) saturate(301%) hue-rotate(201deg) brightness(95%) contrast(87%)' }} alt="Routes" />
-              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Routes</span>
-            </Link>
-
-            {/* Profile */}
-            <Link
-              to="/home?tab=profile"
-              className={cn(
-                "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
-                isProfileActive 
-                  ? "px-[8px] rounded-[15px] text-white" 
-                  : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
-              )}
-              style={isProfileActive ? {
-                background: '#FF7048',
-                outline: '1px solid #FAA087',
-                outlineOffset: '-1px',
-              } : undefined}
-            >
-              {/* Profile tab — inline SVG icon */}
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                <path d="M10.6953 9.33301H5.30467C4.42854 9.33396 3.5886 9.64762 2.96908 10.2052C2.34957 10.7627 2.00106 11.5187 2 12.3072V15.333H14V12.3072C13.9989 11.5187 13.6504 10.7627 13.0309 10.2052C12.4114 9.64762 11.5715 9.33396 10.6953 9.33301Z" fill={isProfileActive ? 'white' : '#71727A'}/>
-                <path d="M8 8C10.2091 8 12 6.20914 12 4C12 1.79086 10.2091 0 8 0C5.79086 0 4 1.79086 4 4C4 6.20914 5.79086 8 8 8Z" fill={isProfileActive ? 'white' : '#71727A'}/>
-              </svg>
-              <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Profile</span>
-            </Link>
           </div>
         )}
 
         {/* Virtual iOS Home Indicator */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[144px] h-[5px] bg-black rounded-full z-50 pointer-events-none"></div>
+        <div className="hidden md:block absolute bottom-2 left-1/2 -translate-x-1/2 w-[144px] h-[5px] bg-black rounded-full z-50 pointer-events-none"></div>
+      </div>
+
+      {/* Version Toggle Tabs */}
+      <div className="hidden md:flex bg-[#374151] rounded-full p-1.5 gap-2 shadow-lg">
+        <button 
+           onClick={() => {
+             const url = new URL(window.location.href);
+             url.searchParams.set('v', '1');
+             window.history.pushState({}, '', url);
+             window.dispatchEvent(new Event('popstate'));
+           }}
+           className={cn(
+             "px-6 py-2 rounded-full text-[14px] font-bold transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none",
+             searchParams.get('v') !== '2' ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
+           )}
+        >
+          Version 1
+        </button>
+        <button 
+           onClick={() => {
+             const url = new URL(window.location.href);
+             url.searchParams.set('v', '2');
+             window.history.pushState({}, '', url);
+             window.dispatchEvent(new Event('popstate'));
+           }}
+           className={cn(
+             "px-6 py-2 rounded-full text-[14px] font-bold transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none",
+             searchParams.get('v') === '2' ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
+           )}
+        >
+          Version 2
+        </button>
       </div>
     </div>
   );

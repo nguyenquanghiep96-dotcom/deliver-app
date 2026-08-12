@@ -69,10 +69,10 @@ export default function CommentScreen({ comments, stopId, stopType, onAddComment
             onClick={onClose}
             className="w-[36px] h-[36px] bg-[#E8E9F1] rounded-full flex items-center justify-center border-none cursor-pointer active:bg-[#D4D6DD] transition-colors shrink-0"
           >
-            <ChevronLeft size={20} className="text-[#2F3036]" />
+            <ChevronLeft size={20} className="text-[#2B3B63]" />
           </button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-[16px] font-bold text-[#2F3036] leading-tight">Comments & Notes</h1>
+            <h1 className="text-[16px] font-bold text-[#2B3B63] leading-tight">Comments & Notes</h1>
             <p className="text-[11px] text-[#71727A] mt-px">{stopId} · {stopType}</p>
           </div>
           {comments.length > 0 && (
@@ -91,7 +91,7 @@ export default function CommentScreen({ comments, stopId, stopType, onAddComment
             <div className="w-[56px] h-[56px] bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
               <MessageSquare size={24} className="text-[#D4D6DD]" />
             </div>
-            <h3 className="text-[14px] font-bold text-[#2F3036] mb-1">No Comments Yet</h3>
+            <h3 className="text-[14px] font-bold text-[#2B3B63] mb-1">No Comments Yet</h3>
             <p className="text-[12px] text-[#71727A] max-w-[200px] leading-relaxed">
               Add notes about this stop — delivery issues, customer requests, or site conditions.
             </p>
@@ -123,7 +123,7 @@ export default function CommentScreen({ comments, stopId, stopType, onAddComment
                     }`}>
                       {isSystemComment ? '⚠️' : isQuickTag ? '🏷️' : 'DN'}
                     </div>
-                    <span className="text-[11px] font-semibold text-[#2F3036] flex-1">
+                    <span className="text-[11px] font-semibold text-[#2B3B63] flex-1">
                       {isSystemComment ? 'System' : 'Driver Note'}
                     </span>
                     <div className="flex items-center gap-1 text-[10px] text-[#A1A2A9] shrink-0">
@@ -134,7 +134,7 @@ export default function CommentScreen({ comments, stopId, stopType, onAddComment
 
                   {/* Body */}
                   <p className={`text-[13px] leading-snug ml-[32px] ${
-                    isSystemComment ? 'text-[#E65100] font-medium' : 'text-[#2F3036]'
+                    isSystemComment ? 'text-[#E65100] font-medium' : 'text-[#2B3B63]'
                   }`}>
                     {comment}
                   </p>
@@ -160,7 +160,7 @@ export default function CommentScreen({ comments, stopId, stopType, onAddComment
                 className="flex items-center gap-1 bg-[#F2F4F7] hover:bg-[#E8E9F1] active:bg-[#D4D6DD] px-2.5 py-[6px] rounded-full border-none cursor-pointer transition-colors"
               >
                 <span className="text-[12px]">{tag.icon}</span>
-                <span className="text-[11px] font-medium text-[#2F3036] font-['Google_Sans_Flex'] whitespace-nowrap">{tag.label}</span>
+                <span className="text-[11px] font-medium text-[#2B3B63] font-['Google_Sans_Flex'] whitespace-nowrap">{tag.label}</span>
               </button>
             ))}
           </div>
@@ -191,7 +191,7 @@ export default function CommentScreen({ comments, stopId, stopType, onAddComment
               onKeyDown={handleKeyDown}
               placeholder="Write a note..."
               rows={1}
-              className="w-full bg-[#F2F4F7] border border-[#E8E9F1] rounded-[18px] py-[8px] px-3 text-[13px] text-[#2F3036] resize-none focus:outline-none focus:ring-2 focus:ring-[#FF7048]/30 focus:border-[#FF7048]/50 font-['Google_Sans_Flex'] placeholder:text-[#A1A2A9] max-h-[80px] overflow-y-auto"
+              className="w-full bg-[#F2F4F7] border border-[#E8E9F1] rounded-[18px] py-[8px] px-3 text-[13px] text-[#2B3B63] resize-none focus:outline-none focus:ring-2 focus:ring-[#FF7048]/30 focus:border-[#FF7048]/50 font-['Google_Sans_Flex'] placeholder:text-[#A1A2A9] max-h-[80px] overflow-y-auto"
               style={{ minHeight: '36px' }}
               onInput={(e) => {
                 const el = e.target as HTMLTextAreaElement;

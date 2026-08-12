@@ -89,7 +89,7 @@ function StopStatusIndicator() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative" data-name="Stop Status Indicator">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer />
     </div>
@@ -107,7 +107,7 @@ function StopStatusContainer() {
 function AddressContainer() {
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full" data-name="Address Container">
-      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[20px] w-full">
+      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[20px] w-full">
         <p className="leading-[normal]">123 William St, Manhattan, NY, 10038</p>
       </div>
       <StopStatusContainer />
@@ -122,14 +122,14 @@ function Symbol() {
         <div className="absolute inset-[33.33%_8.33%_8.33%_33.33%]" data-name="Vector">
           <div className="absolute inset-[-4.76%]">
             <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 15.3333 15.3333">
-              <path d={svgPaths.p3137d940} id="Vector" stroke="var(--stroke-0, #2F3036)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" />
+              <path d={svgPaths.p3137d940} id="Vector" stroke="var(--stroke-0, #2B3B63)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" />
             </svg>
           </div>
         </div>
         <div className="absolute inset-[8.33%_33.33%_33.33%_8.33%]" data-name="Vector">
           <div className="absolute inset-[-4.76%]">
             <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 15.3333 15.3333">
-              <path d={svgPaths.p3e8eeb00} id="Vector" stroke="var(--stroke-0, #2F3036)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" />
+              <path d={svgPaths.p3e8eeb00} id="Vector" stroke="var(--stroke-0, #2B3B63)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.33333" />
             </svg>
           </div>
         </div>
@@ -153,7 +153,7 @@ function Symbol1() {
       <div className="overflow-clip relative shrink-0 size-[24px]" data-name="Notes Icon">
         <div className="absolute inset-[4.13%_4.17%_4.17%_4.17%]" data-name="Union">
           <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 21.999 22.0098">
-            <path d={svgPaths.pd9b4880} fill="var(--fill-0, #2F3036)" id="Union" />
+            <path d={svgPaths.pd9b4880} fill="var(--fill-0, #2B3B63)" id="Union" />
           </svg>
         </div>
       </div>
@@ -176,7 +176,7 @@ function Symbol2() {
       <div className="overflow-clip relative shrink-0 size-[24px]" data-name="Signature Icon 1">
         <div className="absolute inset-[4.13%_4.17%_4.17%_4.17%]" data-name="Union">
           <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 21.999 22.0098">
-            <path d={svgPaths.pd9b4880} fill="var(--fill-0, #2F3036)" id="Union" />
+            <path d={svgPaths.pd9b4880} fill="var(--fill-0, #2B3B63)" id="Union" />
           </svg>
         </div>
       </div>
@@ -300,7 +300,7 @@ function Header() {
   return (
     <div className="-translate-x-1/2 absolute content-stretch flex gap-[16px] items-center left-1/2 px-[16px] py-[12px] top-[54px] w-[393px]" data-name="Header">
       <ButtonIcon />
-      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2f3036] text-[18px] text-center" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2B3B63] text-[18px] text-center" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Stop 3/5</p>
       </div>
       <div className="bg-[rgba(59,130,246,0.2)] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
@@ -318,7 +318,7 @@ function BuildingStyleContainer() {
       <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#71727a] text-[14px] whitespace-nowrap">
         <p className="leading-[normal]">Style:</p>
       </div>
-      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2f3036] text-[18px] w-[min-content]">
+      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2B3B63] text-[18px] w-[min-content]">
         <p className="leading-[normal]">Tiny Home (Porch)</p>
       </div>
     </div>
@@ -332,7 +332,7 @@ function SizeContainer() {
       <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#71727a] text-[14px] whitespace-nowrap">
         <p className="leading-[normal]">Size:</p>
       </div>
-      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2f3036] text-[18px] w-[min-content]">
+      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2B3B63] text-[18px] w-[min-content]">
         <p className="leading-[normal]">14 x 20 x 7</p>
       </div>
     </div>
@@ -345,7 +345,7 @@ function SerialContainer() {
       <div className="flex flex-col font-['Proxima_Nova:Medium',sans-serif] justify-center relative shrink-0 text-[#71727a] text-[14px] whitespace-nowrap">
         <p className="leading-[normal]">Serial #:</p>
       </div>
-      <div className="flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center min-w-full relative shrink-0 text-[#2f3036] text-[18px] w-[min-content]">
+      <div className="flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center min-w-full relative shrink-0 text-[#2B3B63] text-[18px] w-[min-content]">
         <p className="leading-[normal]">RE001</p>
       </div>
     </div>
@@ -498,7 +498,7 @@ function CustomerInfoDetailsContainer() {
       <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#71727a] text-[14px] whitespace-nowrap">
         <p className="leading-[normal]">Customer Name:</p>
       </div>
-      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2f3036] text-[18px] w-[min-content]">
+      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2B3B63] text-[18px] w-[min-content]">
         <p className="leading-[normal]">NganROQ</p>
       </div>
     </div>
@@ -511,7 +511,7 @@ function CustomerPhoneContainer() {
       <div className="flex flex-col font-['Proxima_Nova:Medium',sans-serif] justify-center relative shrink-0 text-[#71727a] text-[14px] whitespace-nowrap">
         <p className="leading-[normal]">Cell Phone:</p>
       </div>
-      <div className="flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center min-w-full relative shrink-0 text-[#2f3036] text-[18px] w-[min-content]">
+      <div className="flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center min-w-full relative shrink-0 text-[#2B3B63] text-[18px] w-[min-content]">
         <p className="leading-[normal]">02057182355</p>
       </div>
     </div>
@@ -547,7 +547,7 @@ function SerialContainer1() {
       <div className="flex flex-col font-['Proxima_Nova:Medium',sans-serif] justify-center relative shrink-0 text-[#71727a] text-[14px] whitespace-nowrap">
         <p className="leading-[normal]">Serial #:</p>
       </div>
-      <div className="flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center min-w-full relative shrink-0 text-[#2f3036] text-[18px] w-[min-content]">
+      <div className="flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center min-w-full relative shrink-0 text-[#2B3B63] text-[18px] w-[min-content]">
         <p className="leading-[normal]">RE001</p>
       </div>
     </div>

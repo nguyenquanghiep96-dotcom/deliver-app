@@ -17,8 +17,8 @@ export default function StopListItem({ stop }: { stop: any }) {
           <div className="bg-[#e8e9f1] w-[36px] h-[36px] rounded-[21px] flex items-center justify-center text-[#71727a] font-bold text-[14px] shrink-0 font-['Proxima_Nova']">
             {stop.num}
           </div>
-          <span className="text-[16px] font-semibold text-[#2f3036] truncate flex-1 font-['Google_Sans_Flex']">{stop.address}</span>
-          <Link to={`/stop/${stop.id}`} className="text-[#71727a] hover:text-[#2f3036] shrink-0 w-[16px] h-[16px] flex items-center justify-center">
+          <span className="text-[16px] font-semibold text-[#2B3B63] truncate flex-1 font-['Google_Sans_Flex']">{stop.address}</span>
+          <Link to={`/stop/${stop.id}`} className="text-[#71727a] hover:text-[#2B3B63] shrink-0 w-[16px] h-[16px] flex items-center justify-center">
             <ChevronRight size={16} strokeWidth={3} />
           </Link>
         </div>

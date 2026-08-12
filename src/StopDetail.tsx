@@ -1,5 +1,6 @@
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react';
-import { useParams, useNavigate } from 'react-router';
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, Check, MapPin } from 'lucide-react';
+import { useParams, useNavigate, Link } from 'react-router';
 import { useDriver } from './DriverContext';
 import { WorkOrderCard } from './components/WorkOrderCard';
 import { cleanStopType } from './lib/utils';
@@ -8,7 +9,7 @@ import { cleanStopType } from './lib/utils';
 
 const IconPhone = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M9.22101 11.045C9.35869 11.1082 9.51381 11.1227 9.6608 11.086C9.8078 11.0493 9.9379 10.9636 10.0297 10.843L10.2663 10.533C10.3905 10.3674 10.5516 10.233 10.7367 10.1404C10.9219 10.0479 11.126 9.99967 11.333 9.99967H13.333C13.6866 9.99967 14.0258 10.1402 14.2758 10.3902C14.5259 10.6402 14.6663 10.9794 14.6663 11.333V13.333C14.6663 13.6866 14.5259 14.0258 14.2758 14.2758C14.0258 14.5259 13.6866 14.6663 13.333 14.6663C10.1504 14.6663 7.09816 13.4021 4.84773 11.1516C2.59729 8.90119 1.33301 5.84894 1.33301 2.66634C1.33301 2.31272 1.47348 1.97358 1.72353 1.72353C1.97358 1.47348 2.31272 1.33301 2.66634 1.33301H4.66634C5.01996 1.33301 5.3591 1.47348 5.60915 1.72353C5.8592 1.97358 5.99967 2.31272 5.99967 2.66634V4.66634C5.99967 4.87333 5.95148 5.07749 5.85891 5.26263C5.76634 5.44777 5.63194 5.60881 5.46634 5.73301L5.15434 5.96701C5.03195 6.06046 4.94569 6.1934 4.9102 6.34324C4.87472 6.49308 4.8922 6.65059 4.95967 6.78901C5.8708 8.63959 7.36929 10.1362 9.22101 11.045Z" fill="#2F3036"/>
+    <path d="M9.22101 11.045C9.35869 11.1082 9.51381 11.1227 9.6608 11.086C9.8078 11.0493 9.9379 10.9636 10.0297 10.843L10.2663 10.533C10.3905 10.3674 10.5516 10.233 10.7367 10.1404C10.9219 10.0479 11.126 9.99967 11.333 9.99967H13.333C13.6866 9.99967 14.0258 10.1402 14.2758 10.3902C14.5259 10.6402 14.6663 10.9794 14.6663 11.333V13.333C14.6663 13.6866 14.5259 14.0258 14.2758 14.2758C14.0258 14.5259 13.6866 14.6663 13.333 14.6663C10.1504 14.6663 7.09816 13.4021 4.84773 11.1516C2.59729 8.90119 1.33301 5.84894 1.33301 2.66634C1.33301 2.31272 1.47348 1.97358 1.72353 1.72353C1.97358 1.47348 2.31272 1.33301 2.66634 1.33301H4.66634C5.01996 1.33301 5.3591 1.47348 5.60915 1.72353C5.8592 1.97358 5.99967 2.31272 5.99967 2.66634V4.66634C5.99967 4.87333 5.95148 5.07749 5.85891 5.26263C5.76634 5.44777 5.63194 5.60881 5.46634 5.73301L5.15434 5.96701C5.03195 6.06046 4.94569 6.1934 4.9102 6.34324C4.87472 6.49308 4.8922 6.65059 4.95967 6.78901C5.8708 8.63959 7.36929 10.1362 9.22101 11.045Z" fill="#2B3B63"/>
   </svg>
 );
 
@@ -69,15 +70,15 @@ const IconNavigate = () => (
 
 const IconUser = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M10.6953 9.33301H5.30467C4.42854 9.33396 3.5886 9.64762 2.96908 10.2052C2.34957 10.7627 2.00106 11.5187 2 12.3072V15.333H14V12.3072C13.9989 11.5187 13.6504 10.7627 13.0309 10.2052C12.4114 9.64762 11.5715 9.33396 10.6953 9.33301Z" fill="#2F3036"/>
-    <path d="M8 8C10.2091 8 12 6.20914 12 4C12 1.79086 10.2091 0 8 0C5.79086 0 4 1.79086 4 4C4 6.20914 5.79086 8 8 8Z" fill="#2F3036"/>
+    <path d="M10.6953 9.33301H5.30467C4.42854 9.33396 3.5886 9.64762 2.96908 10.2052C2.34957 10.7627 2.00106 11.5187 2 12.3072V15.333H14V12.3072C13.9989 11.5187 13.6504 10.7627 13.0309 10.2052C12.4114 9.64762 11.5715 9.33396 10.6953 9.33301Z" fill="#2B3B63"/>
+    <path d="M8 8C10.2091 8 12 6.20914 12 4C12 1.79086 10.2091 0 8 0C5.79086 0 4 1.79086 4 4C4 6.20914 5.79086 8 8 8Z" fill="#2B3B63"/>
   </svg>
 );
 
 // Mobile Link chain icon
 const IconMobileLink = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8.33333 10.8333C8.69121 11.3118 9.14874 11.7077 9.67503 11.9938C10.2013 12.2799 10.7835 12.4496 11.3817 12.4913C11.9798 12.5329 12.5799 12.4454 13.1414 12.2347C13.7029 12.024 14.2124 11.6952 14.6333 11.2708L17.1333 8.77083C17.8918 7.98529 18.3117 6.93321 18.302 5.84062C18.2922 4.74803 17.8536 3.70344 17.0811 2.93092C16.3086 2.1584 15.264 1.71979 14.1714 1.71005C13.0788 1.70032 12.0267 2.12022 11.2408 2.87917L9.7875 4.32417M11.6667 9.16667C11.3088 8.68821 10.8513 8.29231 10.325 8.00619C9.79874 7.72007 9.21654 7.55036 8.61833 7.50868C8.02013 7.46699 7.42009 7.55452 6.85861 7.7652C6.29714 7.97588 5.78767 8.30476 5.36667 8.72917L2.86667 11.2292C2.10818 12.0147 1.68831 13.0668 1.69805 14.1594C1.70779 15.252 2.14639 16.2966 2.91891 17.0691C3.69143 17.8416 4.73603 18.2802 5.82862 18.29C6.92121 18.2997 7.97329 17.8798 8.75883 17.1208L10.2042 15.6758" stroke="#2F3036" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M8.33333 10.8333C8.69121 11.3118 9.14874 11.7077 9.67503 11.9938C10.2013 12.2799 10.7835 12.4496 11.3817 12.4913C11.9798 12.5329 12.5799 12.4454 13.1414 12.2347C13.7029 12.024 14.2124 11.6952 14.6333 11.2708L17.1333 8.77083C17.8918 7.98529 18.3117 6.93321 18.302 5.84062C18.2922 4.74803 17.8536 3.70344 17.0811 2.93092C16.3086 2.1584 15.264 1.71979 14.1714 1.71005C13.0788 1.70032 12.0267 2.12022 11.2408 2.87917L9.7875 4.32417M11.6667 9.16667C11.3088 8.68821 10.8513 8.29231 10.325 8.00619C9.79874 7.72007 9.21654 7.55036 8.61833 7.50868C8.02013 7.46699 7.42009 7.55452 6.85861 7.7652C6.29714 7.97588 5.78767 8.30476 5.36667 8.72917L2.86667 11.2292C2.10818 12.0147 1.68831 13.0668 1.69805 14.1594C1.70779 15.252 2.14639 16.2966 2.91891 17.0691C3.69143 17.8416 4.73603 18.2802 5.82862 18.29C6.92121 18.2997 7.97329 17.8798 8.75883 17.1208L10.2042 15.6758" stroke="#2B3B63" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -86,15 +87,16 @@ const IconMobileLink = () => (
 export default function StopDetail() {
   const { stopId } = useParams();
   const navigate = useNavigate();
-  const { routes, updateStopStatus } = useDriver();
+  const { routes, updateStopStatus, updateWorkOrderStatus } = useDriver();
+  const [showNextStopModal, setShowNextStopModal] = useState(false);
 
   const currentRoute = routes.find(r => r.stops.some(s => s.id === stopId));
   const stop = currentRoute?.stops.find(s => s.id === stopId);
 
   if (!currentRoute || !stop) {
     return (
-      <div className="flex-1 flex items-center justify-center p-8 text-center" style={{ background: '#E8E9F1', fontFamily: "'Google Sans Flex', sans-serif" }}>
-        <span style={{ fontSize: 16, color: '#71727A' }}>Stop Not Found</span>
+      <div className="flex-1 flex items-center justify-center p-8 text-center bg-[#F4F5F8] font-['Google_Sans_Flex']">
+        <span className="text-[16px] text-[#71727A]">Stop Not Found</span>
       </div>
     );
   }
@@ -137,15 +139,15 @@ export default function StopDetail() {
   const handleCompleteWorkOrder = (woId: string) => {
     updateWorkOrderStatus(currentRoute.id, stop.id, woId, 'Completed');
     
-    // Check if all work orders are now completed (including this one, which might not be updated in state yet)
-    const updatedWorkOrders = stop.workOrders.map(wo => wo.id === woId ? { ...wo, status: 'Completed' } : wo);
+    const updatedWorkOrders = stop.workOrders.map(wo => wo.id === woId ? { ...wo, status: 'Completed' as const } : wo);
     const allDone = updatedWorkOrders.every(wo => wo.status === 'Completed' || wo.status === 'Failed');
     if (allDone) {
       updateStopStatus(currentRoute.id, stop.id, 'Done');
-      navigate(`/route/${currentRoute.id}`);
+      setShowNextStopModal(true);
     }
   };
 
+  const nextStop = currentRoute.stops.find(s => s.id !== stop.id && s.status !== 'Done');
   const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(stop.address)}`;
 
   const primaryWO = stop.workOrders?.[0];
@@ -156,106 +158,52 @@ export default function StopDetail() {
 
   return (
     <div
-      className="relative flex-1 flex flex-col overflow-y-auto select-none h-full no-scrollbar"
-      style={{ background: '#E8E9F1', fontFamily: "'Google Sans Flex', sans-serif" }}
+      className="relative flex-1 flex flex-col overflow-y-auto select-none h-full no-scrollbar bg-[#F4F5F8] font-['Google_Sans_Flex']"
     >
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <header
-        className="flex items-center gap-[16px] px-4 pt-[66px] pb-3 shrink-0 sticky top-0 z-50"
-        style={{ background: '#E8E9F1' }}
+        className="flex items-center gap-[16px] px-4 pt-[66px] pb-3 shrink-0 sticky top-0 z-50 bg-[#F4F5F8]"
       >
         <button
           onClick={() => navigate(-1)}
-          className="p-[14px] bg-white rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer active:scale-95 transition-transform"
-          style={{ boxShadow: '0px 4px 12px rgba(0,0,0,0.10)' }}
+          className="w-10 h-10 bg-white rounded-full flex items-center justify-center shrink-0 border border-[#E5E7EB] cursor-pointer active:scale-95 transition-transform"
         >
-          <ChevronLeft size={16} color="#5E6578" />
+          <ChevronLeft size={20} color="#2B3B63" />
         </button>
 
-        <h1 className="flex-1 m-0" style={{ color: '#2F3036', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
-          Stop {stopIndex}/{totalStops}
+        <h1 className="flex-1 m-0 text-[#2B3B63] text-[18px] font-bold font-['Google_Sans_Flex'] truncate">
+          Stop {stopIndex}
         </h1>
-
-        <button
-          className="flex items-center gap-[6px] px-[12px] py-[12px] rounded-full border-none cursor-pointer active:scale-95 transition-transform shrink-0"
-          style={{ background: '#D4D6DD' }}
-        >
-          <IconMobileLink />
-          <span style={{ color: '#2F3036', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Mobile Link</span>
-        </button>
+        <div className="w-10 h-10 shrink-0" />
       </header>
 
       {/* ── Content ──────────────────────────────────────────────────────── */}
       <main className="px-4 pb-32 flex flex-col gap-[12px] mt-[4px]">
 
-        {/* Stop type + status */}
-        <div className="flex items-center gap-[10px]">
-          <span style={{ color: '#2F3036', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
-            {cleanStopType(stopType)}
-          </span>
-          <div
-            className="px-[8px] py-[3px] rounded-[6px] flex items-center justify-center shrink-0"
-            style={{ background: statusBg, outline: statusBorder, outlineOffset: '-1px' }}
-          >
-            <span style={{ color: statusTextColor, fontSize: 11, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
-              {statusLabel}
-            </span>
-          </div>
-        </div>
-
-        {/* Address */}
-        <h2 className="m-0" style={{ color: '#2F3036', fontSize: 26, fontWeight: 600, fontFamily: 'Google Sans Flex', lineHeight: 1.2 }}>
+        {/* Address Subtitle (Large like Route 6) */}
+        <h2 className="m-0 text-[#2B3B63] text-[32px] font-bold font-['Google_Sans_Flex'] leading-tight tracking-tight mb-2">
           {stop.address}
         </h2>
 
-        {/* Unit line: size + model name */}
-        {unitInfo && (
-          <div style={{ color: '#FF7048', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
-            {unitInfo.size}{unitInfo.modelName ? ` ${unitInfo.modelName}` : ''}
-          </div>
-        )}
-
-        {/* Customer + Phone row */}
-        <div className="flex items-center gap-[16px]">
-          <div className="flex-1 flex items-center gap-[6px] min-w-0 overflow-hidden">
-            <div className="shrink-0"><IconUser /></div>
-            <span className="truncate" style={{ color: '#2F3036', fontSize: 12, fontWeight: 500, fontFamily: 'Google Sans Flex' }}>
-              {customerName}
-            </span>
-          </div>
-          {customerPhone !== 'N/A' && (
-            <a
-              href={`tel:${customerPhone}`}
-              className="flex items-center gap-[6px] px-[8px] py-[8px] rounded-[10px] shrink-0 no-underline active:scale-95 transition-transform"
-              style={{ outline: '1px solid #C5C6CC', outlineOffset: '-1px' }}
-            >
-              <div className="shrink-0"><IconPhone /></div>
-              <span style={{ color: '#2F3036', fontSize: 12, fontWeight: 500, fontFamily: 'Google Sans Flex' }}>
-                {customerPhone}
-              </span>
-            </a>
-          )}
-        </div>
-
         {/* Google Maps card */}
         <div
-          className="relative overflow-hidden rounded-[16px]"
-          style={{ height: 132, boxShadow: '0px 1px 2px rgba(0,0,0,0.25)', background: 'white' }}
+          className="relative overflow-hidden rounded-[24px]"
+          style={{ height: 160, boxShadow: '0px 1px 2px rgba(0,0,0,0.1)', background: 'white' }}
         >
           <img src="/map-thumbnail.jpg" alt="Map" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-black/10" />
           <a
             href={mapsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute inset-0 flex items-center justify-center no-underline"
+            className="absolute inset-0 flex items-center justify-center no-underline active:bg-black/20 transition-colors"
           >
             <div
-              className="flex items-center gap-[6px] px-[14px] py-[10px] rounded-full"
-              style={{ background: 'rgba(31,32,36,0.80)' }}
+              className="flex items-center gap-[6px] px-[16px] py-[12px] rounded-full shadow-lg"
+              style={{ background: 'rgba(31,32,36,0.85)' }}
             >
               <IconNavigate />
-              <span style={{ color: 'white', fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Navigate</span>
+              <span style={{ color: 'white', fontSize: 15, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Navigate</span>
             </div>
           </a>
         </div>
@@ -266,16 +214,16 @@ export default function StopDetail() {
             <button
               onClick={handlePrimary}
               disabled={arrivedDisabled}
-              className="w-full flex items-center justify-center gap-[6px] border-none cursor-pointer active:scale-[0.98] transition-transform rounded-[16px]"
+              className="w-full flex items-center justify-center gap-[6px] border-none cursor-pointer active:scale-[0.98] transition-transform rounded-[16px] mt-2"
               style={{
-                paddingTop: 15.5, paddingBottom: 15.5,
+                paddingTop: 16, paddingBottom: 16,
                 background: arrivedDisabled ? '#D4D6DD' : '#FF7048',
-                boxShadow: arrivedDisabled ? 'none' : '0px 8px 20px rgba(255,112,72,0.35)',
+                boxShadow: arrivedDisabled ? 'none' : '0px 8px 20px rgba(255,112,72,0.3)',
                 cursor: arrivedDisabled ? 'not-allowed' : 'pointer',
               }}
             >
               {!arrivedDisabled && <IconArrived />}
-              <span style={{ color: arrivedDisabled ? '#71727A' : 'white', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>
+              <span style={{ color: arrivedDisabled ? '#71727A' : 'white', fontSize: 16, fontWeight: 700, fontFamily: 'Google Sans Flex' }}>
                 I'm Arrived
               </span>
             </button>
@@ -294,9 +242,9 @@ export default function StopDetail() {
 
         {/* Work Orders List */}
         {!isPending && (
-          <div className="flex flex-col gap-3 mt-4">
-            <h3 className="text-[16px] font-semibold text-[#2F3036] font-['Google_Sans_Flex'] m-0">
-              Tasks
+          <div className="flex flex-col gap-3 mt-6">
+            <h3 className="text-[18px] font-bold text-[#2B3B63] font-['Google_Sans_Flex'] m-0 mb-1">
+              Work Orders
             </h3>
             {stop.workOrders.map((wo) => (
               <WorkOrderCard
@@ -313,16 +261,80 @@ export default function StopDetail() {
 
       </main>
 
-{/* ── FAB: Quick Call Customer ─────────────────────────────────────── */}
-      <div className="fixed bottom-[100px] right-[16px] z-50">
-        <a
-          href={`tel:${stop.customerPhone}`}
-          className="flex items-center justify-center no-underline rounded-full active:scale-95 transition-transform"
-          style={{ width: 54, height: 54, background: '#FF7048', boxShadow: '0px 8px 24px rgba(255,112,72,0.45)' }}
-        >
-          <IconPhone />
-        </a>
-      </div>
+      {/* ── Auto-forward Modal ─────────────────────────────────────── */}
+      {showNextStopModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-[360px] rounded-[24px] p-[24px] flex flex-col items-center gap-[16px] shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="size-[64px] bg-[#2FA301]/20 text-[#2FA301] rounded-full flex items-center justify-center mb-[8px]">
+              <Check size={32} />
+            </div>
+            
+            <h2 className="text-[#2B3B63] text-[24px] font-bold font-['Google_Sans_Flex'] m-0">Great Job!</h2>
+            <p className="text-[#71727A] text-[15px] font-['Google_Sans_Flex'] m-0 text-center leading-relaxed">
+              You have completed all tasks for this stop.
+            </p>
+
+            {nextStop ? (
+              <div className="w-full mt-[8px]">
+                <p className="text-[#71727A] text-[13px] font-bold uppercase tracking-wider mb-[8px] font-['Google_Sans_Flex']">Next Up</p>
+                <div className="bg-[#F9F5F0] rounded-[16px] p-[16px] mb-[24px] border border-[#FF7048]/20">
+                  <div className="flex gap-[12px] items-start w-full">
+                    <div className="bg-[#ff7048] size-[28px] rounded-full flex items-center justify-center text-white shrink-0 mt-1 shadow-sm">
+                      <span className="font-bold text-[13px]">{nextStop.num}</span>
+                    </div>
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <h3 className="text-[#2B3B63] font-bold text-[16px] m-0 leading-tight font-['Google_Sans_Flex'] truncate">
+                        {nextStop.address.split(',')[0]}
+                      </h3>
+                      <span className="text-[#71727A] text-[13px] font-['Google_Sans_Flex'] truncate">
+                        {nextStop.address.split(',').slice(1).join(',')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-[10px]">
+                  <button 
+                    onClick={() => {
+                      setShowNextStopModal(false);
+                      navigate(`/route/${currentRoute.id}/stop/${nextStop.id}`);
+                    }}
+                    className="w-full bg-[#FF7048] text-white py-[16px] rounded-[16px] font-semibold text-[16px] font-['Google_Sans_Flex'] shadow-[0_8px_20px_rgba(255,112,72,0.3)] active:scale-[0.98] transition-transform border-none flex items-center justify-center gap-[8px]"
+                  >
+                    <MapPin size={18} /> Navigate to Next
+                  </button>
+                  <button 
+                    onClick={() => {
+                      setShowNextStopModal(false);
+                      navigate(`/route/${currentRoute.id}`);
+                    }}
+                    className="w-full bg-transparent text-[#71727A] py-[16px] rounded-[16px] font-semibold text-[15px] font-['Google_Sans_Flex'] active:scale-[0.98] transition-transform border-none"
+                  >
+                    Choose Another Stop
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full mt-[16px] flex flex-col gap-[10px]">
+                <div className="bg-[#2FA301]/10 rounded-[16px] p-[16px] mb-[16px] text-center border border-[#2FA301]/20">
+                  <span className="text-[#2FA301] font-bold text-[16px] font-['Google_Sans_Flex']">
+                    All stops completed for this route!
+                  </span>
+                </div>
+                <button 
+                  onClick={() => {
+                    setShowNextStopModal(false);
+                    navigate(`/route/${currentRoute.id}`);
+                  }}
+                  className="w-full bg-[#2B3B63] text-white py-[16px] rounded-[16px] font-semibold text-[16px] font-['Google_Sans_Flex'] shadow-[0_8px_20px_rgba(0,0,0,0.15)] active:scale-[0.98] transition-transform border-none"
+                >
+                  View Route Summary
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router';
 import { useDriver } from './DriverContext';
 import { StopCard } from './components/StopCard';
-import { Bell, ChevronRight, User, Info, Clock, LogOut, CheckCircle2, AlertCircle, Phone, MapPin, Calendar as CalendarIcon } from 'lucide-react';
+import { RouteSummaryCard } from './components/home/RouteSummaryCard';
+import { EmptyRouteState } from './components/home/EmptyRouteState';
+import { CompletedRouteState } from './components/home/CompletedRouteState';
+import { UpcomingRoutesSection } from './components/home/UpcomingRoutesSection';
+import { Bell, ChevronRight, User, Info, Clock, LogOut, CheckCircle2, AlertCircle, Phone, MapPin, Calendar as CalendarIcon, CircleUserRound } from 'lucide-react';
 import { cn, cleanStopType, getStopHeader } from './lib/utils';
-import { TagBadge, StatusBadge } from './components/Badges';
 
 import imgUserImage from './assets/3271fc3a53481ca6ba5eb96b8724359f747c54a3.png';
 import imgCompanyLogo from '../icon/Logo/Powered by ShedPro.svg';
@@ -53,7 +56,8 @@ export default function Home() {
   const searchParams = new URLSearchParams(location.search);
   const currentTab = searchParams.get('tab') || 'home';
 
-  // State inside Routes Tab: "Schedule" | "Completed"
+  // State inside Schedule Tab
+  const [scheduleViewMode, setScheduleViewMode] = useState<'list' | 'calendar'>('list');
   const [activeRoutesTab, setActiveRoutesTab] = useState<'Assigned' | 'Completed'>('Assigned');
   const todayDateKey = (() => {
     const now = new Date();
@@ -65,6 +69,7 @@ export default function Home() {
 
   // Modals & expanders states
   const [showNotifications, setShowNotifications] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<string | null>(null);
   const [showDriverMenu, setShowDriverMenu] = useState(false);
   const [upcomingStopsExpanded, setUpcomingStopsExpanded] = useState(false);
 
@@ -124,302 +129,96 @@ export default function Home() {
   const daysInMonthArr = Array.from({ length: calendarDaysInMonth }, (_, i) => i + 1);
 
   return (
-    <div className="relative min-h-full bg-[#E8E9F1] font-sans">
+    <div className="driver-home-page relative min-h-full bg-[#f0f2f6] font-sans">
 
       {/* ── 1. HOME TAB VIEW ────────────────────────────────────────────────── */}
       {currentTab === 'home' && (
         <div className="flex-1 flex flex-col">
           {/* Header */}
-          <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f8f9fe]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
-            <h1 className="text-[34px] font-semibold text-[#2F3036] font-['Google_Sans_Flex']">My Routes</h1>
+          <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f0f2f6]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
+            <h1 className="text-[28px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex'] m-0">My Route</h1>
             
-            <button 
-              onClick={() => setShowNotifications(true)}
-              className="bg-white flex gap-[10px] items-center justify-center p-[8px] relative rounded-[50px] shrink-0 size-[44px] cursor-pointer border-none"
-              style={{ boxShadow: '0px 0px 10px rgba(0,0,0,0.08)' }}
-            >
-              <img src={imgNotificationIcon} alt="Notifications" className="w-[20px] h-[20px]" />
-              <div className="absolute bg-[#f52525] rounded-[30px] size-[14px] top-0 left-[30px]" />
-            </button>
+            <div className="flex items-center gap-[10px]">
+              <button 
+                onClick={() => setShowNotifications(true)}
+                className="relative flex items-center justify-center shrink-0 size-[44px] cursor-pointer border-none bg-transparent active:scale-95 transition-transform"
+              >
+                <Bell size={24} strokeWidth={2.5} className="text-[#71727A]" />
+                <div className="absolute bg-[#f52525] rounded-full size-[10px] top-[10px] right-[10px] border-2 border-[#f0f2f6]" />
+              </button>
+              
+              <Link 
+                to="/home?tab=profile"
+                className="relative flex items-center justify-center shrink-0 size-[44px] cursor-pointer border-none bg-transparent active:scale-95 transition-transform text-[#2B3B63]"
+              >
+                <CircleUserRound size={24} strokeWidth={2.5} className="text-[#71727A]" />
+              </Link>
+            </div>
           </header>
 
-          <main className="px-4 pb-28 flex flex-col gap-[24px]">
+          <main className="px-4 pb-0 flex flex-col flex-1">
             <div>
               
               {activeRoute ? (
                 (() => {
                   const stops = activeRoute.stops;
-                  const totalStops = stops.length;
-                  const completedStopsCount = stops.filter(s => s.status === 'Done').length;
-                  const progressPercentage = totalStops > 0 ? (completedStopsCount / totalStops) * 100 : 0;
-                  const estCompletion = activeRoute.id === 'RT-1001' ? '27 July' : activeRoute.id === 'R-002' ? '27 July' : 'TBD';
+                  const actualStops = stops.filter(s => !s.workOrders.some(wo => wo.action === 'Start' || wo.action === 'End'));
+                  const totalStops = actualStops.length;
+                  const completedStopsCount = actualStops.filter(s => s.status === 'Done').length;
+                  
+                  const allWOs = actualStops.flatMap(s => s.workOrders);
+                  const totalWOs = allWOs.length;
+                  // For mock simplicity, let's say WOs inside a 'Done' stop are done.
+                  const completedWOsCount = actualStops.filter(s => s.status === 'Done').flatMap(s => s.workOrders).length;
+                  
+                  const progressPercentage = totalWOs > 0 ? (completedWOsCount / totalWOs) * 100 : 0;
+                  const estCompletion = activeRoute.id === 'RT-006' ? '15 Aug' : 'TBD';
                   const remainingDistanceStr = getRemainingDistance(activeRoute.id, stops);
 
+                  const nextStop = actualStops.find(s => s.status !== 'Done');
+                  
                   return (
-                    /* Active Route Wrapper */
-                    <div className="flex flex-col gap-[16px] w-full">
-                      <div 
-                        className="w-full bg-white rounded-[24px] overflow-hidden"
-                        style={{
-                          boxShadow: '0px 8px 40px rgba(0, 0, 0, 0.10)',
-                          outline: '2px solid white',
-                          outlineOffset: '-2px',
-                        }}
-                      >
-                        {/* Map Overview */}
-                        <div className="w-full h-[140px] relative overflow-hidden">
-                          <img src={imgMapOverview} alt="Route Map" className="w-full h-full object-cover" />
+                    /* Section A & B */
+                    <div className="flex flex-col gap-[20px] w-full">
+                      
+                      {/* Section A: Route Summary Card */}
+                      <RouteSummaryCard 
+                        route={activeRoute}
+                        completedWOsCount={completedWOsCount}
+                        totalWOs={totalWOs}
+                        progressPercentage={progressPercentage}
+                        remainingDistanceStr={remainingDistanceStr}
+                        onInfoClick={(note) => setSelectedNote(note)}
+                      />
+
+                      {/* Section B: Current Stop Detail and Upcoming */}
+                      {nextStop ? (
+                        <div className="flex flex-col">
+                          <div className="-mx-4">
+                            <StopCard stop={nextStop} routeId={activeRoute.id} title="Current Stop" hideAction={false} />
+                          </div>
+                          <UpcomingRoutesSection />
                         </div>
-                        
-                        {/* Dark inner card — Figma: current-stop-details */}
-                        <div 
-                          className="bg-[#2f3036] rounded-b-[24px] overflow-hidden flex flex-col items-start p-[16px] gap-[10px]"
-                        >
-                          {/* Route Name + Status — Figma: current-stop-info-container */}
-                          <div className="self-stretch flex items-center gap-[6px]">
-                            <div className="flex-1 flex flex-col items-start justify-center min-w-0">
-                              <div className="font-semibold text-[22px] text-white font-['Google_Sans_Flex'] flex items-center truncate">{activeRoute.id} - {activeRoute.name}</div>
-                            </div>
-                            <div className="bg-[#2fa301] rounded-[6px] overflow-hidden flex items-center justify-center px-[6px] py-[2px] shrink-0">
-                              <span className="text-[12px] font-medium text-white font-['Google_Sans_Flex'] whitespace-nowrap">En Route</span>
-                            </div>
-                          </div>
-
-                          {/* Progress Bar — Figma: progress-container */}
-                          <div className="self-stretch flex items-center gap-[10px]">
-                            <div className="flex-1 flex flex-col items-end">
-                              <div className="self-stretch h-[6px] relative">
-                                <div className="absolute top-0 left-0 rounded-[10px] bg-white w-full h-[6px]" />
-                                <div className="absolute top-0 left-0 rounded-[10px] bg-[#ff7048] h-[6px] transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
-                              </div>
-                            </div>
-                            <span className="text-[12px] font-medium text-white text-center font-['Google_Sans_Flex']">{completedStopsCount}/{totalStops}</span>
-                          </div>
-
-                          {/* Stats — Figma: stats-container */}
-                          <div className="self-stretch flex items-start text-center text-[12px] text-[#c5c6cc]">
-                            <div className="flex-1 border-r border-[#71727a] flex flex-col items-start">
-                              <div className="self-stretch font-['Google_Sans_Flex']">Stops done</div>
-                              <div className="self-stretch text-[18px] font-semibold text-white font-['Google_Sans_Flex']">{completedStopsCount}/{totalStops}</div>
-                            </div>
-                            <div className="flex-1 border-r border-[#71727a] flex flex-col items-start">
-                              <div className="self-stretch font-['Google_Sans_Flex']">Remaining</div>
-                              <div className="self-stretch text-[18px] font-semibold text-white font-['Google_Sans_Flex']">{remainingDistanceStr}</div>
-                            </div>
-                            <div className="flex-1 flex flex-col items-center">
-                              <div className="self-stretch font-['Google_Sans_Flex']">Est. done</div>
-                              <div className="self-stretch text-[18px] font-semibold text-white font-['Google_Sans_Flex']">{estCompletion}</div>
-                            </div>
-                          </div>
-
-                          {/* CTA — Figma: buttonfilled */}
-                          <div className="self-stretch flex flex-col items-start text-[16px] gap-[8px] mt-2">
-                            <Link 
-                              to={`/route/${activeRoute.id}`} 
-                              className="self-stretch rounded-[16px] overflow-hidden flex items-center justify-center py-[15.5px] px-[30px] gap-[6px] cursor-pointer decoration-none text-white font-['Google_Sans_Flex'] active:scale-[0.98] transition-transform"
-                              style={{
-                                background: '#ff7048',
-                                outline: '1px solid #faa087',
-                                outlineOffset: '-1px',
-                              }}
-                            >
-                              <span className="font-semibold">Continue Route</span>
-                              <ChevronRight size={16} />
-                            </Link>
-                          </div>
+                      ) : (
+                        <div className="flex flex-col">
+                          <CompletedRouteState routeId={activeRoute.id} />
+                          <UpcomingRoutesSection />
                         </div>
-                      </div>
-
-                      {/* Next Stop Card Preview */}
-                      {stops.find(s => s.status !== 'Done') && (() => {
-                        const nextStop = stops.find(s => s.status !== 'Done');
-                        if (!nextStop) return null;
-                        
-                        // Summary of work orders
-                        const tasksSummary = nextStop.workOrders.length === 1 
-                          ? `1 ${nextStop.workOrders[0].action}`
-                          : `${nextStop.workOrders.length} Tasks`;
-
-                        return (
-                          <div className="bg-white rounded-[24px] p-[16px] flex flex-col gap-[12px]" style={{ boxShadow: '0px 4px 15px rgba(0,0,0,0.05)' }}>
-                            <div className="flex justify-between items-center w-full">
-                              <h3 className="font-semibold text-[#2F3036] font-['Google_Sans_Flex'] m-0">Next Stop</h3>
-                              <div className="bg-[#E8E9F1] px-[8px] py-[4px] rounded-[6px]">
-                                <span className="text-[12px] font-semibold text-[#2F3036] font-['Google_Sans_Flex']">{tasksSummary}</span>
-                              </div>
-                            </div>
-                            <div className="flex gap-[12px] items-start w-full">
-                              <div className="bg-[#ff7048] size-[32px] rounded-[16px] flex items-center justify-center text-white shrink-0 mt-1">
-                                <span className="font-bold text-[14px]">{nextStop.num}</span>
-                              </div>
-                              <div className="flex flex-col gap-[4px] min-w-0 flex-1">
-                                <p className="text-[#2F3036] font-semibold text-[15px] m-0 leading-tight font-['Google_Sans_Flex'] truncate">{nextStop.address}</p>
-                                <div className="flex gap-[6px] items-center">
-                                  <User size={14} className="text-[#71727A]" />
-                                  <span className="text-[#71727A] text-[13px] font-['Google_Sans_Flex'] truncate">
-                                    {nextStop.workOrders.map(wo => wo.customerName).join(', ')}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex gap-[8px] mt-[4px]">
-                              <Link 
-                                to={`/route/${activeRoute.id}/stop/${nextStop.id}`}
-                                className="flex-1 bg-[#2F3036] text-white py-[12px] rounded-[12px] text-center font-semibold text-[14px] decoration-none font-['Google_Sans_Flex'] active:scale-95 transition-transform"
-                              >
-                                View Details
-                              </Link>
-                              <a 
-                                href={`https://maps.google.com/?q=${encodeURIComponent(nextStop.address)}`}
-                                target="_blank" rel="noreferrer"
-                                className="flex-1 bg-[#F9F5F0] border border-[#FF7048]/30 text-[#FF7048] flex items-center justify-center gap-[6px] py-[12px] rounded-[12px] font-semibold text-[14px] decoration-none font-['Google_Sans_Flex'] active:scale-95 transition-transform"
-                              >
-                                <MapPin size={16} />
-                                Navigate
-                              </a>
-                            </div>
-                          </div>
-                        );
-                      })()}
+                      )}
                     </div>
                   );
                 })()
               ) : (
                 /* Empty Route State */
-                <div className="bg-white rounded-[28px] p-6 text-center border border-black/5 shadow-sm select-none">
-                  <span className="text-3xl block mb-2">✨</span>
-                  <h3 className="text-base font-bold text-[#2F3036] font-['Google_Sans_Flex']">No Active Route</h3>
-                  <p className="text-xs text-[#71727A] mt-1.5 leading-relaxed">You have no active routes today.<br />Click the tab below to view your assigned routes.</p>
-                  <Link 
-                    to="/home?tab=routes"
-                    className="mt-4 inline-flex items-center justify-center gap-1.5 bg-[#FF7048] hover:bg-[#FF8563] text-white px-5 py-2.5 rounded-xl text-xs font-bold transition shadow-md shadow-[#FF704833] decoration-none"
-                  >
-                    Go to Routes ➜
-                  </Link>
+                <div className="flex flex-col gap-[24px]">
+                  <EmptyRouteState />
+                  <UpcomingRoutesSection />
                 </div>
               )}
             </div>
 
-            {/* Upcoming Routes — Figma: next-stops-container */}
-            {upcomingRoutes.length > 0 && (
-              <section className="self-stretch flex flex-col items-start gap-[10px] text-left text-[16px] text-[#2f3036]">
-                <div className="self-stretch flex items-start">
-                  <h2 className="flex-1 font-semibold text-[16px] font-['Google_Sans_Flex']">Upcoming Routes</h2>
-                </div>
-                
-                <div className="self-stretch flex flex-col items-start gap-[16px]">
-                  <div className="self-stretch flex flex-col items-start gap-[10px]">
-                    {upcomingRoutes.slice(0, 2).map((route, index) => {
-                      const borderColors = ['#3B82F6', '#F8A2C3', '#2FA301', '#FF7048'];
-                      const topBorderColor = borderColors[index % borderColors.length];
-
-                      let startStr = route.startDate;
-                      let endStr = route.endDate;
-                      
-                      // Fallback mappings
-                      if (!startStr) {
-                        if (route.id === 'R-001') { startStr = 'Jun 23'; endStr = 'Jun 24'; }
-                        else if (route.id === 'R-002') { startStr = 'Jun 23'; endStr = 'Jun 23'; }
-                        else if (route.id === 'R-003') { startStr = 'Jun 22'; endStr = 'Jun 22'; }
-                        else if (route.id === 'R-004') { startStr = 'Jun 25'; endStr = 'Jun 25'; }
-                        else if (route.id === 'R-005') { startStr = 'Jun 23'; endStr = 'Jun 23'; }
-                        else if (route.date === 'Today') { startStr = 'Jun 23'; endStr = 'Jun 23'; }
-                        else if (route.date === 'Tomorrow') { startStr = 'Jun 24'; endStr = 'Jun 24'; }
-                        else { startStr = route.date; endStr = route.date; }
-                      }
-                      if (!endStr) endStr = startStr;
-
-                      let dayStr = '';
-                      let monthStr = route.monthName || 'Jun';
-                      let timeRangeStr = '';
-
-                      if (startStr && endStr) {
-                        const startParts = startStr.split(' ');
-                        const endParts = endStr.split(' ');
-                        if (startParts.length === 2) {
-                          monthStr = startParts[0];
-                          if (startStr !== endStr && endParts.length === 2) {
-                            dayStr = `${startParts[1]}-${endParts[1]}`;
-                            timeRangeStr = `${startStr}, ${route.startTime || '09:00 AM'} - ${endStr}, ${route.endTime || '07:00 PM'}`;
-                          } else {
-                            dayStr = startParts[1];
-                            timeRangeStr = `${route.startTime || '09:00 AM'} - ${route.endTime || '07:00 PM'}`;
-                          }
-                        } else {
-                          dayStr = route.dayOfMonth || '29';
-                          timeRangeStr = `${route.startTime || '09:00 AM'} - ${route.endTime || '07:00 PM'}`;
-                        }
-                      } else {
-                        dayStr = route.dayOfMonth || '29';
-                        timeRangeStr = `${route.startTime || '09:00 AM'} - ${route.endTime || '07:00 PM'}`;
-                      }
-
-                      return (
-                      <Link 
-                        key={route.id} 
-                        to={`/route/${route.id}`} 
-                        className="self-stretch bg-white rounded-[24px] flex items-start p-[12px] gap-[16px] decoration-none active:scale-[0.98] transition-transform"
-                        style={{
-                          boxShadow: '0px 8px 40px rgba(0, 0, 0, 0.10)',
-                          outline: '2px solid white',
-                          outlineOffset: '-2px',
-                        }}
-                      >
-                        {/* Left Date Tag */}
-                        <div 
-                          className="w-[54px] self-stretch px-[2px] py-[12px] bg-[#E8E9F1] overflow-hidden rounded-[11px] flex flex-col items-center justify-center gap-[8px]"
-                          style={{ borderTop: `3px ${topBorderColor} solid` }}
-                        >
-                          <div className="flex flex-col items-center justify-start gap-[4px] self-stretch">
-                            <div className="flex flex-col items-center justify-start">
-                              <span className="text-[#2F3036] text-[16px] font-semibold font-['Google_Sans_Flex'] break-words text-center leading-tight">
-                                {dayStr}
-                              </span>
-                              <span className="text-[#71727A] text-[12px] font-normal font-['Google_Sans_Flex'] break-words text-center leading-tight">
-                                {monthStr}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Route Info */}
-                        <div className="flex-1 flex flex-col items-start gap-[10px]">
-                          <div className="self-stretch flex flex-col items-start gap-[4px]">
-                            <div className="self-stretch flex flex-col items-start gap-[2px]">
-                              {/* Route Name */}
-                              <div className="self-stretch flex items-center justify-end gap-[6px] min-w-0">
-                                <span className="flex-1 text-[#2F3036] text-[16px] font-semibold font-['Google_Sans_Flex'] truncate">
-                                  {route.id} - {route.name}
-                                </span>
-                              </div>
-                              {/* Address */}
-                              <div className="self-stretch flex items-center justify-start gap-[5px] min-w-0">
-                                <span className="flex-1 text-[#71727A] text-[14px] font-normal font-['Google_Sans_Flex'] truncate">
-                                  {route.stops[0]?.address || 'No stops assigned'}
-                                </span>
-                              </div>
-                            </div>
-                            
-                            {/* Meta info lines */}
-                            <div className="self-stretch flex flex-col items-start justify-start">
-                              <div className="self-stretch h-[18px] text-[#71727A] text-[12px] font-normal font-['Google_Sans_Flex'] break-words flex flex-col justify-center">
-                                {timeRangeStr}
-                              </div>
-                              <div className="self-stretch h-[18px] text-[#71727A] text-[12px] font-normal font-['Google_Sans_Flex'] break-words flex flex-col justify-center">
-                                {route.stops.length} stops • {route.dealerName || 'Store A'}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    )})}
-                  </div>
-                </div>
-              </section>
-            )}
-
             {/* Brand Logo */}
-            <div className="flex justify-center py-6 select-none">
+            <div className="-mx-4 bg-white flex justify-center pt-6 pb-28 select-none flex-1">
               <img alt="ShedPro Logo" className="w-[100px] h-[38px] object-contain" src={imgCompanyLogo} />
             </div>
           </main>
@@ -428,178 +227,157 @@ export default function Home() {
 
 
 
-      {/* ── 2. ROUTES TAB VIEW ──────────────────────────────────────────────── */}
-      {currentTab === 'routes' && (
-        <div className="flex-1 flex flex-col">
+      {/* ── 2. SCHEDULE TAB VIEW ──────────────────────────────────────────────── */}
+      {currentTab === 'schedule' && (
+        <div className="flex-1 flex flex-col bg-[#f8f9fe]">
           {/* Header */}
           <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f8f9fe]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
-            <div className="flex-1 flex flex-col justify-center text-[34px] font-semibold text-[#2F3036] font-['Google_Sans_Flex']">Routes</div>
-            <button 
-              onClick={() => setShowNotifications(true)}
-              className="bg-white flex gap-[10px] items-center justify-center p-[8px] relative rounded-[50px] shrink-0 size-[44px] cursor-pointer border-none"
-              style={{ boxShadow: '0px 0px 10px rgba(0,0,0,0.08)' }}
-            >
-              <img src={imgNotificationIcon} alt="Notifications" className="w-[20px] h-[20px]" />
-              <div className="absolute bg-[#f52525] rounded-[30px] size-[14px] top-0 left-[30px]" />
-            </button>
+            <div className="flex-1 flex flex-col justify-center text-[34px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Schedule</div>
           </header>
 
-          {/* Segment Tabs Control */}
-          <div className="flex mx-4 select-none" style={{ borderBottom: '1px solid #D4D6DD' }}>
-            {(['Assigned', 'Completed'] as const).map((tab) => (
+          {/* Master View Toggle (List vs Calendar) */}
+          <div className="flex mx-4 mb-2 bg-[#E8E9F1] rounded-full p-1 select-none">
+            <button
+              onClick={() => setScheduleViewMode('list')}
+              className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all border-none cursor-pointer flex items-center justify-center gap-2 ${scheduleViewMode === 'list' ? 'bg-white shadow-sm text-[#2B3B63]' : 'bg-transparent text-[#71727A]'}`}
+            >
+              List
+            </button>
+            <button
+              onClick={() => setScheduleViewMode('calendar')}
+              className={`flex-1 py-1.5 rounded-full text-[14px] font-bold transition-all border-none cursor-pointer flex items-center justify-center gap-2 ${scheduleViewMode === 'calendar' ? 'bg-white shadow-sm text-[#2B3B63]' : 'bg-transparent text-[#71727A]'}`}
+            >
+              Calendar
+            </button>
+          </div>
+
+          {scheduleViewMode === 'list' ? (
+            <>
+              {/* Segment Tabs Control for List View */}
+              <div className="flex mx-4 select-none" style={{ borderBottom: '1px solid #D4D6DD' }}>
+                {(['Assigned', 'Completed'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveRoutesTab(tab)}
                 className="flex-1 py-[10px] bg-transparent border-none cursor-pointer flex justify-center items-center"
                 style={{ borderBottom: activeRoutesTab === tab ? '4px solid #FF7048' : '4px solid transparent', marginBottom: '-1px' }}
               >
-                <span style={{ color: activeRoutesTab === tab ? '#FF7048' : '#2F3036', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{tab}</span>
+                <span style={{ color: activeRoutesTab === tab ? '#FF7048' : '#2B3B63', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{tab}</span>
               </button>
             ))}
           </div>
 
           <main className="px-4 py-6 space-y-6 pb-28">
             
+
             {/* Assigned View */}
             {activeRoutesTab === 'Assigned' && (
-              <>
-                {/* Upcoming Schedule */}
-                <section className="space-y-[10px]">
-                  
-                  <div className="space-y-[10px] pt-2">
-                    {upcomingRoutes.map(route => {
-                      let topBorderColor = '#3B82F6';
-                      if (route.status === 'En Route') topBorderColor = '#2FA301';
-                      else if (route.status === 'Completed') topBorderColor = '#2FA301';
-                      const startDate = route.startDate || 'Jun 26';
-                      const endDate = route.endDate || startDate;
-                      const startParts = startDate.split(' ');
-                      const endParts = endDate.split(' ');
-                      const dayDisplay = startDate !== endDate && startParts.length === 2 && endParts.length === 2
-                        ? `${startParts[1]}-${endParts[1]}` : (startParts[1] || startDate);
-                      const monthDisplay = startParts[0] || 'Jun';
-                      return (
-                        <Link 
-                          key={route.id} 
-                          to={`/route/${route.id}`} 
-                          className="self-stretch bg-white rounded-[24px] flex items-start p-[12px] gap-[16px] decoration-none active:scale-[0.98] transition-transform"
-                          style={{ boxShadow: '0px 8px 40px rgba(0,0,0,0.10)', outline: '2px solid white', outlineOffset: '-2px' }}
-                        >
-                          <div 
-                            className="w-[54px] self-stretch px-[2px] py-[12px] bg-[#E8E9F1] overflow-hidden rounded-[11px] flex flex-col items-center justify-center gap-[8px]"
-                            style={{ borderTop: `3px ${topBorderColor} solid` }}
-                          >
-                            <div className="flex flex-col items-center justify-start gap-[4px] self-stretch">
-                              <div className="flex flex-col items-center justify-start">
-                                <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{dayDisplay}</span>
-                                <span style={{ color: '#71727A', fontSize: 12, fontWeight: 400, fontFamily: 'Google Sans Flex', marginTop: 2 }}>{monthDisplay}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex-1 flex flex-col items-start gap-[10px]">
-                            <div className="self-stretch flex flex-col items-start gap-[4px]">
-                              <div className="self-stretch flex flex-col items-start gap-[2px]">
-                                <div className="self-stretch flex items-center gap-[6px]">
-                                  <span style={{ flex: 1, color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{route.id} - {route.name}</span>
+              <section className="pt-2">
+                {(() => {
+                  const grouped = upcomingRoutes.reduce((acc, route) => {
+                    const month = route.monthName || (route.startDate ? route.startDate.split(' ')[0] : 'Jun');
+                    if (!acc[month]) acc[month] = [];
+                    acc[month].push(route);
+                    return acc;
+                  }, {});
+                  return Object.entries(grouped).map(([month, rts]) => (
+                    <div key={month} className="mb-4">
+                      <h3 className="text-[16px] font-bold text-[#2B3B63] m-0 font-['Google_Sans_Flex'] mb-3 px-1">{month}</h3>
+                      <div className="flex flex-col gap-2">
+                        {rts.map(route => {
+                          const totalWOs = route.stops.reduce((sum, stop) => sum + (stop.workOrders ? stop.workOrders.length : 0), 0);
+                          const startDate = route.startDate || 'Jun 26';
+                          const startParts = startDate.split(' ');
+                          const dayDisplay = startParts[1] || startDate;
+                          const monthDisplay = startParts[0] || 'Jun';
+                          return (
+                            <Link 
+                              key={route.id} 
+                              to={`/route/${route.id}`} state={{ from: location.pathname + location.search }} 
+                              className="w-full bg-[#E4E6EC] rounded-[16px] p-[12px] flex justify-between items-center decoration-none active:scale-[0.98] transition-transform border border-transparent"
+                            >
+                              <div className="flex items-center gap-[12px]">
+                                <div className="w-[54px] py-[8px] self-stretch bg-white/60 overflow-hidden rounded-[10px] flex flex-col items-center justify-center gap-[4px] border-t-[3px] shrink-0" style={{ borderTopColor: route.stripeColor || '#3B82F6' }}>
+                                   <span className="text-[#2B3B63] text-[15px] font-bold font-['Google_Sans_Flex'] leading-none">{dayDisplay}</span>
+                                   <span className="text-[#71727A] text-[12px] font-semibold font-['Google_Sans_Flex'] leading-none">{monthDisplay}</span>
                                 </div>
-                                <div className="self-stretch flex items-center justify-start gap-[5px]">
-                                  <span style={{ flex: 1, color: '#71727A', fontSize: 14, fontWeight: 400, fontFamily: 'Google Sans Flex' }} className="truncate">{route.stops[0]?.address || 'No stops assigned'}</span>
+                                <div className="flex flex-col gap-1">
+                                  <h4 className="text-[#2B3B63] font-bold text-[16px] m-0 font-['Google_Sans_Flex']">{route.id} - {route.name}</h4>
+                                  <span className="text-[#71727A] text-[13px] font-['Google_Sans_Flex']">
+                                    {totalWOs} work orders &middot; {route.stops.length || route.stopsCount} stops
+                                  </span>
                                 </div>
                               </div>
-                              <div className="self-stretch flex flex-col items-start">
-                                <div style={{ alignSelf: 'stretch', height: 18, color: '#71727A', fontSize: 12, fontWeight: 400, fontFamily: 'Google Sans Flex', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                  {startDate !== endDate ? `${startDate}, ${route.startTime || '09:00 AM'} - ${endDate}, ${route.endTime || '07:00 PM'}` : `${route.startTime || '09:00 AM'} - ${route.endTime || '07:00 PM'}`}
-                                </div>
-                                <div style={{ alignSelf: 'stretch', height: 18, color: '#71727A', fontSize: 12, fontWeight: 400, fontFamily: 'Google Sans Flex', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                  {route.stops.length} stops • {route.dealerName || 'Store A'}
-                                </div>
+                              <div className="bg-white size-[32px] rounded-full flex items-center justify-center shrink-0 shadow-sm ml-2">
+                                <ChevronRight size={18} className="text-[#2B3B63]"/>
                               </div>
-                            </div>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </section>
-              </>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ));
+                })()}
+              </section>
             )}
 
             {/* Completed Routes View */}
             {activeRoutesTab === 'Completed' && (
-              <section className="space-y-[10px] pt-2">
-                <div className="space-y-[10px]">
-                  {[
-                    {
-                      id: 'R-004',
-                      name: 'Dallas TX (North)',
-                      startDate: 'Jun 25',
-                      endDate: 'Jun 25',
-                      stopsCount: 3,
-                      firstStopAddress: '304 North St, Dallas TX',
-                      startTime: '8:00 AM',
-                      endTime: '3:30 PM',
-                      borderColor: '#2FA301'
-                    },
-                    {
-                      id: 'R-005',
-                      name: 'Houston TX (Express)',
-                      startDate: 'Jun 24',
-                      endDate: 'Jun 24',
-                      stopsCount: 2,
-                      firstStopAddress: '121 South Ave, Houston TX',
-                      startTime: '9:00 AM',
-                      endTime: '1:15 PM',
-                      borderColor: '#2FA301'
-                    }
-                  ].map(route => {
-                    const startParts = route.startDate.split(' ');
-                    return (
-                      <Link 
-                        key={route.id} 
-                        to={`/route/${route.id}`} 
-                        className="self-stretch bg-white rounded-[24px] flex items-start p-[12px] gap-[16px] decoration-none active:scale-[0.98] transition-transform"
-                        style={{ boxShadow: '0px 8px 40px rgba(0,0,0,0.10)', outline: '2px solid white', outlineOffset: '-2px' }}
-                      >
-                        <div 
-                          className="w-[54px] self-stretch px-[2px] py-[12px] bg-[#E8E9F1] overflow-hidden rounded-[11px] flex flex-col items-center justify-center gap-[8px]"
-                          style={{ borderTop: `3px ${route.borderColor} solid` }}
-                        >
-                          <div className="flex flex-col items-center justify-start gap-[4px] self-stretch">
-                            <div className="flex flex-col items-center justify-start">
-                              <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{startParts[1]}</span>
-                              <span style={{ color: '#71727A', fontSize: 12, fontWeight: 400, fontFamily: 'Google Sans Flex', marginTop: 2 }}>{startParts[0]}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex-1 flex flex-col items-start gap-[10px]">
-                          <div className="self-stretch flex flex-col items-start gap-[4px]">
-                            <div className="self-stretch flex flex-col items-start gap-[2px]">
-                              <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{route.id} - {route.name}</span>
-                              <span style={{ color: '#71727A', fontSize: 14, fontWeight: 400, fontFamily: 'Google Sans Flex' }} className="truncate self-stretch">{route.firstStopAddress}</span>
-                            </div>
-                            <div className="self-stretch flex flex-col items-start">
-                              <div style={{ alignSelf: 'stretch', height: 18, color: '#71727A', fontSize: 12, fontWeight: 400, fontFamily: 'Google Sans Flex', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                {route.startTime} - {route.endTime}
+              <section className="pt-2">
+                {(() => {
+                  const completedRts = routes.filter(r => r.status === 'Completed');
+                  const grouped = completedRts.reduce((acc, route) => {
+                    const month = route.monthName || (route.startDate ? route.startDate.split(' ')[0] : 'Jun');
+                    if (!acc[month]) acc[month] = [];
+                    acc[month].push(route);
+                    return acc;
+                  }, {});
+                  return Object.entries(grouped).map(([month, rts]) => (
+                    <div key={month} className="mb-4">
+                      <h3 className="text-[16px] font-bold text-[#2B3B63] m-0 font-['Google_Sans_Flex'] mb-3 px-1">{month}</h3>
+                      <div className="flex flex-col gap-2">
+                        {rts.map(route => {
+                          const totalWOs = route.stops?.reduce((sum, stop) => sum + (stop.workOrders ? stop.workOrders.length : 0), 0) || 0;
+                          const startDate = route.startDate || 'Jun 26';
+                          const startParts = startDate.split(' ');
+                          const dayDisplay = startParts[1] || startDate;
+                          const monthDisplay = startParts[0] || 'Jun';
+                          return (
+                            <Link 
+                              key={route.id} 
+                              to={`/route/${route.id}`} state={{ from: location.pathname + location.search }} 
+                              className="w-full bg-[#E4E6EC] rounded-[16px] p-[12px] flex justify-between items-center decoration-none active:scale-[0.98] transition-transform border border-transparent"
+                            >
+                              <div className="flex items-center gap-[12px]">
+                                <div className="w-[54px] py-[8px] self-stretch bg-white/60 overflow-hidden rounded-[10px] flex flex-col items-center justify-center gap-[4px] border-t-[3px] shrink-0" style={{ borderTopColor: route.stripeColor || '#2FA301' }}>
+                                   <span className="text-[#2B3B63] text-[15px] font-bold font-['Google_Sans_Flex'] leading-none">{dayDisplay}</span>
+                                   <span className="text-[#71727A] text-[12px] font-semibold font-['Google_Sans_Flex'] leading-none">{monthDisplay}</span>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                  <h4 className="text-[#2B3B63] font-bold text-[16px] m-0 font-['Google_Sans_Flex']">{route.id} - {route.name}</h4>
+                                  <span className="text-[#71727A] text-[13px] font-['Google_Sans_Flex']">
+                                    {totalWOs} work orders &middot; {route.stops?.length || route.stopsCount} stops
+                                  </span>
+                                </div>
                               </div>
-                              <div style={{ alignSelf: 'stretch', height: 18, color: '#71727A', fontSize: 12, fontWeight: 400, fontFamily: 'Google Sans Flex', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                {route.stopsCount} stops
+                              <div className="bg-white size-[32px] rounded-full flex items-center justify-center shrink-0 shadow-sm ml-2">
+                                <ChevronRight size={18} className="text-[#2B3B63]"/>
                               </div>
-                            </div>
-                          </div>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ));
+                })()}
               </section>
             )}
 
           </main>
-        </div>
-      )}
-
-      {/* ── 3. CALENDAR TAB VIEW ────────────────────────────────────────────── */}
-      {currentTab === 'calendar' && (() => {
+          </>
+          ) : (
+            <div className="flex-1 flex flex-col pb-28">
+              {(() => {
 
         const getRouteRange = (route: any) => {
           const startStr = route.startDate || route.date || '';
@@ -640,17 +418,6 @@ export default function Home() {
 
         return (
           <div className="flex-1 flex flex-col bg-transparent">
-            {/* Header */}
-            <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#E8E9F1]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
-              <div className="flex-1 flex flex-col justify-center text-[34px] font-semibold text-[#2F3036] font-['Google_Sans_Flex'] break-words">Calendar</div>
-              <button 
-                onClick={() => setShowNotifications(true)}
-                className="bg-white flex gap-[10px] items-center justify-center p-[8px] relative rounded-[50px] shrink-0 size-[44px] cursor-pointer border-none shadow-[0px_0px_10px_rgba(0,0,0,0.05)]"
-              >
-                <img src={imgNotificationIcon} alt="Notifications" className="w-[20px] h-[20px]" />
-                <div className="absolute bg-[#f52525] rounded-[30px] size-[14px] top-0 left-[30px]" />
-              </button>
-            </header>
 
             {/* Month / Week View Mode Toggle Selector — Month first */}
             <div className="flex mx-4 shrink-0 mt-2 mb-4" style={{ borderBottom: '1px solid #D4D6DD' }}>
@@ -659,20 +426,20 @@ export default function Home() {
                 className="flex-1 py-[10px] bg-transparent border-none cursor-pointer flex justify-center items-center"
                 style={{ borderBottom: calendarViewMode === 'month' ? '4px solid #FF7048' : '4px solid transparent', marginBottom: '-1px' }}
               >
-                <span style={{ color: calendarViewMode === 'month' ? '#FF7048' : '#2F3036', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Month</span>
+                <span style={{ color: calendarViewMode === 'month' ? '#FF7048' : '#2B3B63', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Month</span>
               </button>
               <button 
                 onClick={() => setCalendarViewMode('week')}
                 className="flex-1 py-[10px] bg-transparent border-none cursor-pointer flex justify-center items-center"
                 style={{ borderBottom: calendarViewMode === 'week' ? '4px solid #FF7048' : '4px solid transparent', marginBottom: '-1px' }}
               >
-                <span style={{ color: calendarViewMode === 'week' ? '#FF7048' : '#2F3036', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Week</span>
+                <span style={{ color: calendarViewMode === 'week' ? '#FF7048' : '#2B3B63', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Week</span>
               </button>
             </div>
 
             {/* Month Header Dropdown */}
             <div className="flex items-center gap-[10px] px-4 select-none cursor-pointer shrink-0 mb-4">
-              <div className="flex flex-col justify-center text-[#2F3036] text-[26px] font-semibold font-['Google_Sans_Flex'] break-words">{calendarMonthLabel}</div>
+              <div className="flex flex-col justify-center text-[#2B3B63] text-[26px] font-semibold font-['Google_Sans_Flex'] break-words">{calendarMonthLabel}</div>
               <div className="w-[16px] h-[16px] flex items-center justify-center">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M13.349 4L8.25456 8.94671L3.16013 4L1.58789 5.5266L8.25456 12L14.9212 5.5266L13.349 4Z" fill="#71727A"/>
@@ -707,7 +474,7 @@ export default function Home() {
                           height: 80,
                           paddingTop: 12,
                           paddingBottom: 12,
-                          background: (isActive || isToday) ? '#2F3036' : 'white',
+                          background: (isActive || isToday) ? '#2B3B63' : 'white',
                           boxShadow: (isActive || isToday) ? 'none' : '0px 4px 15px rgba(0,0,0,0.02)'
                         }}
                       >
@@ -716,7 +483,7 @@ export default function Home() {
                           <span style={{ fontSize: 12, fontWeight: 600, fontFamily: 'Google Sans Flex', textAlign: 'center', textTransform: 'uppercase', color: (isActive || isToday) ? '#D4D6DD' : '#71727A' }}>
                             {day.dayName}
                           </span>
-                          <span style={{ fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex', textAlign: 'center', color: (isActive || isToday) ? 'white' : '#2F3036', marginTop: 2 }}>
+                          <span style={{ fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex', textAlign: 'center', color: (isActive || isToday) ? 'white' : '#2B3B63', marginTop: 2 }}>
                             {day.dayNum}
                           </span>
                         </div>
@@ -771,8 +538,8 @@ export default function Home() {
                                   onClick={() => setSelectedCalendarDate(dateKey)}
                                   style={{
                                     width: 30, height: 30, borderRadius: 26, border: 'none', cursor: 'pointer',
-                                    background: isActive ? '#2F3036' : 'white',
-                                    color: isActive ? 'white' : '#2F3036',
+                                    background: isActive ? '#2B3B63' : 'white',
+                                    color: isActive ? 'white' : '#2B3B63',
                                     fontSize: 14, fontWeight: 600, fontFamily: 'Google Sans Flex',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s'
                                   }}
@@ -792,7 +559,7 @@ export default function Home() {
 
               {/* Schedule header */}
               <div className="flex items-center justify-between mt-2">
-                <span style={{ fontSize: 16, fontWeight: 600, color: '#2F3036', fontFamily: 'Google Sans Flex' }}>Schedule</span>
+                <span style={{ fontSize: 16, fontWeight: 600, color: '#2B3B63', fontFamily: 'Google Sans Flex' }}>Schedule</span>
                 <span style={{ fontSize: 12, fontWeight: 500, color: '#71727A', fontFamily: 'Google Sans Flex' }}>{calendarRoutes.length} {calendarRoutes.length === 1 ? 'Route' : 'Routes'}</span>
               </div>
 
@@ -809,7 +576,7 @@ export default function Home() {
                     return (
                       <Link 
                         key={route.id} 
-                        to={`/route/${route.id}`} 
+                        to={`/route/${route.id}`} state={{ from: location.pathname + location.search }} 
                         className="self-stretch bg-white rounded-[24px] flex items-start p-[12px] gap-[16px] decoration-none active:scale-[0.98] transition-transform"
                         style={{ boxShadow: '0px 8px 40px rgba(0,0,0,0.10)', outline: '2px solid white', outlineOffset: '-2px' }}
                       >
@@ -818,12 +585,12 @@ export default function Home() {
                           style={{ borderTop: `3px ${route.stripeColor} solid` }}
                         >
                           <div className="flex flex-col items-center justify-start">
-                            <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{dayStr}</span>
+                            <span style={{ color: '#2B3B63', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{dayStr}</span>
                             <span style={{ color: '#71727A', fontSize: 12, fontWeight: 400, fontFamily: 'Google Sans Flex', marginTop: 2 }}>{monthStr}</span>
                           </div>
                         </div>
                         <div className="flex-1 flex flex-col items-start gap-[4px]">
-                          <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{route.id} - {route.name}</span>
+                          <span style={{ color: '#2B3B63', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{route.id} - {route.name}</span>
                           <span style={{ color: '#71727A', fontSize: 14, fontWeight: 400, fontFamily: 'Google Sans Flex' }} className="truncate self-stretch">{route.stops[0]?.address || route.startingAddress || 'No stops assigned'}</span>
                           <span style={{ color: '#71727A', fontSize: 12, fontWeight: 400, fontFamily: 'Google Sans Flex' }}>
                             {startStr !== endStr ? `${startStr}, ${route.startTime || '09:00 AM'} - ${endStr}, ${route.endTime || '07:00 PM'}` : `${route.startTime || '09:00 AM'} - ${route.endTime || '07:00 PM'}`}
@@ -841,7 +608,7 @@ export default function Home() {
                   <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
                     <CalendarIcon size={24} className="text-[#71727A]" />
                   </div>
-                  <p style={{ fontSize: 15, fontWeight: 600, color: '#2F3036', fontFamily: 'Google Sans Flex' }}>No Routes Scheduled</p>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: '#2B3B63', fontFamily: 'Google Sans Flex' }}>No Routes Scheduled</p>
                   <p style={{ fontSize: 12, color: '#71727A', fontFamily: 'Google Sans Flex', maxWidth: 200 }}>There are no routes scheduled for this date.</p>
                 </div>
               )}
@@ -849,6 +616,10 @@ export default function Home() {
           </div>
         );
       })()}
+            </div>
+          )}
+        </div>
+      )}
 
 
 
@@ -859,14 +630,21 @@ export default function Home() {
         <div className="flex-1 flex flex-col">
           {/* Header */}
           <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f8f9fe]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
-            <div className="flex-1 flex flex-col justify-center text-[34px] font-semibold text-[#2F3036] font-['Google_Sans_Flex']">Profile</div>
-            <button 
-              onClick={() => setShowNotifications(true)}
-              className="bg-[#e8e9f1] flex gap-[10px] items-center justify-center p-[8px] relative rounded-[50px] shrink-0 size-[44px] cursor-pointer border-none"
-            >
-              <img src={imgNotificationIcon} alt="Notifications" className="w-[20px] h-[20px]" />
-              <div className="absolute bg-[#f52525] rounded-[30px] size-[14px] top-0 left-[30px]" />
-            </button>
+            <div className="flex-1 flex flex-col justify-center text-[34px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Profile</div>
+            <div className="flex items-center gap-[10px]">
+              <button 
+                onClick={() => setShowNotifications(true)}
+                className="bg-[#e8e9f1] flex gap-[10px] items-center justify-center p-[8px] relative rounded-[50px] shrink-0 size-[44px] cursor-pointer border-none"
+              >
+                <img src={imgNotificationIcon} alt="Notifications" className="w-[20px] h-[20px]" />
+                <div className="absolute bg-[#f52525] rounded-[30px] size-[14px] top-0 left-[30px]" />
+              </button>
+              <div
+                className="bg-[#e8e9f1] flex items-center justify-center p-[2px] relative rounded-[50px] shrink-0 size-[44px] cursor-pointer border-none"
+              >
+                <img src={imgUserImage} alt="Profile" className="w-full h-full rounded-full object-cover" />
+              </div>
+            </div>
           </header>
 
           <main className="px-4 py-2 space-y-6 pb-28">
@@ -876,7 +654,7 @@ export default function Home() {
                 <img alt="Driver" className="w-full h-full object-cover" src={imgUserImage} />
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-lg font-bold text-[#2F3036] truncate font-['Google_Sans_Flex']">{activeDriver.name}</h2>
+                <h2 className="text-lg font-bold text-[#2B3B63] truncate font-['Google_Sans_Flex']">{activeDriver.name}</h2>
                 <p className="text-[13px] text-[#71727A] font-semibold truncate mt-0.5">Driver ID: SHD-4890</p>
                 <p className="text-[12px] text-[#FF7048] font-bold truncate mt-0.5">Vehicle: Ford F-550 (Plate: 83A-4927)</p>
               </div>
@@ -888,15 +666,15 @@ export default function Home() {
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="bg-[#F2F4F7] p-3 rounded-2xl">
                   <span className="text-[11px] text-[#71727A] font-bold uppercase block">Hours</span>
-                  <span className="text-[18px] font-extrabold text-[#2F3036] mt-0.5 block">6.2h</span>
+                  <span className="text-[18px] font-extrabold text-[#2B3B63] mt-0.5 block">6.2h</span>
                 </div>
                 <div className="bg-[#F2F4F7] p-3 rounded-2xl">
                   <span className="text-[11px] text-[#71727A] font-bold uppercase block">Miles</span>
-                  <span className="text-[18px] font-extrabold text-[#2F3036] mt-0.5 block">142 mi</span>
+                  <span className="text-[18px] font-extrabold text-[#2B3B63] mt-0.5 block">142 mi</span>
                 </div>
                 <div className="bg-[#F2F4F7] p-3 rounded-2xl">
                   <span className="text-[11px] text-[#71727A] font-bold uppercase block">Stops</span>
-                  <span className="text-[18px] font-extrabold text-[#2F3036] mt-0.5 block">2/5</span>
+                  <span className="text-[18px] font-extrabold text-[#2B3B63] mt-0.5 block">2/5</span>
                 </div>
               </div>
             </div>
@@ -907,7 +685,7 @@ export default function Home() {
               
               <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <div className="flex flex-col gap-0.5 max-w-[70%]">
-                  <span className="text-[15px] font-bold text-[#2F3036]">GPS High Precision</span>
+                  <span className="text-[15px] font-bold text-[#2B3B63]">GPS High Precision</span>
                   <span className="text-[12px] text-[#71727A] font-semibold">Increase real-time location accuracy</span>
                 </div>
                 <button
@@ -923,7 +701,7 @@ export default function Home() {
 
               <div className="flex items-center justify-between py-2 border-b border-gray-100">
                 <div className="flex flex-col gap-0.5 max-w-[70%]">
-                  <span className="text-[15px] font-bold text-[#2F3036]">Push Notifications</span>
+                  <span className="text-[15px] font-bold text-[#2B3B63]">Push Notifications</span>
                   <span className="text-[12px] text-[#71727A] font-semibold">Receive route updates from Dispatcher</span>
                 </div>
                 <button
@@ -939,7 +717,7 @@ export default function Home() {
 
               <div className="flex items-center justify-between py-2">
                 <div className="flex flex-col gap-0.5 max-w-[70%]">
-                  <span className="text-[15px] font-bold text-[#2F3036]">Offline Sync Mode</span>
+                  <span className="text-[15px] font-bold text-[#2B3B63]">Offline Sync Mode</span>
                   <span className="text-[12px] text-[#71727A] font-semibold">Auto save and sync data when offline</span>
                 </div>
                 <button
@@ -958,7 +736,7 @@ export default function Home() {
             <div className="space-y-3 pt-4">
               <button 
                 onClick={resetData}
-                className="w-full bg-[#E8E9F1] hover:bg-gray-200 text-[#2F3036] font-bold py-3.5 rounded-2xl text-[14px] transition active:scale-[0.99] cursor-pointer border-none"
+                className="w-full bg-[#E8E9F1] hover:bg-gray-200 text-[#2B3B63] font-bold py-3.5 rounded-2xl text-[14px] transition active:scale-[0.99] cursor-pointer border-none"
               >
                 Reset App Data Sync
               </button>
@@ -977,14 +755,14 @@ export default function Home() {
 
       {/* ── 4. NOTIFICATIONS SLIDING OVERLAY PANEL ──────────────────────────── */}
       {showNotifications && (
-        <div className="absolute inset-0 bg-black/60 z-50 flex flex-col justify-end select-none">
+        <div className="fixed inset-0 bg-black/60 z-50 flex flex-col justify-end select-none">
           {/* Dismiss Click Area */}
           <div className="flex-1" onClick={() => setShowNotifications(false)} />
           
           {/* Notification Card Panel */}
           <div className="bg-white rounded-t-[32px] p-5 max-h-[75%] flex flex-col space-y-4 border-t border-gray-150 animate-in slide-in-from-bottom duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h2 className="text-lg font-bold text-[#2F3036] flex items-center gap-2 font-['Google_Sans_Flex']">
+              <h2 className="text-lg font-bold text-[#2B3B63] flex items-center gap-2 font-['Google_Sans_Flex']">
                 <span>🔔</span> Notifications Inbox
               </h2>
               <button 
@@ -1007,7 +785,7 @@ export default function Home() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1.5">
-                      <span className="font-bold text-[#2F3036] text-[14px] font-['Google_Sans_Flex']">{notification.title}</span>
+                      <span className="font-bold text-[#2B3B63] text-[14px] font-['Google_Sans_Flex']">{notification.title}</span>
                       <span className="text-[11px] text-[#71727A] font-semibold">{notification.time}</span>
                     </div>
                     <p className="text-[12px] text-[#71727A] font-medium leading-relaxed mt-1 font-sans">{notification.body}</p>
@@ -1021,14 +799,14 @@ export default function Home() {
 
       {/* ── 5. DRIVER PROFILE SELECTION SWITCH OVERLAY ───────────────────────── */}
       {showDriverMenu && (
-        <div className="absolute inset-0 bg-black/60 z-50 flex flex-col justify-end select-none">
+        <div className="fixed inset-0 bg-black/60 z-50 flex flex-col justify-end select-none">
           {/* Dismiss Click Area */}
           <div className="flex-1" onClick={() => setShowDriverMenu(false)} />
           
           {/* Active Switcher Card Panel */}
           <div className="bg-white rounded-t-[32px] p-5 max-h-[75%] flex flex-col space-y-4 border-t border-gray-150">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h2 className="text-lg font-bold text-[#2F3036] flex items-center gap-1.5 font-['Google_Sans_Flex']">
+              <h2 className="text-lg font-bold text-[#2B3B63] flex items-center gap-1.5 font-['Google_Sans_Flex']">
                 <span>👤</span> Switch Active Driver
               </h2>
               <button 
@@ -1051,7 +829,7 @@ export default function Home() {
                     "p-3 rounded-2xl flex items-center gap-3 cursor-pointer transition border",
                     drv.id === activeDriver.id 
                       ? "bg-[#ff7048]/10 border-[#ff7048] text-[#ff7048]" 
-                      : "bg-[#F2F4F7] hover:bg-gray-200 border-transparent text-[#2F3036]"
+                      : "bg-[#F2F4F7] hover:bg-gray-200 border-transparent text-[#2B3B63]"
                   )}
                 >
                   <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-black/5 bg-gray-200 select-none">
@@ -1061,6 +839,34 @@ export default function Home() {
                   {drv.id === activeDriver.id && <span className="font-bold text-xs uppercase tracking-wide bg-[#ff7048] text-white px-2 py-0.5 rounded-md font-sans">Active</span>}
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 6. ROUTE NOTE OVERLAY ───────────────────────── */}
+      {selectedNote && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex flex-col justify-end select-none">
+          {/* Dismiss Click Area */}
+          <div className="flex-1" onClick={() => setSelectedNote(null)} />
+          
+          {/* Note Card Panel */}
+          <div className="bg-white rounded-t-[32px] p-5 flex flex-col space-y-4 border-t border-gray-150 animate-in slide-in-from-bottom duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <h2 className="text-lg font-bold text-[#2B3B63] flex items-center gap-2 font-['Google_Sans_Flex']">
+                <Info size={20} className="text-[#FF7048]"/> Route Note
+              </h2>
+              <button 
+                onClick={() => setSelectedNote(null)}
+                className="text-gray-400 hover:text-gray-600 font-extrabold text-sm cursor-pointer border-none bg-transparent"
+              >
+                ✕ Close
+              </button>
+            </div>
+            <div className="pb-6">
+              <p className="text-[14px] text-[#2B3B63] font-['Google_Sans_Flex'] leading-relaxed whitespace-pre-wrap">
+                {selectedNote}
+              </p>
             </div>
           </div>
         </div>

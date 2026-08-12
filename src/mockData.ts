@@ -32,6 +32,7 @@ export interface Stop {
   buildingOrientation?: string;
   gpsMarked?: boolean;
   gpsCoords?: { lat: number; lng: number };
+  distance?: string;
   workOrders: WorkOrder[];
 }
 
@@ -53,6 +54,9 @@ export interface RouteData {
   startingAddress?: string;
   routeNote?: string;
   dispatcherPhone?: string;
+  ownerEntity?: string;
+  endAddress?: string;
+  totalDistance?: string;
 }
 
 export interface Driver {
@@ -94,37 +98,50 @@ export const mockDrivers: Driver[] = [
 
 export const initialRoutes: RouteData[] = [
   {
-    id: 'RT-1001',
-    name: 'Harrisonburg Route',
+    id: 'RT-006',
+    name: 'Route 1',
     startTime: '07:00 AM',
     endTime: '05:00 PM',
-    date: 'Jul 27',
-    dayOfMonth: '27',
-    monthName: 'Jul',
-    stopsCount: 5,
-    dealerName: 'Rose MNF (Demo Dev)',
+    date: 'Aug 11',
+    dayOfMonth: '11',
+    monthName: 'Aug',
+    stopsCount: 6,
+    dealerName: 'NganLe Store A',
     status: 'En Route',
     stripeColor: '#FF7048',
-    startDate: 'Jul 27',
-    endDate: 'Jul 27',
-    startingAddress: '3210 S Main St, Harrisonburg, VA 22801',
-    routeNote: '--',
+    startDate: 'Aug 11',
+    endDate: 'Aug 11',
+    startingAddress: 'Newton St, Seattle, WA 98109',
+    endAddress: 'Newton St, Seattle, WA 98109',
+    totalDistance: '5539.8 mi',
+    ownerEntity: 'NganLe Store A',
+    routeNote: 'Please ensure to call the customer 30 minutes prior to arrival. Heavy traffic expected on US-340 detour.',
     dispatcherPhone: '540-555-0110',
     stops: [
       {
         id: '1',
         num: 1,
-        address: '3210 S Main St, Harrisonburg, VA 22801',
+        address: 'Newton St, Seattle, WA 98109',
         status: 'Done',
         workOrders: [
           {
-            id: 'WO-1000',
-            type: 'Lot Transfer',
+            id: 'WO-11',
+            type: 'Delivery',
             category: 'Move',
-            action: 'Start',
+            action: 'Dropoff',
             status: 'Completed',
-            customerName: 'Start address',
-            customerPhone: '555-0000',
+            customerName: 'Alice Johnson',
+            customerPhone: '555-0001',
+            unitInfo: { size: '10x10', modelName: 'Shed', base: 'Grey', trim: 'White', roof: 'Metal', serial: 'SN-0001' }
+          },
+          {
+            id: 'WO-12',
+            type: 'Repair',
+            category: 'Service',
+            action: 'Visit',
+            status: 'Completed',
+            customerName: 'Bob Smith',
+            customerPhone: '555-0002',
             unitInfo: { size: '', base: '', trim: '', roof: '', serial: '' }
           }
         ]
@@ -132,95 +149,115 @@ export const initialRoutes: RouteData[] = [
       {
         id: '2',
         num: 2,
-        address: '3210 S Main St, Harrisonburg, VA 22801',
-        status: 'Pending',
+        address: '1102 US-340, Shenandoah, VA 22849',
+        status: 'Servicing',
+        distance: '0.2 mi away',
         workOrders: [
           {
-            id: 'WO-1042',
+            id: 'WO-27',
             type: 'Delivery',
             category: 'Move',
             action: 'Pickup',
             status: 'Pending',
-            customerName: 'Dennis Sartain',
-            customerPhone: '555-1111',
-            unitInfo: { size: '10x12', modelName: 'Utility shed', base: 'Grey', trim: 'White', roof: 'Metal', serial: 'SN-927711' }
+            customerName: 'David Copperfield',
+            customerPhone: '555-2222',
+            unitInfo: { size: '10x12', modelName: 'Premium Storage Utility Shed with Double Doors', base: 'Grey', trim: 'White', roof: 'Metal', serial: 'SN-927711' }
           },
           {
-            id: 'WO-1043',
-            type: 'Delivery',
+            id: 'WO-28',
+            type: 'Repo',
             category: 'Move',
-            action: 'Pickup',
+            action: 'Dropoff',
             status: 'Pending',
-            customerName: 'Marisol Reyes',
-            customerPhone: '555-2222',
+            customerName: 'Jane Smith',
+            customerPhone: '555-3333',
             unitInfo: { size: '12x16', modelName: 'Garden shed', base: 'Brown', trim: 'White', roof: 'Metal', serial: 'SN-927718' }
           },
           {
-            id: 'WO-1051',
+            id: 'WO-29',
+            type: 'Repair',
+            category: 'Service',
+            action: 'Visit',
+            status: 'Pending',
+            customerName: 'Khiet (Site Inspection)',
+            customerPhone: '555-4444',
+            unitInfo: { size: '', base: '', trim: '', roof: '', serial: '' }
+          },
+          {
+            id: 'WO-30',
             type: 'Delivery',
             category: 'Move',
-            action: 'Pickup',
+            action: 'Dropoff',
             status: 'Pending',
-            customerName: 'Grant Whitfield',
-            customerPhone: '555-3333',
-            unitInfo: { size: '8x10', modelName: 'Lean-to shed', base: 'White', trim: 'White', roof: 'Shingle', serial: 'SN-927774' }
+            customerName: 'Long Name Customer Limited Liability Company',
+            customerPhone: '555-5555',
+            unitInfo: { size: '14x20', modelName: 'Garage shed', base: 'Red', trim: 'White', roof: 'Shingle', serial: 'SN-999999' }
           }
         ]
       },
       {
         id: '3',
         num: 3,
-        address: '212 N Main St, Bridgewater, VA 22812',
+        address: '1102 US-340, Shenandoah, VA 22849',
         status: 'Pending',
         workOrders: [
           {
-            id: 'WO-1042',
+            id: 'WO-22',
             type: 'Delivery',
             category: 'Move',
-            action: 'Dropoff',
+            action: 'Visit',
             status: 'Pending',
-            customerName: 'Dennis Sartain',
+            customerName: 'Ngan Le',
             customerPhone: '555-1111',
-            unitInfo: { size: '10x12', modelName: 'Utility shed', base: 'Grey', trim: 'White', roof: 'Metal', serial: 'SN-927711' }
-          },
-          {
-            id: 'WO-1043',
-            type: 'Delivery',
-            category: 'Move',
-            action: 'Dropoff',
-            status: 'Pending',
-            customerName: 'Marisol Reyes',
-            customerPhone: '555-2222',
-            unitInfo: { size: '12x16', modelName: 'Garden shed', base: 'Brown', trim: 'White', roof: 'Metal', serial: 'SN-927718' }
+            unitInfo: { size: '', base: '', trim: '', roof: '', serial: '' }
           }
         ]
       },
       {
         id: '4',
         num: 4,
-        address: '116 W Beverley St, Staunton, VA 24401',
+        address: 'Staten Island Ferry, Staten Island, NY',
         status: 'Pending',
         workOrders: [
           {
-            id: 'WO-1051',
+            id: 'WO-31',
             type: 'Delivery',
             category: 'Move',
             action: 'Dropoff',
             status: 'Pending',
-            customerName: 'Grant Whitfield',
+            customerName: 'Khiet',
             customerPhone: '555-3333',
-            unitInfo: { size: '8x10', modelName: 'Lean-to shed', base: 'White', trim: 'White', roof: 'Shingle', serial: 'SN-927774' }
+            unitInfo: { size: '12x16', modelName: 'Garden shed', base: 'Brown', trim: 'White', roof: 'Metal', serial: 'SN-927718' }
           }
         ]
       },
       {
         id: '5',
         num: 5,
-        address: '3210 S Main St, Harrisonburg, VA 22801',
+        address: 'Vesta Dr, PA 17745',
         status: 'Pending',
         workOrders: [
           {
-            id: 'WO-1001',
+            id: 'WO-27',
+            type: 'Delivery',
+            category: 'Move',
+            action: 'Dropoff',
+            status: 'Pending',
+            customerName: 'Dennis Sartain',
+            customerPhone: '555-2222',
+            unitInfo: { size: '10x12', modelName: 'Utility shed', base: 'Grey', trim: 'White', roof: 'Metal', serial: 'SN-927711' }
+          }
+        ]
+      },
+      {
+        id: '6',
+        num: 6,
+        address: 'Newton St, Seattle, WA 98109',
+        status: 'Pending',
+        distance: '100 mi away',
+        workOrders: [
+          {
+            id: 'WO-END',
             type: 'Lot Transfer',
             category: 'Move',
             action: 'End',
@@ -235,7 +272,7 @@ export const initialRoutes: RouteData[] = [
   },
   {
     id: 'R-002',
-    name: 'Dallas North',
+    name: 'Route 2',
     startTime: '09:00 AM',
     endTime: '06:00 PM',
     date: 'Jul 10 - Jul 11',
@@ -291,7 +328,7 @@ export const initialRoutes: RouteData[] = [
   },
   {
     id: 'R-003',
-    name: 'Houston South',
+    name: 'Route 3',
     startTime: '09:00 AM',
     endTime: '05:00 PM',
     date: 'Jul 14 - Jul 15',
@@ -310,7 +347,7 @@ export const initialRoutes: RouteData[] = [
   },
   {
     id: 'R-004',
-    name: 'Austin West',
+    name: 'Route 4',
     startTime: '08:00 AM',
     endTime: '04:00 PM',
     date: 'Jun 22',
@@ -376,5 +413,119 @@ export const initialRoutes: RouteData[] = [
         ]
       }
     ]
+  }
+
+  ,
+  {
+    id: 'R-005',
+    name: 'Route 5',
+    startTime: '08:00 AM',
+    endTime: '03:30 PM',
+    date: 'Aug 18',
+    dayOfMonth: '18',
+    monthName: 'Aug',
+    stopsCount: 3,
+    dealerName: 'Store B',
+    status: 'Planned',
+    stripeColor: '#3B82F6',
+    startDate: 'Aug 18',
+    endDate: 'Aug 18',
+    stops: []
+  },
+  {
+    id: 'R-007',
+    name: 'Route 6',
+    startTime: '09:00 AM',
+    endTime: '01:15 PM',
+    date: 'Aug 20',
+    dayOfMonth: '20',
+    monthName: 'Aug',
+    stopsCount: 2,
+    dealerName: 'Store C',
+    status: 'Planned',
+    stripeColor: '#3B82F6',
+    startDate: 'Aug 20',
+    endDate: 'Aug 20',
+    stops: []
+  },
+  {
+    id: 'R-008',
+    name: 'Route 7',
+    startTime: '07:30 AM',
+    endTime: '04:00 PM',
+    date: 'Sep 05',
+    dayOfMonth: '05',
+    monthName: 'Sep',
+    stopsCount: 5,
+    dealerName: 'Store D',
+    status: 'Planned',
+    stripeColor: '#3B82F6',
+    startDate: 'Sep 05',
+    endDate: 'Sep 05',
+    stops: []
+  },
+  {
+    id: 'R-009',
+    name: 'Route 8',
+    startTime: '10:00 AM',
+    endTime: '02:00 PM',
+    date: 'Sep 12',
+    dayOfMonth: '12',
+    monthName: 'Sep',
+    stopsCount: 4,
+    dealerName: 'Store E',
+    status: 'Planned',
+    stripeColor: '#3B82F6',
+    startDate: 'Sep 12',
+    endDate: 'Sep 12',
+    stops: []
+  },
+  {
+    id: 'R-010',
+    name: 'Route 9',
+    startTime: '08:00 AM',
+    endTime: '04:00 PM',
+    date: 'Aug 02',
+    dayOfMonth: '02',
+    monthName: 'Aug',
+    stopsCount: 3,
+    dealerName: 'Store A',
+    status: 'Completed',
+    stripeColor: '#2FA301',
+    startDate: 'Aug 02',
+    endDate: 'Aug 02',
+    stops: []
+  },
+  {
+    id: 'R-011',
+    name: 'Route 10',
+    startTime: '07:00 AM',
+    endTime: '02:00 PM',
+    date: 'Jul 28',
+    dayOfMonth: '28',
+    monthName: 'Jul',
+    stopsCount: 2,
+    dealerName: 'Store B',
+    status: 'Completed',
+    stripeColor: '#2FA301',
+    startDate: 'Jul 28',
+    endDate: 'Jul 28',
+    stops: []
+  },
+  {
+    id: 'R-012',
+    name: 'Route 11',
+    startTime: '09:00 AM',
+    endTime: '05:00 PM',
+    date: 'Jul 10',
+    dayOfMonth: '10',
+    monthName: 'Jul',
+    stopsCount: 4,
+    dealerName: 'Store C',
+    status: 'Completed',
+    stripeColor: '#2FA301',
+    startDate: 'Jul 10',
+    endDate: 'Jul 10',
+    stops: []
   }
 ];

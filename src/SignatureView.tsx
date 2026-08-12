@@ -52,7 +52,7 @@ export default function SignatureView() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.strokeStyle = '#2F3036';
+    ctx.strokeStyle = '#2B3B63';
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -110,7 +110,7 @@ export default function SignatureView() {
         </button>
         <h1
           className="flex-1 m-0"
-          style={{ color: '#2F3036', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
+          style={{ color: '#2B3B63', fontSize: 18, fontWeight: 600, fontFamily: 'Google Sans Flex' }}
         >
           Signature
         </h1>
@@ -180,7 +180,7 @@ export default function SignatureView() {
           className="w-full flex items-center justify-center border-none cursor-pointer active:scale-[0.98] transition-transform rounded-[16px]"
           style={{ paddingTop: 17.5, paddingBottom: 17.5, background: '#D4D6DD' }}
         >
-          <span style={{ color: '#2F3036', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Clear</span>
+          <span style={{ color: '#2B3B63', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Clear</span>
         </button>
       </div>
     </div>

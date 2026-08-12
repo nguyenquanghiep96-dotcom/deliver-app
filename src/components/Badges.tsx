@@ -3,7 +3,7 @@ import { cn } from '../lib/utils';
 
 export function TagBadge({ text, className }: { text: string; className?: string }) {
   return (
-    <div className={cn("px-[8px] py-[3px] rounded-[6px] bg-[#E8E9F1] border border-transparent text-[#2F3036] text-[11px] font-semibold font-['Google_Sans_Flex'] whitespace-nowrap w-fit flex items-center justify-center leading-[normal]", className)}>
+    <div className={cn("px-[8px] py-[3px] rounded-[6px] bg-[#E8E9F1] border border-transparent text-[#2B3B63] text-[11px] font-semibold font-['Google_Sans_Flex'] whitespace-nowrap w-fit flex items-center justify-center leading-[normal]", className)}>
       {text}
     </div>
   );

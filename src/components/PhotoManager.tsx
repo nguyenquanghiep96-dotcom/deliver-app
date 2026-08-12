@@ -69,7 +69,7 @@ export default function PhotoManager({ photos, onAddPhoto, onRemovePhoto, maxPho
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Camera size={18} className="text-[#71727A]" />
-          <span className="text-[15px] font-semibold text-[#2F3036]">Photos</span>
+          <span className="text-[15px] font-semibold text-[#2B3B63]">Photos</span>
           <span className="bg-[#E8E9F1] text-[#71727A] text-[11px] font-bold px-[6px] py-[1px] rounded-full min-w-[20px] text-center">
             {photos.length}
           </span>
@@ -93,7 +93,7 @@ export default function PhotoManager({ photos, onAddPhoto, onRemovePhoto, maxPho
           <div className="w-[48px] h-[48px] bg-[#E8E9F1] rounded-full flex items-center justify-center">
             <Camera size={22} className="text-[#71727A]" />
           </div>
-          <span className="text-[14px] font-semibold text-[#2F3036]">Add Photos</span>
+          <span className="text-[14px] font-semibold text-[#2B3B63]">Add Photos</span>
           <span className="text-[12px] text-[#71727A]">Take or upload photos of this stop</span>
         </button>
       )}
@@ -159,7 +159,7 @@ export default function PhotoManager({ photos, onAddPhoto, onRemovePhoto, maxPho
                   <Camera size={16} className="text-[#FF7048]" />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="text-[14px] font-semibold text-[#2F3036] font-['Google_Sans_Flex']">Take Photo</span>
+                  <span className="text-[14px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Take Photo</span>
                   <span className="text-[11px] text-[#71727A] font-['Google_Sans_Flex']">Open camera to capture</span>
                 </div>
               </button>
@@ -174,7 +174,7 @@ export default function PhotoManager({ photos, onAddPhoto, onRemovePhoto, maxPho
                   <ImagePlus size={16} className="text-[#3B82F6]" />
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="text-[14px] font-semibold text-[#2F3036] font-['Google_Sans_Flex']">Choose from Library</span>
+                  <span className="text-[14px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Choose from Library</span>
                   <span className="text-[11px] text-[#71727A] font-['Google_Sans_Flex']">Select existing photos</span>
                 </div>
               </button>

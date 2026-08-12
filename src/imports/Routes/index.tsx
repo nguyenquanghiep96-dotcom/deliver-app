@@ -84,7 +84,7 @@ function ButtonIcon() {
 function Header() {
   return (
     <div className="absolute content-stretch flex items-center justify-between left-0 px-[16px] py-[12px] top-[54px] w-[393px]" data-name="Header">
-      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2f3036] text-[34px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2B3B63] text-[34px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Routes</p>
       </div>
       <ButtonIcon />
@@ -289,7 +289,7 @@ function CurrentStopContainer() {
 function ActiveRouteDetails() {
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full" data-name="Active Route Details">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2f3036] text-[16px] w-[min-content]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2B3B63] text-[16px] w-[min-content]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Acitve Route</p>
       </div>
       <CurrentStopContainer />
@@ -302,7 +302,7 @@ function CustomTag() {
     <div className="bg-[#d4d6dd] h-full relative rounded-[11px] shrink-0" data-name="Custom Tag">
       <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
         <div className="[word-break:break-word] content-stretch flex flex-col items-center justify-center leading-[0] not-italic px-[14px] py-[6px] relative size-full text-left whitespace-nowrap">
-          <div className="flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center relative shrink-0 text-[#2f3036] text-[18px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+          <div className="flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center relative shrink-0 text-[#2B3B63] text-[18px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
             <p className="leading-[normal]">22</p>
           </div>
           <div className="flex flex-col font-['Google_Sans_Flex:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#71727a] text-[12px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
@@ -317,7 +317,7 @@ function CustomTag() {
 function CurrentStopInfoContainer1() {
   return (
     <div className="content-stretch flex gap-[6px] items-center justify-end relative shrink-0 w-full" data-name="Current Stop Info Container">
-      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold h-full justify-center leading-[0] min-w-px not-italic relative text-[#2f3036] text-[16px] text-left" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold h-full justify-center leading-[0] min-w-px not-italic relative text-[#2B3B63] text-[16px] text-left" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">R-016 - Disney Land</p>
       </div>
       <div className="bg-[#3b82f6] content-stretch flex gap-[4px] items-center justify-center overflow-clip px-[6px] py-[2px] relative rounded-[6px] shrink-0" data-name="Status">
@@ -388,7 +388,7 @@ function CustomTag1() {
     <div className="bg-[#d4d6dd] h-full relative rounded-[11px] shrink-0" data-name="Custom Tag">
       <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
         <div className="[word-break:break-word] content-stretch flex flex-col items-center justify-center leading-[0] not-italic px-[14px] py-[6px] relative size-full text-left whitespace-nowrap">
-          <div className="flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center relative shrink-0 text-[#2f3036] text-[18px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+          <div className="flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center relative shrink-0 text-[#2B3B63] text-[18px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
             <p className="leading-[normal]">26</p>
           </div>
           <div className="flex flex-col font-['Google_Sans_Flex:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#71727a] text-[12px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
@@ -403,7 +403,7 @@ function CustomTag1() {
 function CurrentStopInfoContainer2() {
   return (
     <div className="content-stretch flex gap-[6px] items-center justify-end relative shrink-0 w-full" data-name="Current Stop Info Container">
-      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold h-full justify-center leading-[0] min-w-px not-italic relative text-[#2f3036] text-[16px] text-left" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold h-full justify-center leading-[0] min-w-px not-italic relative text-[#2B3B63] text-[16px] text-left" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">R-017 - New York</p>
       </div>
       <div className="bg-[#3b82f6] content-stretch flex gap-[4px] items-center justify-center overflow-clip px-[6px] py-[2px] relative rounded-[6px] shrink-0" data-name="Status">
@@ -475,7 +475,7 @@ function NextStop() {
 function UpcomingSchedule() {
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full" data-name="Upcoming Schedule">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Upcoming Schedule</p>
       </div>
       <NextStop />
@@ -502,12 +502,12 @@ function TabBar() {
         </div>
       </div>
       <div className="content-stretch flex items-center justify-center py-[10px] relative shrink-0" data-name="Tab">
-        <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[18px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+        <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[18px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
           <p className="leading-[normal]">Completed</p>
         </div>
       </div>
       <div className="content-stretch flex items-center justify-center py-[10px] relative shrink-0" data-name="Tab">
-        <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[18px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+        <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[18px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
           <p className="leading-[normal]">Calendar</p>
         </div>
       </div>
@@ -690,7 +690,7 @@ export default function Routes() {
       <Header />
       <ActiveRoute />
       <TabBar />
-      <div className="-translate-x-1/2 absolute bg-[#2f3036] content-stretch drop-shadow-[0px_0px_5px_rgba(0,0,0,0.16)] flex gap-[5px] items-center left-1/2 p-[6px] rounded-[24px] top-[755px] w-[361px]" data-name="Button">
+      <div className="-translate-x-1/2 absolute bg-[#2B3B63] content-stretch drop-shadow-[0px_0px_5px_rgba(0,0,0,0.16)] flex gap-[5px] items-center left-1/2 p-[6px] rounded-[24px] top-[755px] w-[361px]" data-name="Button">
         <a className="cursor-pointer flex-[1_0_0] min-w-px relative rounded-[30px]" data-name="Home">
           <div className="flex flex-col items-center justify-center size-full">
             <div className="content-stretch flex flex-col gap-[8px] items-center justify-center px-[6px] py-[10px] relative size-full">

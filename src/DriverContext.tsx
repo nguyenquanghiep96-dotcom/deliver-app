@@ -41,6 +41,7 @@ export const DriverProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   });
 
   const [routes, setRoutes] = useState<RouteData[]>(() => {
+    localStorage.removeItem('opshub_driver_routes');
     const saved = localStorage.getItem('opshub_driver_routes');
     if (saved) {
       try {

@@ -197,7 +197,7 @@ function CurrentStopContainer() {
 export default function ActiveRouteDetails() {
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative size-full" data-name="Active Route Details">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex',sans-serif] font-semibold justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2f3036] text-[16px] w-[min-content]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex',sans-serif] font-semibold justify-center leading-[0] min-w-full not-italic relative shrink-0 text-[#2B3B63] text-[16px] w-[min-content]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Active Route</p>
       </div>
       <CurrentStopContainer />

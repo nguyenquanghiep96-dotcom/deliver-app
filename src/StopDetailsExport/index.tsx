@@ -119,7 +119,7 @@ function StopStatusIndicator() {
     <div className="content-stretch flex flex-[1_0_0] gap-[8px] items-center min-w-px relative" data-name="Stop Status Indicator">
       <div className="bg-[#e8e9f1] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
         <div aria-hidden className="absolute border border-[#e8e9f1] border-solid inset-0 pointer-events-none rounded-[6px]" />
-        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[11px] whitespace-nowrap">Lot Transfer</p>
+        <p className="[word-break:break-word] font-['Proxima_Nova:Semibold',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[11px] whitespace-nowrap">Lot Transfer</p>
       </div>
       <StopUserContainer />
       <StopInfoContainer />
@@ -138,7 +138,7 @@ function StopStatusContainer() {
 function AddressContainer() {
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full" data-name="Address Container">
-      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[20px] w-full">
+      <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Bold',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[20px] w-full">
         <p className="leading-[normal]">123 William St, Manhattan, NY, 10038</p>
       </div>
       <StopStatusContainer />
@@ -162,7 +162,7 @@ function NoteHeader() {
   return (
     <div className="content-stretch flex gap-[4px] items-center relative shrink-0" data-name="Note Header">
       <Description24DpE3E3E3Fill1Wght400Grad0Opsz />
-      <p className="[word-break:break-word] font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[14px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <p className="[word-break:break-word] font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[14px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         Stop Notes
       </p>
     </div>
@@ -196,7 +196,7 @@ function InstructionHeader() {
   return (
     <div className="content-stretch flex gap-[4px] items-center relative shrink-0" data-name="Instruction Header">
       <Description24DpE3E3E3Fill1Wght400Grad0Opsz1 />
-      <p className="[word-break:break-word] font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold leading-[normal] not-italic relative shrink-0 text-[#2f3036] text-[14px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <p className="[word-break:break-word] font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold leading-[normal] not-italic relative shrink-0 text-[#2B3B63] text-[14px] whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         Delivery Instruction
       </p>
     </div>
@@ -300,7 +300,7 @@ function PhotoCamera24DpE3E3E3Fill1Wght400Grad0Opsz() {
 function AddPhotoText() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative" data-name="Add Photo Text">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">Add Photo</p>
       </div>
     </div>
@@ -369,7 +369,7 @@ function CreditCard24DpE3E3E3Fill1Wght400Grad0Opsz() {
 function PaymentText() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative" data-name="Payment Text">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">Payment</p>
       </div>
     </div>
@@ -438,7 +438,7 @@ function StylusNote24DpE3E3E3Fill1Wght400Grad0Opsz() {
 function SignatureText() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative" data-name="Signature Text">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">Delivery Signature</p>
       </div>
     </div>
@@ -507,7 +507,7 @@ function Description24DpE3E3E3Fill1Wght400Grad0Opsz2() {
 function CommentText() {
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start justify-center min-w-px relative" data-name="Comment Text">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2f3036] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic overflow-hidden relative shrink-0 text-[#2B3B63] text-[16px] text-ellipsis w-full whitespace-nowrap" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal] overflow-hidden text-ellipsis">Comment / Notes</p>
       </div>
     </div>
@@ -622,7 +622,7 @@ function Header() {
   return (
     <div className="-translate-x-1/2 absolute content-stretch flex gap-[16px] items-center left-1/2 px-[16px] py-[12px] top-[54px] w-[393px]" data-name="Header">
       <ButtonIcon />
-      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2f3036] text-[18px] text-center" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-[1_0_0] flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] min-w-px not-italic relative text-[#2B3B63] text-[18px] text-center" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Stop 3/5</p>
       </div>
       <div className="bg-[rgba(59,130,246,0.2)] content-stretch flex items-center px-[8px] py-[3px] relative rounded-[6px] shrink-0" data-name="Value">
@@ -636,7 +636,7 @@ function Header() {
 function BuildingDetailsHeader() {
   return (
     <div className="content-stretch flex h-[20px] items-center justify-center px-[16px] relative shrink-0" data-name="Building Details Header">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold h-full justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[18px] w-[361px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold h-full justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[18px] w-[361px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Building Details</p>
       </div>
     </div>
@@ -650,7 +650,7 @@ function BuildingStyleContainer() {
       <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:Regular',sans-serif] font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#71727a] text-[14px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Style:</p>
       </div>
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Tiny Home (Porch)</p>
       </div>
     </div>
@@ -664,7 +664,7 @@ function SizeContainer() {
       <div className="[word-break:break-word] flex flex-col font-['Proxima_Nova:Medium',sans-serif] justify-center leading-[0] not-italic relative shrink-0 text-[#71727a] text-[14px] w-full">
         <p className="leading-[normal]">Size:</p>
       </div>
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">14 x 20 x 7</p>
       </div>
     </div>
@@ -677,7 +677,7 @@ function SerialContainer() {
       <div className="flex flex-col font-['Google_Sans_Flex:Regular',sans-serif] font-normal justify-center relative shrink-0 text-[#71727a] text-[14px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Serial #:</p>
       </div>
-      <div className="flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center relative shrink-0 text-[#2f3036] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center relative shrink-0 text-[#2B3B63] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">RE001</p>
       </div>
     </div>
@@ -797,7 +797,7 @@ function BuildingDetailsContainer() {
 function CustomerInfoHeader() {
   return (
     <div className="content-stretch flex h-[20px] items-center justify-center px-[16px] relative shrink-0" data-name="Customer Info Header">
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold h-full justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[18px] w-[361px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold h-full justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[18px] w-[361px]" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Customer Infor</p>
       </div>
     </div>
@@ -811,7 +811,7 @@ function BuildingStyleContainer1() {
       <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:Regular',sans-serif] font-normal justify-center leading-[0] not-italic relative shrink-0 text-[#71727a] text-[14px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">Name:</p>
       </div>
-      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2f3036] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="[word-break:break-word] flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center leading-[0] not-italic relative shrink-0 text-[#2B3B63] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">James Carter</p>
       </div>
     </div>
@@ -824,7 +824,7 @@ function PhoneInfo() {
       <div className="flex flex-col font-['Proxima_Nova:Medium',sans-serif] justify-center relative shrink-0 text-[#71727a] text-[14px] w-full">
         <p className="leading-[normal]">Phone:</p>
       </div>
-      <div className="flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center relative shrink-0 text-[#2f3036] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
+      <div className="flex flex-col font-['Google_Sans_Flex:SemiBold',sans-serif] font-semibold justify-center relative shrink-0 text-[#2B3B63] text-[16px] w-full" style={{ fontVariationSettings: '"GRAD" 0, "ROND" 0, "wdth" 100' }}>
         <p className="leading-[normal]">714-345-4909</p>
       </div>
     </div>
