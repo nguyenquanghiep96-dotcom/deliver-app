@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronLeft, Phone, MapPin, ListFilter, Calendar as CalendarIcon, FileText } from "lucide-react";
+import { ChevronLeft, Phone, MapPin, ListFilter, Calendar as CalendarIcon, FileText, Info } from "lucide-react";
 import { useNavigate, useParams, Link, useLocation } from "react-router";
 import { useDriver } from "./DriverContext";
 import { cn } from "./lib/utils";
@@ -27,7 +27,8 @@ export default function RouteDetail() {
   const backUrl = location.state?.from || "/home?tab=home";
   const { routes } = useDriver();
   
-  const [sortByNearest, setSortByNearest] = useState(false);
+  const [isRearranging, setIsRearranging] = useState(false);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
 
   const route = routes.find((r) => r.id === routeId);
 
@@ -89,34 +90,24 @@ export default function RouteDetail() {
   };
 
   const displayStops = [...actualStops];
-  if (sortByNearest) {
-    // Mock sort: just reverse for demo purposes
-    displayStops.reverse();
-  }
 
   return (
-    <div className="relative flex-1 flex flex-col overflow-y-auto select-none h-full pb-0 no-scrollbar bg-[#F4F5F8] font-['Google_Sans_Flex']">
+    <div className="relative flex-1 flex flex-col overflow-y-auto select-none h-full pb-0 no-scrollbar bg-white font-['Google_Sans_Flex']">
       
       {/* ── Dark Header Section ────────────────────────────────────────────── */}
-      <div className="bg-[#2B3B63] px-4 pt-[66px] pb-6 rounded-b-[32px] text-white relative shadow-[0_8px_30px_rgba(43,59,99,0.3)] z-10">
+      <div className="bg-white px-4 pt-[66px] pb-6 rounded-b-[32px] text-[#2B3B63] relative z-10 shadow-sm border-b border-[#E5E7EB]">
         
         {/* Top bar */}
-        <header className="flex items-center justify-between mb-5">
+        <header className="flex items-center gap-3 mb-5">
           <button
             onClick={() => navigate(backUrl)}
-            className="size-[40px] bg-white/10 rounded-full flex items-center justify-center border border-white/20 cursor-pointer active:scale-95 transition-all shrink-0 text-white hover:bg-white/20"
+            className="size-[40px] bg-white rounded-full flex items-center justify-center border border-[#E5E7EB] cursor-pointer active:scale-95 transition-all shrink-0 text-[#2B3B63] hover:bg-gray-50 shadow-sm"
           >
             <ChevronLeft size={20} />
           </button>
-          <h1 className="text-[18px] font-semibold m-0 tracking-wide">
+          <h1 className="text-[18px] font-semibold m-0 tracking-wide text-[#2B3B63]">
             Route Details
           </h1>
-          <button 
-            className="bg-white/10 flex gap-[10px] items-center justify-center p-[8px] relative rounded-full shrink-0 size-[40px] cursor-pointer border border-white/20 active:scale-95 transition-all hover:bg-white/20"
-          >
-            <img src={imgNotificationIcon} alt="Notifications" className="w-[18px] h-[18px] invert brightness-0" />
-            <div className="absolute bg-[#f52525] rounded-[30px] size-[12px] top-[2px] right-[2px] border-2 border-[#2B3B63]" />
-          </button>
         </header>
 
         {/* Status Badge & Route ID */}
@@ -125,11 +116,11 @@ export default function RouteDetail() {
             <div className={cn(
               "px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0 flex items-center gap-1.5",
               route.status === 'Completed' ? "bg-[#2FA301]/20 text-[#4ADE80]" :
-              route.status === 'En Route' ? "bg-[#3B82F6]/20 text-[#60A5FA]" :
-              "bg-[#F09A11]/20 text-[#FBBF24]"
+              route.status === 'En Route' ? "bg-[#2563eb] text-white" :
+              "bg-[#F09A11]/20 text-[#F09A11]"
             )}>
               {route.status === 'En Route' && (
-                <div className="w-1.5 h-1.5 rounded-full bg-[#60A5FA]" />
+                <div className="w-1.5 h-1.5 rounded-full bg-white" />
               )}
               {route.status === 'En Route' ? 'In Progress' : route.status === 'Planned' ? 'Scheduled' : 'Completed'}
             </div>
@@ -140,7 +131,7 @@ export default function RouteDetail() {
         </div>
 
         {/* Route Name */}
-        <h2 className="text-[32px] font-bold leading-tight m-0 mb-3 text-white tracking-tight">
+        <h2 className="text-[32px] font-bold leading-tight m-0 mb-3 text-[#2B3B63] tracking-tight">
           {route.name}
         </h2>
 
@@ -148,45 +139,40 @@ export default function RouteDetail() {
         <div className="flex flex-col gap-2 mb-6">
           <div className="flex items-start gap-2.5">
             <MapPin size={16} className="text-[#9CA3AF] mt-0.5 shrink-0" />
-            <span className="text-[14px] text-[#E5E7EB] font-medium leading-snug">
-              Start: {route.startingAddress || 'N/A'}
+            <span className="text-[14px] leading-tight text-[#71727A]">
+              {route.startingAddress || "123 Main St, Dallas, TX 75201"}
             </span>
           </div>
           <div className="flex items-start gap-2.5">
             <CalendarIcon size={16} className="text-[#9CA3AF] mt-0.5 shrink-0" />
-            <span className="text-[14px] text-[#E5E7EB] font-medium leading-snug">
-              {buildScheduleString()}
+            <span className="text-[14px] leading-tight text-[#71727A]">
+              {route.startDate ? `Est. ${route.startDate}, ${route.startTime || "10:42 AM"}` : "Est. Aug 12, 10:42 AM"}
             </span>
           </div>
         </div>
 
-        {/* Progress & Stats */}
-        <div className="bg-white/10 rounded-[20px] p-4 backdrop-blur-sm border border-white/10">
-          <div className="flex justify-between items-center text-[13px] text-white/80 font-medium mb-2">
-             <span>Progress</span>
-             <span className="font-bold text-white">{completedWOsCount}/{totalWOs} Work Orders</span>
+        {/* Progress Card */}
+        <div className="bg-[#F8F9FB] rounded-[24px] p-4 flex flex-col gap-3 border border-[#E5E7EB]">
+          <div className="flex items-center justify-between text-[13px] font-['Google_Sans_Flex']">
+            <span className="text-[#71727A]">Progress</span>
+            <span className="font-semibold text-[#2B3B63]">{completedWOsCount}/{totalWOs} Work Orders</span>
           </div>
-          <div className="w-full bg-white/20 h-[8px] rounded-full overflow-hidden mb-4">
-             <div 
-               className="h-full bg-[#2FA301] transition-all duration-500 rounded-full" 
-               style={{ width: `${progressPercentage}%` }} 
-             />
+          <div className="w-full bg-[#E5E7EB] h-[8px] rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-[#FF7048] transition-all duration-500 rounded-full" 
+              style={{ width: `${progressPercentage}%` }} 
+            />
           </div>
-          
-          {/* Stats Grid */}
-          <div className="flex items-start text-center">
-            <div className="flex-1 border-r border-white/20 flex flex-col items-start pr-2">
-              <span className="text-[11px] text-white/70">WOs done</span>
-              <span className="text-[16px] font-bold text-white">{completedWOsCount}/{totalWOs}</span>
+          <div className="flex items-center justify-between mt-1 text-[#71727A] text-[13px] font-['Google_Sans_Flex']">
+            <div className="flex items-center gap-2">
+              <MapPin size={14} className="text-[#9CA3AF]"/>
+              <span>{remainingDistance} remaining</span>
             </div>
-            <div className="flex-1 border-r border-white/20 flex flex-col items-start px-3">
-              <span className="text-[11px] text-white/70">Remaining</span>
-              <span className="text-[16px] font-bold text-white">{route.totalDistance || remainingDistance}</span>
-            </div>
-            <div className="flex-1 flex flex-col items-start pl-3">
-              <span className="text-[11px] text-white/70">Est. done</span>
-              <span className="text-[16px] font-bold text-white">{estCompletion}</span>
-            </div>
+            <button 
+              className="text-[#71727A] bg-white border border-[#E5E7EB] rounded-full p-1.5 shadow-sm active:scale-95 transition-transform cursor-pointer"
+            >
+              <Info size={16} strokeWidth={1.5} />
+            </button>
           </div>
         </div>
 
@@ -194,71 +180,99 @@ export default function RouteDetail() {
 
       {/* ── Action Buttons & Notes ────────────────────────────────────────── */}
       <div className="px-4 py-6 flex flex-col gap-4 relative z-0">
-        {/* Call & Map buttons */}
-        <div className="flex gap-3">
-          {route.dispatcherPhone && (
-            <a 
-              href={`tel:${route.dispatcherPhone}`}
-              className="flex-1 bg-white border border-[#E5E7EB] text-[#2B3B63] py-[14px] rounded-[16px] flex items-center justify-center gap-[8px] font-bold text-[15px] decoration-none shadow-[0_2px_10px_rgba(0,0,0,0.03)] active:scale-95 transition-all"
-            >
-              <Phone size={18} className="text-[#FF7048]" />
-              Dispatcher
-            </a>
-          )}
-          <a 
-            href={buildMapsUrl()}
-            target="_blank" rel="noreferrer"
-            className="flex-1 bg-[#2B3B63] text-white py-[14px] rounded-[16px] flex items-center justify-center gap-[8px] font-bold text-[15px] decoration-none shadow-[0_8px_20px_rgba(43,59,99,0.3)] active:scale-95 transition-all border border-[#2B3B63]"
-          >
-            <MapPin size={18} />
-            Full Maps
-          </a>
+        <div className="flex flex-col gap-3">
+          <button className="w-full bg-[#2FA301]/10 text-[#2FA301] px-4 py-3.5 rounded-[16px] font-bold text-[15px] flex items-center justify-center gap-2 active:scale-95 transition-transform border-none cursor-pointer">
+            <Phone size={18} />
+            Call Dispatcher
+          </button>
         </div>
 
-        {/* Route Note */}
-        {route.routeNote && (
-          <div className="bg-[#FFF7EE] border border-[#FFE4C4] rounded-[16px] p-4 flex items-start gap-3 shadow-sm mt-1">
-            <div className="shrink-0 mt-0.5"><FileText size={20} className="text-[#FF7048]" /></div>
-            <p className="flex-1 text-[14px] text-[#2B3B63] leading-[1.5] m-0 font-medium">
-              {route.routeNote}
-            </p>
+        {route.routeNote && !bannerDismissed && (
+          <div className="bg-[#FFF8F1] border border-[#FF7048]/20 rounded-[16px] p-4 flex items-start gap-3 relative shadow-sm">
+            <Info size={20} className="text-[#FF7048] shrink-0 mt-0.5" />
+            <div className="flex-1 pr-6">
+              <h3 className="text-[14px] font-bold text-[#FF7048] m-0 mb-1">Route Note</h3>
+              <p className="text-[13px] text-[#2F3036] m-0 leading-snug">
+                {route.routeNote}
+              </p>
+            </div>
+            <button 
+              onClick={() => setBannerDismissed(true)}
+              className="absolute top-3 right-3 text-[#FF7048] bg-transparent border-none cursor-pointer p-1 active:scale-95"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>close</span>
+            </button>
           </div>
         )}
       </div>
 
-      {/* ── Stops List ────────────────────────────────────────────────────── */}
-      <div className="px-4 pb-28 flex flex-col gap-4 relative z-0">
-        <div className="flex items-center justify-between">
-          <h3 className="font-bold text-[18px] text-[#2B3B63] m-0">
-            Stops ({actualStops.length})
-          </h3>
-          <button 
-            onClick={() => setSortByNearest(!sortByNearest)}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[12px] font-bold transition-colors cursor-pointer active:scale-95",
-              sortByNearest 
-                ? "bg-[#2B3B63] text-white border-[#2B3B63]" 
-                : "bg-white text-[#71727A] border-[#E5E7EB] hover:bg-gray-50 shadow-sm"
-            )}
+      {/* ── Stops List ── */}
+      <div className="px-4 pb-28 flex flex-col gap-4 relative z-0 mt-6">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <h3 className="text-[18px] font-bold text-[#2B3B63] m-0">Stops ({actualStops.length})</h3>
+            <button 
+              onClick={() => setIsRearranging(!isRearranging)}
+              className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E5E7EB] text-[12px] font-semibold transition-colors cursor-pointer", isRearranging ? "bg-[#2B3B63] text-white" : "bg-white text-[#2B3B63]")}
+            >
+              <ListFilter size={14} />
+              Rearrange
+            </button>
+          </div>
+          <a
+            href={buildMapsUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full mt-2 bg-[#2B3B63] text-white px-4 py-3.5 rounded-[16px] font-bold text-[15px] flex items-center justify-center gap-2 active:scale-95 transition-transform decoration-none cursor-pointer border border-[#2B3B63]"
           >
-            <ListFilter size={14} />
-            {sortByNearest ? "Nearest First" : "Sort by Nearest"}
-          </button>
+            <MapPin size={18} />
+            Full Maps
+          </a>
+          <div className="text-[13px] text-[#71727A] font-medium mt-1 mb-2">Total distance: {route.totalDistance || remainingDistance}</div>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
+          {/* Start Card */}
+          <div className="bg-white rounded-[20px] shadow-sm border border-[#E5E7EB] p-4 flex gap-3 items-center">
+            <div className="bg-[#E8E9F1] rounded-full size-[40px] flex items-center justify-center shrink-0">
+              <MapPin size={20} className="text-[#2B3B63]" />
+            </div>
+            <div className="flex flex-col flex-1">
+              <span className="text-[#71727A] text-[11px] font-bold uppercase tracking-wider mb-0.5">Start</span>
+              <span className="text-[#2B3B63] text-[14px] font-bold font-['Google_Sans_Flex'] leading-tight">{route.startingAddress || "123 Main St, Dallas, TX 75201"}</span>
+            </div>
+          </div>
+
           {displayStops.map((stop) => (
-            <StopCard 
-              key={stop.id}
-              stop={stop} 
-              routeId={route.id}
-              hideAction={true} // HIDDEN FOR PLANNER TRACK
-              className="rounded-[20px] shadow-sm border border-[#E5E7EB]"
-            />
+            <div key={stop.id} className={cn("transition-all duration-300 relative", isRearranging ? "pl-10" : "")}>
+              {isRearranging && (
+                <div className="absolute left-1 top-1/2 -translate-y-1/2 text-[#9CA3AF]">
+                  <span className="material-symbols-outlined">drag_handle</span>
+                </div>
+              )}
+              <div className="block no-underline">
+                <StopCard 
+                  stop={stop} 
+                  routeId={route.id}
+                  hideAction={true} 
+                  className={cn("rounded-[20px] shadow-sm border border-[#E5E7EB]", stop.status === "Done" ? "overflow-hidden" : "")}
+                />
+              </div>
+            </div>
           ))}
+
+          {/* End Card */}
+          <div className="bg-white rounded-[20px] shadow-sm border border-[#E5E7EB] p-4 flex gap-3 items-center">
+            <div className="bg-[#E8E9F1] rounded-full size-[40px] flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-[#2B3B63]">flag</span>
+            </div>
+            <div className="flex flex-col flex-1">
+              <span className="text-[#71727A] text-[11px] font-bold uppercase tracking-wider mb-0.5">End</span>
+              <span className="text-[#2B3B63] text-[14px] font-bold font-['Google_Sans_Flex'] leading-tight">{actualStops.length > 0 ? actualStops[actualStops.length-1].address : '8999 Sunset Blvd, Austin, TX'}</span>
+            </div>
+          </div>
         </div>
       </div>
-      
     </div>
   );
 }
