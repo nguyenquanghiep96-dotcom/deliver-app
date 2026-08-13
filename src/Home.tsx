@@ -6,7 +6,7 @@ import { RouteSummaryCard } from './components/home/RouteSummaryCard';
 import { EmptyRouteState } from './components/home/EmptyRouteState';
 import { CompletedRouteState } from './components/home/CompletedRouteState';
 import { UpcomingRoutesSection } from './components/home/UpcomingRoutesSection';
-import { Bell, ChevronRight, User, Info, Clock, LogOut, CheckCircle2, AlertCircle, Phone, MapPin, Calendar as CalendarIcon, CircleUserRound } from 'lucide-react';
+import { Bell, ChevronRight, User, Info, Clock, LogOut, CheckCircle2, AlertCircle, Phone, MapPin, Calendar as CalendarIcon, CircleUserRound, MessageSquare } from 'lucide-react';
 import { cn, cleanStopType, getStopHeader } from './lib/utils';
 
 import imgUserImage from './assets/3271fc3a53481ca6ba5eb96b8724359f747c54a3.png';
@@ -232,7 +232,7 @@ export default function Home() {
         <div className="flex-1 flex flex-col bg-[#f8f9fe]">
           {/* Header */}
           <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f8f9fe]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
-            <div className="flex-1 flex flex-col justify-center text-[34px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Schedule</div>
+            <div className="flex-1 flex flex-col justify-center text-[28px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Schedule</div>
           </header>
 
           {/* Master View Toggle (List vs Calendar) */}
@@ -627,127 +627,70 @@ export default function Home() {
 
       {/* ── 3. PROFILE TAB VIEW ──────────────────────────────────────────────── */}
       {currentTab === 'profile' && (
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col bg-[#f8f9fe]">
           {/* Header */}
           <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f8f9fe]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
-            <div className="flex-1 flex flex-col justify-center text-[34px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Profile</div>
-            <div className="flex items-center gap-[10px]">
-              <button 
-                onClick={() => setShowNotifications(true)}
-                className="bg-[#e8e9f1] flex gap-[10px] items-center justify-center p-[8px] relative rounded-[50px] shrink-0 size-[44px] cursor-pointer border-none"
-              >
-                <img src={imgNotificationIcon} alt="Notifications" className="w-[20px] h-[20px]" />
-                <div className="absolute bg-[#f52525] rounded-[30px] size-[14px] top-0 left-[30px]" />
-              </button>
-              <div
-                className="bg-[#e8e9f1] flex items-center justify-center p-[2px] relative rounded-[50px] shrink-0 size-[44px] cursor-pointer border-none"
-              >
-                <img src={imgUserImage} alt="Profile" className="w-full h-full rounded-full object-cover" />
-              </div>
-            </div>
+            <div className="flex-1 flex flex-col justify-center text-[28px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Profile</div>
           </header>
 
-          <main className="px-4 py-2 space-y-6 pb-28">
-            {/* Driver Info Card */}
-            <div className="bg-white rounded-[24px] p-5 shadow-sm flex items-center gap-4 border border-black/[0.02]">
-              <div className="w-14 h-14 rounded-2xl overflow-hidden shrink-0 border border-black/5 bg-gray-200">
-                <img alt="Driver" className="w-full h-full object-cover" src={imgUserImage} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h2 className="text-lg font-bold text-[#2B3B63] truncate font-['Google_Sans_Flex']">{activeDriver.name}</h2>
-                <p className="text-[13px] text-[#71727A] font-semibold truncate mt-0.5">Driver ID: SHD-4890</p>
-                <p className="text-[12px] text-[#FF7048] font-bold truncate mt-0.5">Vehicle: Ford F-550 (Plate: 83A-4927)</p>
-              </div>
-            </div>
-
-            {/* Today's Stats Card */}
-            <div className="bg-white rounded-[24px] p-5 shadow-sm border border-black/[0.02] space-y-4">
-              <h3 className="text-[14px] font-bold text-[#71727A] uppercase tracking-wider">Today's Performance</h3>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="bg-[#F2F4F7] p-3 rounded-2xl">
-                  <span className="text-[11px] text-[#71727A] font-bold uppercase block">Hours</span>
-                  <span className="text-[18px] font-extrabold text-[#2B3B63] mt-0.5 block">6.2h</span>
+          <main className="px-4 py-2 space-y-4 pb-28">
+            {/* Driver Info & Performance Card */}
+            <div className="bg-white rounded-[24px] p-5 shadow-sm border border-black/[0.02]">
+              <div className="flex items-center gap-4 mb-5">
+                <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 border border-black/5 bg-gray-200">
+                  <img alt="Driver" className="w-full h-full object-cover" src={imgUserImage} />
                 </div>
-                <div className="bg-[#F2F4F7] p-3 rounded-2xl">
-                  <span className="text-[11px] text-[#71727A] font-bold uppercase block">Miles</span>
-                  <span className="text-[18px] font-extrabold text-[#2B3B63] mt-0.5 block">142 mi</span>
-                </div>
-                <div className="bg-[#F2F4F7] p-3 rounded-2xl">
-                  <span className="text-[11px] text-[#71727A] font-bold uppercase block">Stops</span>
-                  <span className="text-[18px] font-extrabold text-[#2B3B63] mt-0.5 block">2/5</span>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-lg font-bold text-[#2B3B63] truncate font-['Google_Sans_Flex']">{activeDriver.name}</h2>
+                  <p className="text-[13px] text-[#71727A] font-semibold truncate mt-0.5">SHD-4890 • Ford F-550</p>
                 </div>
               </div>
-            </div>
-
-            {/* Settings Toggles */}
-            <div className="bg-white rounded-[24px] p-5 shadow-sm border border-black/[0.02] space-y-4">
-              <h3 className="text-[14px] font-bold text-[#71727A] uppercase tracking-wider">System Configuration</h3>
               
-              <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                <div className="flex flex-col gap-0.5 max-w-[70%]">
-                  <span className="text-[15px] font-bold text-[#2B3B63]">GPS High Precision</span>
-                  <span className="text-[12px] text-[#71727A] font-semibold">Increase real-time location accuracy</span>
+              <div className="grid grid-cols-3 gap-3 border-t border-gray-100 pt-4">
+                <div className="flex flex-col items-center">
+                  <span className="text-[18px] font-extrabold text-[#2B3B63]">1,240</span>
+                  <span className="text-[11px] text-[#71727A] font-bold mt-1 text-center leading-tight">Total<br/>Miles</span>
                 </div>
-                <button
-                  onClick={() => setGpsPrecision(!gpsPrecision)}
-                  className={cn(
-                    "w-11 h-6 rounded-full p-0.5 transition-colors duration-200 flex items-center cursor-pointer border-none",
-                    gpsPrecision ? "bg-[#ff7048]" : "bg-gray-200"
-                  )}
-                >
-                  <div className={cn("bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-200", gpsPrecision ? "translate-x-5" : "translate-x-0")} />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                <div className="flex flex-col gap-0.5 max-w-[70%]">
-                  <span className="text-[15px] font-bold text-[#2B3B63]">Push Notifications</span>
-                  <span className="text-[12px] text-[#71727A] font-semibold">Receive route updates from Dispatcher</span>
+                <div className="flex flex-col items-center border-x border-gray-100 px-2">
+                  <span className="text-[18px] font-extrabold text-[#2B3B63]">145</span>
+                  <span className="text-[11px] text-[#71727A] font-bold mt-1 text-center leading-tight">Completed<br/>Routes</span>
                 </div>
-                <button
-                  onClick={() => setPushNotifications(!pushNotifications)}
-                  className={cn(
-                    "w-11 h-6 rounded-full p-0.5 transition-colors duration-200 flex items-center cursor-pointer border-none",
-                    pushNotifications ? "bg-[#ff7048]" : "bg-gray-200"
-                  )}
-                >
-                  <div className={cn("bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-200", pushNotifications ? "translate-x-5" : "translate-x-0")} />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <div className="flex flex-col gap-0.5 max-w-[70%]">
-                  <span className="text-[15px] font-bold text-[#2B3B63]">Offline Sync Mode</span>
-                  <span className="text-[12px] text-[#71727A] font-semibold">Auto save and sync data when offline</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-[18px] font-extrabold text-[#2B3B63]">892</span>
+                  <span className="text-[11px] text-[#71727A] font-bold mt-1 text-center leading-tight">Completed<br/>WOs</span>
                 </div>
-                <button
-                  onClick={() => setOfflineSync(!offlineSync)}
-                  className={cn(
-                    "w-11 h-6 rounded-full p-0.5 transition-colors duration-200 flex items-center cursor-pointer border-none",
-                    offlineSync ? "bg-[#ff7048]" : "bg-gray-200"
-                  )}
-                >
-                  <div className={cn("bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-200", offlineSync ? "translate-x-5" : "translate-x-0")} />
-                </button>
               </div>
             </div>
 
-            {/* Logout and data action buttons */}
-            <div className="space-y-3 pt-4">
-              <button 
-                onClick={resetData}
-                className="w-full bg-[#E8E9F1] hover:bg-gray-200 text-[#2B3B63] font-bold py-3.5 rounded-2xl text-[14px] transition active:scale-[0.99] cursor-pointer border-none"
-              >
-                Reset App Data Sync
-              </button>
-              
-              <button 
-                onClick={() => { alert('Logout logic triggered'); }}
-                className="w-full bg-red-500/10 hover:bg-red-500/15 text-red-600 font-bold py-3.5 rounded-2xl text-[14px] transition active:scale-[0.99] cursor-pointer border-none flex items-center justify-center gap-1.5"
-              >
-                <LogOut size={16} /> Logout Account
-              </button>
+            {/* List Actions */}
+            <div className="bg-white rounded-[24px] overflow-hidden shadow-sm border border-black/[0.02]">
+              <div className="flex items-center justify-between p-4 border-b border-gray-100 cursor-pointer active:bg-gray-50 transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#E8E9F1] flex items-center justify-center">
+                    <MessageSquare size={16} className="text-[#2B3B63]" />
+                  </div>
+                  <span className="text-[15px] font-bold text-[#2B3B63]">Góp ý & Báo lỗi</span>
+                </div>
+                <ChevronRight size={18} className="text-[#9CA3AF]" />
+              </div>
+              <div className="flex items-center justify-between p-4 cursor-pointer active:bg-gray-50 transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#E8E9F1] flex items-center justify-center">
+                    <Info size={16} className="text-[#2B3B63]" />
+                  </div>
+                  <span className="text-[15px] font-bold text-[#2B3B63]">Thông tin ứng dụng</span>
+                </div>
+                <ChevronRight size={18} className="text-[#9CA3AF]" />
+              </div>
             </div>
+
+            {/* Logout Section */}
+            <button 
+              onClick={() => { alert('Logout logic triggered'); }}
+              className="w-full mt-4 bg-white shadow-sm border border-black/[0.02] text-[#ef4444] font-bold py-4 rounded-[24px] text-[15px] transition active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
+            >
+              <LogOut size={18} /> Đăng xuất
+            </button>
           </main>
         </div>
       )}
