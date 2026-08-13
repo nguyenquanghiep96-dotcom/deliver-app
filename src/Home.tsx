@@ -636,14 +636,19 @@ export default function Home() {
           <main className="px-4 py-2 space-y-4 pb-28">
             {/* Driver Info & Performance Card */}
             <div className="bg-white rounded-[24px] p-5 shadow-sm border border-black/[0.02]">
-              <div className="flex items-center gap-4 mb-5">
-                <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 border border-black/5 bg-gray-200">
-                  <img alt="Driver" className="w-full h-full object-cover" src={imgUserImage} />
+              <div className="flex items-start justify-between gap-4 mb-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 border border-black/5 bg-gray-200">
+                    <img alt="Driver" className="w-full h-full object-cover" src={imgUserImage} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-lg font-bold text-[#2B3B63] truncate font-['Google_Sans_Flex']">{activeDriver.name}</h2>
+                    <p className="text-[13px] text-[#71727A] font-semibold truncate mt-0.5">ID: SHD-4890 • Ford F-550</p>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="text-lg font-bold text-[#2B3B63] truncate font-['Google_Sans_Flex']">{activeDriver.name}</h2>
-                  <p className="text-[13px] text-[#71727A] font-semibold truncate mt-0.5">SHD-4890 • Ford F-550</p>
-                </div>
+                <button className="text-[#FF7048] bg-[#FF7048]/10 rounded-full p-2 hover:bg-[#FF7048]/20 transition-colors border-none cursor-pointer">
+                  <span className="material-symbols-outlined text-[18px]">edit</span>
+                </button>
               </div>
               
               <div className="grid grid-cols-3 gap-3 border-t border-gray-100 pt-4">
@@ -669,7 +674,7 @@ export default function Home() {
                   <div className="w-8 h-8 rounded-full bg-[#E8E9F1] flex items-center justify-center">
                     <MessageSquare size={16} className="text-[#2B3B63]" />
                   </div>
-                  <span className="text-[15px] font-bold text-[#2B3B63]">Góp ý & Báo lỗi</span>
+                  <span className="text-[15px] font-bold text-[#2B3B63]">Feedback & Bug Report</span>
                 </div>
                 <ChevronRight size={18} className="text-[#9CA3AF]" />
               </div>
@@ -678,7 +683,7 @@ export default function Home() {
                   <div className="w-8 h-8 rounded-full bg-[#E8E9F1] flex items-center justify-center">
                     <Info size={16} className="text-[#2B3B63]" />
                   </div>
-                  <span className="text-[15px] font-bold text-[#2B3B63]">Thông tin ứng dụng</span>
+                  <span className="text-[15px] font-bold text-[#2B3B63]">App Information</span>
                 </div>
                 <ChevronRight size={18} className="text-[#9CA3AF]" />
               </div>
@@ -689,7 +694,7 @@ export default function Home() {
               onClick={() => { alert('Logout logic triggered'); }}
               className="w-full mt-4 bg-white shadow-sm border border-black/[0.02] text-[#ef4444] font-bold py-4 rounded-[24px] text-[15px] transition active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
             >
-              <LogOut size={18} /> Đăng xuất
+              <LogOut size={18} /> Log Out
             </button>
           </main>
         </div>
