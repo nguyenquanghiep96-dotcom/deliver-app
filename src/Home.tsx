@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router';
+import { useLocation, Link, useNavigate } from 'react-router';
 import { useDriver } from './DriverContext';
 import { StopCard } from './components/StopCard';
 import { RouteSummaryCard } from './components/home/RouteSummaryCard';
@@ -42,6 +42,7 @@ const getRemainingDistance = (routeId: string, stops: any[]) => {
 
 export default function Home() {
   const location = useLocation();
+  const navigate = useNavigate();
   const {
     activeDriver,
     drivers,
@@ -691,7 +692,7 @@ export default function Home() {
 
             {/* Logout Section */}
             <button 
-              onClick={() => { alert('Logout logic triggered'); }}
+              onClick={() => navigate('/login', { replace: true })}
               className="w-full mt-4 bg-white shadow-sm border border-black/[0.02] text-[#ef4444] font-bold py-4 rounded-[24px] text-[15px] transition active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
             >
               <LogOut size={18} /> Log Out
