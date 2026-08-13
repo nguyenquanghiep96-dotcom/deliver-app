@@ -42,10 +42,7 @@ export function RouteSummaryCard({
          </div>
       </div>
 
-      {/* Client Info */}
-      <div className="text-[14px] text-[#2B3B63] font-['Google_Sans_Flex']">
-        Client: <span className="font-semibold">{route.ownerEntity || route.dealerName || 'Appalachian Storage (Manufacturer)'}</span>
-      </div>
+
 
       {/* Progress */}
       <div className="route-summary-progress flex flex-col gap-1.5 mt-1">
