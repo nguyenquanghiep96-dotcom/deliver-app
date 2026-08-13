@@ -7,7 +7,10 @@ export default function Login() {
   const navigate = useNavigate();
   return (
     <div className="w-full h-full bg-[#2B3B63] flex flex-col items-center justify-center p-6 relative font-['Google_Sans_Flex']">
-      <h1 className="text-white text-3xl font-bold mb-12 text-center tracking-tight">ShedPro<br/><span className="text-[#FF7048] text-xl">Driver App</span></h1>
+      <div className="mb-12 flex flex-col items-center justify-center">
+        <img src="/ShedPro.svg" alt="ShedPro Logo" className="w-[180px] h-auto invert brightness-0" />
+        <span className="text-[#FF7048] text-[22px] font-bold mt-2 tracking-wide">Driver App</span>
+      </div>
       
       <div className="w-full max-w-sm flex flex-col gap-4">
         

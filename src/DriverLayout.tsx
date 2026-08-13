@@ -37,8 +37,8 @@ export default function DriverLayout() {
   const isScheduleActive = isDetailView ? !!fromSchedule : (location.pathname === '/home' && currentTab === 'schedule');
   const isProfileActive = location.pathname === '/home' && currentTab === 'profile';
 
-  // Always show bottom nav
-  const showBottomNav = true;
+  // Hide bottom nav on splash and login screens
+  const showBottomNav = location.pathname !== '/login' && location.pathname !== '/';
 
   return (
     <div className="min-h-[100dvh] bg-[#4B5563] flex flex-col md:flex-row gap-6 items-center justify-center p-0 md:p-4 select-none">

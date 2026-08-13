@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import { DriverProvider } from './DriverContext';
 import DriverLayout from './DriverLayout';
+import Splash from './Splash';
 import Login from './Login';
 import Home from './Home';
 import RouteDetail from './RouteDetail';
@@ -18,7 +19,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<DriverLayout />}>
-            <Route index element={<Navigate to="/login" replace />} />
+            <Route index element={<Splash />} />
             <Route path="login" element={<Login />} />
             <Route path="home" element={<Home />} />
             <Route path="route/:routeId" element={<RouteDetail />} />
