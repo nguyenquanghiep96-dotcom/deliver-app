@@ -16,6 +16,19 @@
 html, body {
   background-color: #f3f4f6;
   color: #111827;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Driver UI uses flat buttons for clarity in bright outdoor conditions. */
+button,
+[role="button"] {
+  box-shadow: none !important;
 }
 
 /* Disable Tailwind dark mode variants from applying */
@@ -39,4 +52,13 @@ html, body {
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

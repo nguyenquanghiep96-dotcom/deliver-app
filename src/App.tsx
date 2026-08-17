@@ -12,6 +12,7 @@ import PhotosView from './PhotosView';
 import StopNotesView from './StopNotesView';
 import UpcomingStopsList from './UpcomingStopsList';
 import CompletedStopsList from './CompletedStopsList';
+import EndRouteSummary from './EndRouteSummary';
 
 export default function App() {
   return (
@@ -23,7 +24,9 @@ export default function App() {
             <Route path="login" element={<Login />} />
             <Route path="home" element={<Home />} />
             <Route path="route/:routeId" element={<RouteDetail />} />
+            <Route path="route/:routeId/summary" element={<EndRouteSummary />} />
             <Route path="route/:routeId/stop/:stopId" element={<StopDetail />} />
+            <Route path="route/:routeId/stop/:stopId/model" element={<BuildingDetail />} />
             <Route path="route/:routeId/stop/:stopId/building" element={<BuildingDetail />} />
             <Route path="route/:routeId/stop/:stopId/signature" element={<SignatureView />} />
             <Route path="route/:routeId/stop/:stopId/photos" element={<PhotosView />} />

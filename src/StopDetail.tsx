@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Check, MapPin } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, Navigation, Camera, PenLine, FileText, AlertTriangle, Flag, X, MapPin } from 'lucide-react';
 import { useParams, useNavigate, Link } from 'react-router';
 import { useDriver } from './DriverContext';
 import { WorkOrderCard } from './components/WorkOrderCard';
 import { cleanStopType } from './lib/utils';
+import { getProofRequirements } from './lib/proofRequirements';
 
 // ─── Custom SVG Icons (Figma-aligned) ────────────────────────────────────────
 
@@ -18,6 +19,15 @@ const IconArrived = () => (
     <path d="M10.9998 21.9498V20.9498C8.91647 20.7165 7.12897 19.854 5.6373 18.3623C4.14564 16.8706 3.28314 15.0831 3.0498 12.9998H2.0498C1.76647 12.9998 1.52897 12.904 1.3373 12.7123C1.14564 12.5206 1.0498 12.2831 1.0498 11.9998C1.0498 11.7165 1.14564 11.479 1.3373 11.2873C1.52897 11.0956 1.76647 10.9998 2.0498 10.9998H3.0498C3.28314 8.91647 4.14564 7.12897 5.6373 5.6373C7.12897 4.14564 8.91647 3.28314 10.9998 3.0498V2.0498C10.9998 1.76647 11.0956 1.52897 11.2873 1.3373C11.479 1.14564 11.7165 1.0498 11.9998 1.0498C12.2831 1.0498 12.5206 1.14564 12.7123 1.3373C12.904 1.52897 12.9998 1.76647 12.9998 2.0498V3.0498C15.0831 3.28314 16.8706 4.14564 18.3623 5.6373C19.854 7.12897 20.7165 8.91647 20.9498 10.9998H21.9498C22.2331 10.9998 22.4706 11.0956 22.6623 11.2873C22.854 11.479 22.9498 11.7165 22.9498 11.9998C22.9498 12.2831 22.854 12.5206 22.6623 12.7123C22.4706 12.904 22.2331 12.9998 21.9498 12.9998H20.9498C20.7165 15.0831 19.854 16.8706 18.3623 18.3623C16.8706 19.854 15.0831 20.7165 12.9998 20.9498V21.9498C12.9998 22.2331 12.904 22.4706 12.7123 22.6623C12.5206 22.854 12.2831 22.9498 11.9998 22.9498C11.7165 22.9498 11.479 22.854 11.2873 22.6623C11.0956 22.4706 10.9998 22.2331 10.9998 21.9498ZM16.9498 16.9498C18.3165 15.5831 18.9998 13.9331 18.9998 11.9998C18.9998 10.0665 18.3165 8.41647 16.9498 7.0498C15.5831 5.68314 13.9331 4.9998 11.9998 4.9998C10.0665 4.9998 8.41647 5.68314 7.0498 7.0498C5.68314 8.41647 4.9998 10.0665 4.9998 11.9998C4.9998 13.9331 5.68314 15.5831 7.0498 16.9498C8.41647 18.3165 10.0665 18.9998 11.9998 18.9998C13.9331 18.9998 15.5831 18.3165 16.9498 16.9498ZM9.1748 14.8248C8.39147 14.0415 7.9998 13.0998 7.9998 11.9998C7.9998 10.8998 8.39147 9.95814 9.1748 9.1748C9.95814 8.39147 10.8998 7.9998 11.9998 7.9998C13.0998 7.9998 14.0415 8.39147 14.8248 9.1748C15.6081 9.95814 15.9998 10.8998 15.9998 11.9998C15.9998 13.0998 15.6081 14.0415 14.8248 14.8248C14.0415 15.6081 13.0998 15.9998 11.9998 15.9998C10.8998 15.9998 9.95814 15.6081 9.1748 14.8248ZM13.4123 13.4123C13.804 13.0206 13.9998 12.5498 13.9998 11.9998C13.9998 11.4498 13.804 10.979 13.4123 10.5873C13.0206 10.1956 12.5498 9.9998 11.9998 9.9998C11.4498 9.9998 10.979 10.1956 10.5873 10.5873C10.1956 10.979 9.9998 11.4498 9.9998 11.9998C9.9998 12.5498 10.1956 13.0206 10.5873 13.4123C10.979 13.804 11.4498 13.9998 11.9998 13.9998C12.5498 13.9998 13.0206 13.804 13.4123 13.4123Z" fill="white"/>
   </svg>
 );
+
+const WORK_ORDER_EXCEPTION_REASONS = [
+  'Customer unavailable',
+  'Cannot access site',
+  'Site not ready',
+  'Wrong unit',
+  'Damaged building',
+  'Unable to complete',
+] as const;
 
 const IconBuildingOrientation = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -62,12 +72,6 @@ const IconStopNotes = () => (
   </svg>
 );
 
-const IconNavigate = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8.03858 13.743L2.26469 12.846C2.07472 12.8095 1.92113 12.7343 1.80392 12.6203C1.68671 12.5064 1.61033 12.3729 1.57477 12.2198C1.53921 12.0668 1.55076 11.9103 1.60942 11.7505C1.66807 11.5907 1.77461 11.4525 1.92902 11.336L13.5311 3.46842C13.6782 3.36368 13.8357 3.3145 14.0035 3.32088C14.1713 3.32726 14.3201 3.37084 14.4498 3.45162C14.5794 3.5324 14.6841 3.64671 14.7639 3.79456C14.8436 3.9424 14.8688 4.10541 14.8397 4.28359L12.8923 18.1658C12.8558 18.3558 12.7787 18.5123 12.6611 18.6354C12.5435 18.7585 12.4082 18.8378 12.2552 18.8734C12.1021 18.909 11.9486 18.8992 11.7947 18.8443C11.6407 18.7893 11.5055 18.6846 11.389 18.5302L8.03858 13.743Z" fill="white"/>
-  </svg>
-);
-
 const IconUser = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M10.6953 9.33301H5.30467C4.42854 9.33396 3.5886 9.64762 2.96908 10.2052C2.34957 10.7627 2.00106 11.5187 2 12.3072V15.333H14V12.3072C13.9989 11.5187 13.6504 10.7627 13.0309 10.2052C12.4114 9.64762 11.5715 9.33396 10.6953 9.33301Z" fill="#2B3B63"/>
@@ -85,13 +89,24 @@ const IconMobileLink = () => (
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function StopDetail() {
-  const { stopId } = useParams();
+  const { routeId, stopId } = useParams();
   const navigate = useNavigate();
-  const { routes, updateStopStatus, updateWorkOrderStatus } = useDriver();
-  const [showNextStopModal, setShowNextStopModal] = useState(false);
-
-  const currentRoute = routes.find(r => r.stops.some(s => s.id === stopId));
+  const { routes, updateStopStatus, updateWorkOrderStatus, reportWorkOrderIssue, startDrivingMode } = useDriver();
+  const currentRoute = routes.find(r => r.id === routeId);
   const stop = currentRoute?.stops.find(s => s.id === stopId);
+  const [showNextStopModal, setShowNextStopModal] = useState(false);
+  const [pendingCompleteWoId, setPendingCompleteWoId] = useState<string | null>(null);
+  const [showCompleteStopReview, setShowCompleteStopReview] = useState(false);
+  const [reportWorkOrderId, setReportWorkOrderId] = useState<string | null>(null);
+  const [reportReason, setReportReason] = useState('');
+  const [reportDetails, setReportDetails] = useState('');
+  const currentStopKey = `${routeId || ''}:${stopId || ''}`;
+  const defaultExpandedWoId = stop?.workOrders.find(wo => wo.status === 'Pending')?.id || null;
+  const [expandedWoState, setExpandedWoState] = useState<{ stopKey: string; woId: string | null }>(() => ({
+    stopKey: currentStopKey,
+    woId: defaultExpandedWoId,
+  }));
+  const expandedWoId = expandedWoState.stopKey === currentStopKey ? expandedWoState.woId : defaultExpandedWoId;
 
   if (!currentRoute || !stop) {
     return (
@@ -102,34 +117,19 @@ export default function StopDetail() {
   }
 
   const commentCount = stop.comments?.length || 0;
-  const stopIndex = currentRoute.stops.findIndex(s => s.id === stop.id) + 1;
-  const totalStops = currentRoute.stops.length;
-
   const isPending = stop.status === 'Pending';
   const isServicing = stop.status === 'Servicing';
   const isDone = stop.status === 'Done';
 
-  // Status badge
-  let statusBg = 'rgba(239,154,11,0.20)';
-  let statusBorder = '1px solid #F09A11';
-  let statusTextColor = '#F09A11';
-  let statusLabel = 'Pending';
-  if (isServicing) {
-    statusBg = 'rgba(59,130,246,0.20)';
-    statusBorder = '1px solid #3B82F6';
-    statusTextColor = '#3B82F6';
-    statusLabel = 'Arrived';
-  } else if (isDone) {
-    statusBg = 'rgba(47,163,1,0.20)';
-    statusBorder = '1px solid #2FA301';
-    statusTextColor = '#2FA301';
-    statusLabel = 'Done';
-  }
+  const statusLabel = isServicing ? 'Arrived' : isDone ? 'Done' : 'Pending';
 
   // Primary button
   // Only allow I'm Arrived if no other stop in this route is currently Servicing
-  const otherServiceStop = currentRoute.stops.find(s => s.id !== stop.id && s.status === 'Servicing');
-  const arrivedDisabled = isPending && !!otherServiceStop; // disabled if another stop is being serviced
+  const activeService = routes.flatMap(route => route.stops.map(routeStop => ({ route, stop: routeStop })))
+    .find(item => item.stop.status === 'Servicing' && !(item.route.id === currentRoute.id && item.stop.id === stop.id));
+  const arrivedDisabled = isPending && !!activeService;
+  const isTodaysAssignedRoute = currentRoute.date === 'Today';
+  const showArrivedAction = isPending && (currentRoute.status === 'En Route' || isTodaysAssignedRoute);
 
   const handlePrimary = () => {
     if (arrivedDisabled) return;
@@ -138,17 +138,56 @@ export default function StopDetail() {
 
   const handleCompleteWorkOrder = (woId: string) => {
     updateWorkOrderStatus(currentRoute.id, stop.id, woId, 'Completed');
-    
-    const updatedWorkOrders = stop.workOrders.map(wo => wo.id === woId ? { ...wo, status: 'Completed' as const } : wo);
-    const allDone = updatedWorkOrders.every(wo => wo.status === 'Completed' || wo.status === 'Failed');
-    if (allDone) {
-      updateStopStatus(currentRoute.id, stop.id, 'Done');
-      setShowNextStopModal(true);
-    }
+    const nextPendingWorkOrder = stop.workOrders.find(wo => wo.id !== woId && wo.status === 'Pending');
+    setExpandedWoState({ stopKey: currentStopKey, woId: nextPendingWorkOrder?.id || null });
   };
 
-  const nextStop = currentRoute.stops.find(s => s.id !== stop.id && s.status !== 'Done');
-  const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(stop.address)}`;
+  const pendingCompleteWo = stop.workOrders.find(wo => wo.id === pendingCompleteWoId);
+  const reportWorkOrder = stop.workOrders.find(wo => wo.id === reportWorkOrderId);
+  const relatedWorkOrderTasks = pendingCompleteWo
+    ? currentRoute.stops.flatMap(routeStop => routeStop.workOrders.map(wo => ({ ...wo, stopId: routeStop.id }))).filter(wo => wo.id === pendingCompleteWo.id)
+    : [];
+  const isFinalWorkOrderAction = pendingCompleteWo
+    ? relatedWorkOrderTasks.filter(task => task.stopId !== stop.id).every(task => task.status === 'Completed' || task.status === 'Failed')
+    : false;
+  const proofRequirements = pendingCompleteWo ? getProofRequirements(pendingCompleteWo) : null;
+  const hasRequiredPhotos = (pendingCompleteWo?.photos?.length || 0) > 0;
+  const hasRequiredSignature = Boolean(pendingCompleteWo?.signature);
+  const hasRequiredNotes = Boolean(pendingCompleteWo?.notes?.trim());
+  const canConfirmCompletion = Boolean(proofRequirements &&
+    (!proofRequirements.photos || hasRequiredPhotos) &&
+    (!proofRequirements.signature || hasRequiredSignature) &&
+    (!proofRequirements.notes || hasRequiredNotes));
+
+  const completedTaskCount = stop.workOrders.filter(wo => wo.status === 'Completed' || wo.status === 'Failed').length;
+  const allStopActionsComplete = stop.workOrders.length > 0 && completedTaskCount === stop.workOrders.length;
+  const showCompleteStopAction = isServicing && allStopActionsComplete;
+  const nextStop = currentRoute.stops.find(s =>
+    s.id !== stop.id &&
+    s.status !== 'Done' &&
+    s.workOrders.some(wo => wo.action !== 'Start' && wo.action !== 'End')
+  );
+  const handleNavigate = () => {
+    sessionStorage.setItem('opshub_return_to_stop', `/route/${currentRoute.id}/stop/${stop.id}`);
+    startDrivingMode(currentRoute.id, stop.id);
+    const encodedAddress = encodeURIComponent(stop.address);
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}&travelmode=driving`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const closeReportSheet = () => {
+    setReportWorkOrderId(null);
+    setReportReason('');
+    setReportDetails('');
+  };
+
+  const confirmWorkOrderReport = () => {
+    if (!reportWorkOrder || !reportReason) return;
+    reportWorkOrderIssue(currentRoute.id, stop.id, reportWorkOrder.id, reportReason, reportDetails);
+    const nextPending = stop.workOrders.find(workOrder => workOrder.id !== reportWorkOrder.id && workOrder.status === 'Pending');
+    setExpandedWoState({ stopKey: currentStopKey, woId: nextPending?.id || null });
+    closeReportSheet();
+  };
 
   const primaryWO = stop.workOrders?.[0];
   const stopType = primaryWO?.action || 'Stop';
@@ -161,105 +200,298 @@ export default function StopDetail() {
       className="relative flex-1 flex flex-col overflow-y-auto select-none h-full no-scrollbar bg-[#F4F5F8] font-['Google_Sans_Flex']"
     >
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <header
-        className="flex items-center gap-[16px] px-4 pt-[66px] pb-3 shrink-0 sticky top-0 z-50 bg-[#F4F5F8]"
-      >
+      <header className="flex items-center gap-3 px-4 pt-4 md:pt-[66px] pb-4 shrink-0 sticky top-0 z-50 bg-white/95 backdrop-blur-md">
         <button
           onClick={() => navigate(-1)}
-          className="w-10 h-10 bg-white rounded-full flex items-center justify-center shrink-0 border border-[#E5E7EB] cursor-pointer active:scale-95 transition-transform"
+          className="size-11 bg-[#F4F5F8] rounded-full flex items-center justify-center shrink-0 border-none cursor-pointer active:scale-95 transition-transform text-[#2B3B63]"
+          aria-label="Back"
         >
-          <ChevronLeft size={20} color="#2B3B63" />
+          <ChevronLeft size={20} />
         </button>
 
-        <h1 className="flex-1 m-0 text-[#2B3B63] text-[18px] font-bold font-['Google_Sans_Flex'] truncate">
-          Stop {stopIndex}
-        </h1>
-        <div className="w-10 h-10 shrink-0" />
+        <h1 className="flex-1 min-w-0 m-0 text-[#2B3B63] text-[17px] font-semibold truncate">Stop {stop.num}</h1>
       </header>
 
       {/* ── Content ──────────────────────────────────────────────────────── */}
-      <main className="px-4 pb-32 flex flex-col gap-[12px] mt-[4px]">
+      <main className={`px-4 flex flex-col gap-3 pt-4 ${(showArrivedAction || showCompleteStopAction) ? 'pb-52' : 'pb-32'}`}>
 
         {/* Address Subtitle (Large like Route 6) */}
-        <h2 className="m-0 text-[#2B3B63] text-[32px] font-bold font-['Google_Sans_Flex'] leading-tight tracking-tight mb-2">
-          {stop.address}
-        </h2>
-
-        {/* Google Maps card */}
-        <div
-          className="relative overflow-hidden rounded-[24px]"
-          style={{ height: 160, boxShadow: '0px 1px 2px rgba(0,0,0,0.1)', background: 'white' }}
-        >
-          <img src="/map-thumbnail.jpg" alt="Map" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/10" />
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute inset-0 flex items-center justify-center no-underline active:bg-black/20 transition-colors"
-          >
-            <div
-              className="flex items-center gap-[6px] px-[16px] py-[12px] rounded-full shadow-lg"
-              style={{ background: 'rgba(31,32,36,0.85)' }}
-            >
-              <IconNavigate />
-              <span style={{ color: 'white', fontSize: 15, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Navigate</span>
-            </div>
-          </a>
+        <div>
+          <div className={`w-fit mb-2 px-2.5 py-1 rounded-full text-[11px] font-bold flex items-center gap-1.5 ${
+            isServicing ? 'bg-[#2563EB] text-white' : isDone ? 'bg-[#2FA301]/20 text-[#278900]' : 'bg-[#F09A11]/20 text-[#C67A00]'
+          }`}>
+            {isServicing && <span className="size-1.5 rounded-full bg-white" />}
+            {statusLabel}
+          </div>
+          <h2 className="m-0 text-[#2B3B63] text-[24px] font-bold font-['Google_Sans_Flex'] leading-tight tracking-tight">{stop.address}</h2>
         </div>
 
-        {/* Primary Action Button */}
-        {isPending && (
-          <>
-            <button
-              onClick={handlePrimary}
-              disabled={arrivedDisabled}
-              className="w-full flex items-center justify-center gap-[6px] border-none cursor-pointer active:scale-[0.98] transition-transform rounded-[16px] mt-2"
-              style={{
-                paddingTop: 16, paddingBottom: 16,
-                background: arrivedDisabled ? '#D4D6DD' : '#FF7048',
-                boxShadow: arrivedDisabled ? 'none' : '0px 8px 20px rgba(255,112,72,0.3)',
-                cursor: arrivedDisabled ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {!arrivedDisabled && <IconArrived />}
-              <span style={{ color: arrivedDisabled ? '#71727A' : 'white', fontSize: 16, fontWeight: 700, fontFamily: 'Google Sans Flex' }}>
-                I'm Arrived
-              </span>
-            </button>
-            {arrivedDisabled && otherServiceStop && (
-              <div
-                className="rounded-[12px] px-3 py-2 text-center"
-                style={{ background: 'rgba(239,154,11,0.12)', border: '1px solid rgba(239,154,11,0.3)' }}
-              >
-                <span style={{ color: '#F09A11', fontSize: 12, fontWeight: 500, fontFamily: 'Google Sans Flex' }}>
-                  Stop #{currentRoute.stops.find(s => s.id === otherServiceStop.id)?.num} is currently being serviced
-                </span>
-              </div>
-            )}
-          </>
-        )}
+        <div className="w-full">
+          <button
+            type="button"
+            onClick={handleNavigate}
+            className="w-full min-h-[52px] px-4 flex items-center justify-center gap-2 rounded-[14px] bg-white border border-[#DCE0E6] text-[#2B3B63] text-[16px] font-semibold active:scale-[0.98] transition-transform cursor-pointer"
+          >
+            <Navigation size={18} className="text-[#FF7048]" fill="currentColor" />
+            Navigate
+          </button>
+        </div>
 
-        {/* Work Orders List */}
-        {!isPending && (
-          <div className="flex flex-col gap-3 mt-6">
-            <h3 className="text-[18px] font-bold text-[#2B3B63] font-['Google_Sans_Flex'] m-0 mb-1">
-              Work Orders
-            </h3>
-            {stop.workOrders.map((wo) => (
-              <WorkOrderCard
-                key={wo.id}
-                workOrder={wo}
-                routeId={currentRoute.id}
-                stopId={stop.id}
-                onComplete={handleCompleteWorkOrder}
-                stopStatus={stop.status}
-              />
-            ))}
+        {isPending && activeService && (
+          <div
+            className="rounded-[12px] px-3 py-2 text-center"
+            style={{ background: 'rgba(239,154,11,0.12)', border: '1px solid rgba(239,154,11,0.3)' }}
+          >
+            <span style={{ color: '#F09A11', fontSize: 12, fontWeight: 500, fontFamily: 'Google Sans Flex' }}>
+              Stop {activeService.stop.num} · {activeService.route.name} is currently in progress. Finish it before starting another stop.
+            </span>
           </div>
         )}
 
+        {/* Work Orders are always visible for planning; execution unlocks after arrival. */}
+        <div className="flex flex-col gap-3 mt-3">
+          <div className="flex items-center gap-2">
+            <h3 className="text-[20px] font-bold text-[#2B3B63] font-['Google_Sans_Flex'] m-0">Work Orders</h3>
+            <span className="min-w-6 h-6 px-1.5 rounded-full bg-[#2B3B63] text-white text-[12px] font-bold flex items-center justify-center">{stop.workOrders.length}</span>
+          </div>
+          <div className="flex items-center justify-between px-3 py-2.5 rounded-[12px] bg-[#E9EBF1]">
+            <span className="text-[12px] font-semibold text-[#5F6572]">Tasks at this Stop</span>
+            <span className={`text-[12px] font-bold ${allStopActionsComplete ? 'text-[#278900]' : 'text-[#2B3B63]'}`}>
+              {completedTaskCount}/{stop.workOrders.length} complete
+            </span>
+          </div>
+          {showCompleteStopAction && (
+            <div className="rounded-[14px] bg-[#2FA301]/10 border border-[#2FA301]/20 p-3 flex gap-2.5">
+              <Check size={18} className="text-[#278900] shrink-0 mt-0.5" />
+              <p className="m-0 text-[12px] leading-relaxed text-[#3F5F33]">
+                All tasks are complete. Review the Stop before marking it completed.
+              </p>
+            </div>
+          )}
+          {stop.workOrders.map((wo) => (
+            <WorkOrderCard
+              key={wo.id}
+              workOrder={wo}
+              routeId={currentRoute.id}
+              stopId={stop.id}
+              onComplete={setPendingCompleteWoId}
+              onReport={setReportWorkOrderId}
+              stopStatus={stop.status}
+              isExpanded={expandedWoId === wo.id}
+              onToggle={() => setExpandedWoState({ stopKey: currentStopKey, woId: expandedWoId === wo.id ? null : wo.id })}
+            />
+          ))}
+        </div>
+
       </main>
+
+      {/* Persistent arrival action for the route currently in progress. */}
+      {showArrivedAction && (
+        <div className="fixed left-0 right-0 bottom-[72px] z-[45] px-4 pt-3 pb-3 bg-gradient-to-t from-white via-white to-white/90 border-t border-[#E7E9EE]">
+          <button
+            onClick={handlePrimary}
+            disabled={arrivedDisabled}
+            className="w-full min-h-[56px] flex items-center justify-center gap-2 border-none active:scale-[0.98] transition-transform rounded-[14px] bg-[#FF7048] text-white disabled:bg-[#D4D6DD] disabled:text-[#71727A] disabled:cursor-not-allowed cursor-pointer"
+          >
+            {!arrivedDisabled && <IconArrived />}
+            <span className="text-[16px] font-semibold font-['Google_Sans_Flex']">I'm Arrived</span>
+          </button>
+        </div>
+      )}
+
+      {showCompleteStopAction && (
+        <div className="fixed left-0 right-0 bottom-[72px] z-[45] px-4 pt-3 pb-3 bg-gradient-to-t from-white via-white to-white/90 border-t border-[#E7E9EE]">
+          <button
+            type="button"
+            onClick={() => setShowCompleteStopReview(true)}
+            className="w-full min-h-[56px] flex items-center justify-center gap-2 border-none active:scale-[0.98] transition-transform rounded-[14px] bg-[#2FA301] text-white cursor-pointer"
+          >
+            <Check size={20} />
+            <span className="text-[16px] font-bold font-['Google_Sans_Flex']">Review & Complete Stop</span>
+          </button>
+        </div>
+      )}
+
+      {/* Deliberate completion review */}
+      {pendingCompleteWo && (
+        <div className="fixed inset-0 z-[110] bg-black/50 flex flex-col justify-end">
+          <button className="flex-1 bg-transparent border-none" onClick={() => setPendingCompleteWoId(null)} aria-label="Close completion review" />
+          <div role="dialog" aria-modal="true" aria-labelledby="task-review-title" className="bg-white rounded-t-[28px] px-4 pt-4 pb-6 max-h-[72%] flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between pb-3 border-b border-[#ECEEF2] shrink-0">
+              <div>
+                <h2 id="task-review-title" className="text-[18px] font-bold text-[#2B3B63] m-0">Review Completion</h2>
+                <p className="text-[12px] text-[#8A909D] m-0 mt-0.5">{pendingCompleteWo.action} · {pendingCompleteWo.type}</p>
+              </div>
+              <button onClick={() => setPendingCompleteWoId(null)} className="size-10 rounded-full bg-[#F2F4F7] text-[#71727A] border-none flex items-center justify-center cursor-pointer" aria-label="Close">
+                <X size={19} />
+              </button>
+            </div>
+
+            <div className="flex-1 min-h-0 overflow-y-auto py-4 no-scrollbar">
+              <div className="bg-[#FFF7F3] border border-[#FF7048]/20 rounded-[14px] p-3 flex gap-2.5 mb-4">
+                <AlertTriangle size={18} className="text-[#FF7048] shrink-0 mt-0.5" />
+                <p className="text-[12px] text-[#4B5563] leading-relaxed m-0">
+                  {isFinalWorkOrderAction
+                    ? `This completes the final task for ${pendingCompleteWo.id}. The Stop will remain Arrived until you review and complete the Stop.`
+                    : `This completes only the ${pendingCompleteWo.action.toLowerCase()} task at this stop. ${pendingCompleteWo.id} remains in progress until its remaining actions are complete.`}
+                </p>
+              </div>
+
+              {proofRequirements && (
+                <p className="m-0 mb-3 text-[12px] font-semibold leading-relaxed text-[#5F6572]">{proofRequirements.summary}</p>
+              )}
+
+              <div className="space-y-2">
+                <div className="min-h-[48px] px-3 rounded-[12px] bg-[#F7F8FA] flex items-center gap-3">
+                  <Camera size={18} className={hasRequiredPhotos ? 'text-[#2FA301]' : proofRequirements?.photos ? 'text-[#FF7048]' : 'text-[#9CA3AF]'} />
+                  <span className="flex-1 text-[14px] font-semibold text-[#2B3B63]">Photos</span>
+                  <span className={`text-[12px] font-medium ${hasRequiredPhotos ? 'text-[#2FA301]' : proofRequirements?.photos ? 'text-[#DC2626]' : 'text-[#8A909D]'}`}>{hasRequiredPhotos ? `${pendingCompleteWo.photos!.length} added` : proofRequirements?.photos ? 'Required' : 'Optional'}</span>
+                </div>
+                <div className="min-h-[48px] px-3 rounded-[12px] bg-[#F7F8FA] flex items-center gap-3">
+                  <PenLine size={18} className={hasRequiredSignature ? 'text-[#2FA301]' : proofRequirements?.signature ? 'text-[#FF7048]' : 'text-[#9CA3AF]'} />
+                  <span className="flex-1 text-[14px] font-semibold text-[#2B3B63]">Signature</span>
+                  <span className={`text-[12px] font-medium ${hasRequiredSignature ? 'text-[#2FA301]' : proofRequirements?.signature ? 'text-[#DC2626]' : 'text-[#8A909D]'}`}>{hasRequiredSignature ? 'Captured' : proofRequirements?.signature ? 'Required' : 'Optional'}</span>
+                </div>
+                <div className="min-h-[48px] px-3 rounded-[12px] bg-[#F7F8FA] flex items-center gap-3">
+                  <FileText size={18} className={hasRequiredNotes ? 'text-[#2FA301]' : proofRequirements?.notes ? 'text-[#FF7048]' : 'text-[#71727A]'} />
+                  <span className="flex-1 text-[14px] font-semibold text-[#2B3B63]">Notes</span>
+                  <span className={`text-[12px] font-medium ${hasRequiredNotes ? 'text-[#2FA301]' : proofRequirements?.notes ? 'text-[#DC2626]' : 'text-[#71727A]'}`}>{pendingCompleteWo.notes ? 'Added' : proofRequirements?.notes ? 'Required' : 'Optional'}</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              disabled={!canConfirmCompletion}
+              onClick={() => {
+                handleCompleteWorkOrder(pendingCompleteWo.id);
+                setPendingCompleteWoId(null);
+              }}
+              className="w-full min-h-[54px] bg-[#2FA301] text-white rounded-[14px] font-bold text-[16px] border-none flex items-center justify-center gap-2 cursor-pointer disabled:bg-[#D4D6DD] disabled:text-[#71727A] disabled:cursor-not-allowed shrink-0"
+            >
+              <Check size={19} /> Confirm {pendingCompleteWo.action} Complete
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showCompleteStopReview && (
+        <div className="fixed inset-0 z-[115] bg-black/50 flex flex-col justify-end">
+          <button
+            type="button"
+            className="flex-1 bg-transparent border-none"
+            onClick={() => setShowCompleteStopReview(false)}
+            aria-label="Close Stop completion review"
+          />
+          <section role="dialog" aria-modal="true" aria-labelledby="stop-review-title" className="bg-white rounded-t-[28px] px-4 pt-4 pb-6 flex flex-col shadow-2xl">
+            <header className="flex items-center justify-between pb-3 border-b border-[#ECEEF2]">
+              <div>
+                <h2 id="stop-review-title" className="m-0 text-[18px] font-bold text-[#2B3B63]">Complete Stop {stop.num}?</h2>
+                <p className="m-0 mt-0.5 text-[12px] text-[#8A909D]">Final Stop confirmation</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCompleteStopReview(false)}
+                className="size-10 rounded-full bg-[#F2F4F7] text-[#71727A] border-none flex items-center justify-center cursor-pointer"
+                aria-label="Close"
+              >
+                <X size={19} />
+              </button>
+            </header>
+            <div className="py-4">
+              <div className="rounded-[16px] bg-[#2FA301]/10 border border-[#2FA301]/20 p-3.5 flex gap-3">
+                <span className="size-8 rounded-full bg-[#2FA301] text-white flex items-center justify-center shrink-0">
+                  <Check size={18} />
+                </span>
+                <div>
+                  <p className="m-0 text-[14px] font-bold text-[#2B3B63]">{completedTaskCount} of {stop.workOrders.length} tasks complete</p>
+                  <p className="m-0 mt-1 text-[12px] leading-relaxed text-[#5F6572]">
+                    Completing this Stop updates Route progress. Work Orders with remaining Pickup or Dropoff tasks will stay In Progress.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-[0.8fr_1.2fr] gap-2.5">
+              <button
+                type="button"
+                onClick={() => setShowCompleteStopReview(false)}
+                className="min-h-[54px] rounded-[14px] bg-white border border-[#D9DDE4] text-[#2B3B63] text-[15px] font-bold cursor-pointer"
+              >
+                Not Yet
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  updateStopStatus(currentRoute.id, stop.id, 'Done');
+                  setShowCompleteStopReview(false);
+                  setShowNextStopModal(true);
+                }}
+                className="min-h-[54px] rounded-[14px] bg-[#2FA301] border-none text-white text-[15px] font-bold flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Check size={18} /> Complete Stop
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {reportWorkOrder && (
+        <div className="fixed inset-0 z-[118] bg-black/50 flex flex-col justify-end">
+          <button type="button" className="flex-1 bg-transparent border-none" onClick={closeReportSheet} aria-label="Close Work Order report" />
+          <section role="dialog" aria-modal="true" aria-labelledby="report-work-order-title" className="max-h-[76%] rounded-t-[28px] bg-white px-4 pt-4 pb-6 flex flex-col overflow-hidden">
+            <header className="flex items-center justify-between gap-3 border-b border-[#ECEEF2] pb-3 shrink-0">
+              <div>
+                <h2 id="report-work-order-title" className="m-0 text-[18px] font-bold text-[#2B3B63]">Report an Exception</h2>
+                <p className="m-0 mt-0.5 text-[12px] text-[#8A909D]">{reportWorkOrder.id} · {reportWorkOrder.action}</p>
+              </div>
+              <button type="button" onClick={closeReportSheet} className="size-10 rounded-full border-none bg-[#F2F4F7] text-[#71727A] flex items-center justify-center cursor-pointer" aria-label="Close">
+                <X size={19} />
+              </button>
+            </header>
+
+            <div className="flex-1 min-h-0 overflow-y-auto py-4 no-scrollbar">
+              <p className="m-0 mb-3 text-[12px] leading-relaxed text-[#5F6572]">Choose why this Work Order action cannot be completed at this Stop.</p>
+              <div className="grid grid-cols-2 gap-2">
+                {WORK_ORDER_EXCEPTION_REASONS.map(reason => (
+                  <button
+                    key={reason}
+                    type="button"
+                    onClick={() => setReportReason(reason)}
+                    className={`min-h-[48px] rounded-[12px] border px-3 text-left text-[12px] font-semibold cursor-pointer ${reportReason === reason ? 'border-[#DC2626] bg-[#FEECEC] text-[#9F1D1D]' : 'border-[#DCE0E6] bg-white text-[#2B3B63]'}`}
+                  >
+                    {reason}
+                  </button>
+                ))}
+              </div>
+              <label className="block mt-4">
+                <span className="block mb-1.5 text-[12px] font-bold text-[#2B3B63]">Details <span className="font-medium text-[#8A909D]">(optional)</span></span>
+                <textarea
+                  value={reportDetails}
+                  onChange={event => setReportDetails(event.target.value)}
+                  placeholder="Add details for Dispatcher…"
+                  rows={3}
+                  className="w-full resize-none rounded-[13px] border border-[#DCE0E6] bg-white p-3 text-[14px] text-[#2B3B63] outline-none box-border focus:border-[#2B3B63]"
+                />
+              </label>
+              <div className="mt-3 rounded-[13px] border border-[#F09A11]/25 bg-[#FFF7ED] p-3 flex gap-2.5">
+                <AlertTriangle size={17} className="mt-0.5 shrink-0 text-[#C67A00]" aria-hidden="true" />
+                <p className="m-0 text-[11px] leading-relaxed text-[#7A4A00]">This action will be recorded as an exception. Other Work Orders at this Stop still need to be resolved.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-[0.8fr_1.2fr] gap-2.5 shrink-0">
+              <button type="button" onClick={closeReportSheet} className="min-h-[54px] rounded-[14px] border border-[#D9DDE4] bg-white text-[15px] font-bold text-[#2B3B63] cursor-pointer">Cancel</button>
+              <button
+                type="button"
+                disabled={!reportReason}
+                onClick={confirmWorkOrderReport}
+                className="min-h-[54px] rounded-[14px] border-none bg-[#DC2626] text-white text-[15px] font-bold flex items-center justify-center gap-2 cursor-pointer disabled:bg-[#D4D6DD] disabled:text-[#71727A] disabled:cursor-not-allowed"
+              >
+                <Flag size={17} aria-hidden="true" /> Report Exception
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
 
       {/* ── Auto-forward Modal ─────────────────────────────────────── */}
       {showNextStopModal && (
@@ -324,11 +556,11 @@ export default function StopDetail() {
                 <button 
                   onClick={() => {
                     setShowNextStopModal(false);
-                    navigate(`/route/${currentRoute.id}`);
+                    navigate(`/route/${currentRoute.id}/summary`);
                   }}
                   className="w-full bg-[#2B3B63] text-white py-[16px] rounded-[16px] font-semibold text-[16px] font-['Google_Sans_Flex'] shadow-[0_8px_20px_rgba(0,0,0,0.15)] active:scale-[0.98] transition-transform border-none"
                 >
-                  View Route Summary
+                  Review Route Summary
                 </button>
               </div>
             )}

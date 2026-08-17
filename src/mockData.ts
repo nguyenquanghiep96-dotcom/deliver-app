@@ -16,11 +16,19 @@ export interface WorkOrder {
     amount?: string;
     material?: string;
     dimensions?: string;
+    orientation?: string;
+    description?: string;
+    images?: string[];
   };
   signature?: string;
   driverSignature?: string;
   photos?: string[];
   notes?: string;
+  exception?: {
+    reason: string;
+    details?: string;
+    reportedAt: string;
+  };
 }
 
 export interface Stop {
@@ -33,6 +41,10 @@ export interface Stop {
   gpsMarked?: boolean;
   gpsCoords?: { lat: number; lng: number };
   distance?: string;
+  issues?: Array<{
+    reason: string;
+    reportedAt: string;
+  }>;
   workOrders: WorkOrder[];
 }
 
@@ -55,8 +67,12 @@ export interface RouteData {
   routeNote?: string;
   dispatcherPhone?: string;
   ownerEntity?: string;
+  ownerEntities?: string[];
   endAddress?: string;
   totalDistance?: string;
+  closeoutCompleted?: boolean;
+  actualMileage?: string;
+  finishedAt?: string;
 }
 
 export interface Driver {
@@ -115,6 +131,7 @@ export const initialRoutes: RouteData[] = [
     endAddress: 'Newton St, Seattle, WA 98109',
     totalDistance: '5539.8 mi',
     ownerEntity: 'NganLe Store A',
+    ownerEntities: ['NganLe Store A', 'ShedPro Manufacturing', 'Rose Store - Harrisonburg'],
     routeNote: 'Please ensure to call the customer 30 minutes prior to arrival. Heavy traffic expected on US-340 detour.',
     dispatcherPhone: '540-555-0110',
     stops: [
@@ -161,7 +178,19 @@ export const initialRoutes: RouteData[] = [
             status: 'Pending',
             customerName: 'David Copperfield',
             customerPhone: '555-2222',
-            unitInfo: { size: '10x12', modelName: 'Premium Storage Utility Shed with Double Doors', base: 'Grey', trim: 'White', roof: 'Metal', serial: 'SN-927711' }
+            unitInfo: {
+              size: '10x12',
+              modelName: 'Premium Storage Utility Shed with Double Doors',
+              base: 'Grey',
+              trim: 'White',
+              roof: 'Metal',
+              serial: 'SN-927711',
+              material: 'LP SmartSide',
+              dimensions: "10' W × 12' L × 8' H",
+              orientation: 'Doors face the driveway. Keep 3 ft clearance on the left side.',
+              description: 'Utility shed with centered double doors, two front vents, and a metal roof. Confirm the grey siding and white trim before unloading.',
+              images: ['/Building Image 1.jpg', '/Building Image 2.jpg', '/Building Image 3.jpg']
+            }
           },
           {
             id: 'WO-28',
@@ -243,9 +272,21 @@ export const initialRoutes: RouteData[] = [
             category: 'Move',
             action: 'Dropoff',
             status: 'Pending',
-            customerName: 'Dennis Sartain',
+            customerName: 'David Copperfield',
             customerPhone: '555-2222',
-            unitInfo: { size: '10x12', modelName: 'Utility shed', base: 'Grey', trim: 'White', roof: 'Metal', serial: 'SN-927711' }
+            unitInfo: {
+              size: '10x12',
+              modelName: 'Premium Storage Utility Shed with Double Doors',
+              base: 'Grey',
+              trim: 'White',
+              roof: 'Metal',
+              serial: 'SN-927711',
+              material: 'LP SmartSide',
+              dimensions: "10' W × 12' L × 8' H",
+              orientation: 'Doors face the driveway. Keep 3 ft clearance on the left side.',
+              description: 'Utility shed with centered double doors, two front vents, and a metal roof. Confirm the grey siding and white trim before unloading.',
+              images: ['/Building Image 1.jpg', '/Building Image 2.jpg', '/Building Image 3.jpg']
+            }
           }
         ]
       },
@@ -275,15 +316,16 @@ export const initialRoutes: RouteData[] = [
     name: 'Route 2',
     startTime: '09:00 AM',
     endTime: '06:00 PM',
-    date: 'Jul 10 - Jul 11',
-    dayOfMonth: '10-11',
-    monthName: 'Jul',
+    date: 'Aug 15',
+    dayOfMonth: '15',
+    monthName: 'Aug',
     stopsCount: 2,
     dealerName: 'Store A',
+    ownerEntities: ['Store A', 'Store B'],
     status: 'Planned',
     stripeColor: '#8E94F2',
-    startDate: 'Jul 10',
-    endDate: 'Jul 11',
+    startDate: 'Aug 15',
+    endDate: 'Aug 15',
     startingAddress: '990 Preston Rd, Plano, TX 75093',
     routeNote: 'Gate code at Stop 2 is 1234.',
     dispatcherPhone: '+18005550200',
@@ -300,9 +342,9 @@ export const initialRoutes: RouteData[] = [
             category: 'Move',
             action: 'Pickup',
             status: 'Pending',
-            customerName: 'Store A',
+            customerName: 'ShedPro Inventory',
             customerPhone: '555-9999',
-            unitInfo: { size: '10 x 20', base: 'Tan', trim: 'White', roof: 'Metal', serial: 'S-AAAA' }
+            unitInfo: { size: '10 x 20', modelName: 'Utility Shed', base: 'Tan', trim: 'White', roof: 'Metal', serial: 'S-AAAA' }
           }
         ]
       },
@@ -318,9 +360,9 @@ export const initialRoutes: RouteData[] = [
             category: 'Move',
             action: 'Dropoff',
             status: 'Pending',
-            customerName: 'Store B',
-            customerPhone: '555-8888',
-            unitInfo: { size: '10 x 20', base: 'Tan', trim: 'White', roof: 'Metal', serial: 'S-AAAA' }
+            customerName: 'ShedPro Inventory',
+            customerPhone: '555-9999',
+            unitInfo: { size: '10 x 20', modelName: 'Utility Shed', base: 'Tan', trim: 'White', roof: 'Metal', serial: 'S-AAAA' }
           }
         ]
       }
@@ -331,19 +373,57 @@ export const initialRoutes: RouteData[] = [
     name: 'Route 3',
     startTime: '09:00 AM',
     endTime: '05:00 PM',
-    date: 'Jul 14 - Jul 15',
-    dayOfMonth: '14-15',
-    monthName: 'Jul',
-    stopsCount: 0,
+    date: 'Aug 16',
+    dayOfMonth: '16',
+    monthName: 'Aug',
+    stopsCount: 3,
     dealerName: 'MFR A',
     status: 'Planned',
     stripeColor: '#F582A8',
-    startDate: 'Jul 14',
-    endDate: 'Jul 15',
+    startDate: 'Aug 16',
+    endDate: 'Aug 16',
     startingAddress: '123 Main St, Houston, TX',
     routeNote: '',
     dispatcherPhone: '+18005550300',
-    stops: []
+    endAddress: '123 Main St, Houston, TX',
+    stops: [
+      {
+        id: '1',
+        num: 1,
+        address: '1200 McKinney St, Houston, TX 77010',
+        status: 'Pending',
+        distance: '6.2 mi away',
+        workOrders: [{
+          id: 'WO-013', type: 'Delivery', category: 'Move', action: 'Pickup', status: 'Pending',
+          customerName: 'Maria Gonzalez', customerPhone: '713-555-0130',
+          unitInfo: { size: '12 x 16', modelName: 'Garden Shed', base: 'Clay', trim: 'White', roof: 'Shingle', serial: 'HS-1216-013' }
+        }]
+      },
+      {
+        id: '2',
+        num: 2,
+        address: '789 W Alabama St, Houston, TX 77006',
+        status: 'Pending',
+        distance: '4.8 mi away',
+        workOrders: [{
+          id: 'WO-014', type: 'Repair', category: 'Service', action: 'Visit', status: 'Pending',
+          customerName: 'James Wilson', customerPhone: '713-555-0140',
+          unitInfo: { size: '10 x 12', modelName: 'Utility Shed', base: 'Blue', trim: 'White', roof: 'Metal', serial: 'HS-1012-014' }
+        }]
+      },
+      {
+        id: '3',
+        num: 3,
+        address: '4502 Yale St, Houston, TX 77018',
+        status: 'Pending',
+        distance: '9.1 mi away',
+        workOrders: [{
+          id: 'WO-013', type: 'Delivery', category: 'Move', action: 'Dropoff', status: 'Pending',
+          customerName: 'Maria Gonzalez', customerPhone: '713-555-0130',
+          unitInfo: { size: '12 x 16', modelName: 'Garden Shed', base: 'Clay', trim: 'White', roof: 'Shingle', serial: 'HS-1216-013' }
+        }]
+      }
+    ]
   },
   {
     id: 'R-004',

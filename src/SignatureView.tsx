@@ -1,22 +1,23 @@
 import React, { useState, useRef } from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { Check, ChevronLeft, PenLine } from 'lucide-react';
 import { useParams, useNavigate, useSearchParams } from 'react-router';
 import { useDriver } from './DriverContext';
 
 export default function SignatureView() {
-  const { stopId } = useParams();
+  const { routeId, stopId } = useParams();
   const [searchParams] = useSearchParams();
   const woId = searchParams.get('woId');
   const navigate = useNavigate();
   const { routes, saveSignature } = useDriver();
 
-  const currentRoute = routes.find(r => r.stops.some(s => s.id === stopId));
+  const currentRoute = routes.find(r => r.id === routeId);
   const stop = currentRoute?.stops.find(s => s.id === stopId);
   const workOrder = stop?.workOrders.find(wo => wo.id === woId);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasStrokes, setHasStrokes] = useState(false);
+  const [isReplacing, setIsReplacing] = useState(false);
 
   if (!currentRoute || !stop || !workOrder) {
     return (
@@ -91,6 +92,8 @@ export default function SignatureView() {
     navigate(-1);
   };
 
+  const showSavedSignature = Boolean(workOrder.signature) && !isReplacing;
+
   return (
     <div
       className="relative flex-1 flex flex-col select-none h-full"
@@ -98,7 +101,7 @@ export default function SignatureView() {
     >
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <header
-        className="flex items-center gap-[16px] px-4 pt-[66px] pb-3 shrink-0"
+        className="flex items-center gap-[16px] px-4 pt-4 md:pt-[66px] pb-3 shrink-0"
         style={{ background: '#E8E9F1' }}
       >
         <button
@@ -116,72 +119,64 @@ export default function SignatureView() {
         </h1>
       </header>
 
-      {/* ── Canvas — fills available space between header and buttons ── */}
+      {/* ── Saved signature review or capture canvas ── */}
       <div className="flex-1 px-4 mt-[8px] overflow-hidden">
-        <div
-          className="w-full overflow-hidden relative"
-          style={{
-            background: 'white',
-            borderRadius: 16,
-            height: '100%',
-          }}
-        >
-          {/* Guide line */}
-          <div
-            className="absolute left-[48px] right-[48px]"
-            style={{ top: '55%', height: 1, background: '#E0E1E8', pointerEvents: 'none' }}
-          />
-          {/* Hint — fades once drawing starts */}
-          {!hasStrokes && (
-            <div
-              className="absolute inset-0 flex items-center justify-center pointer-events-none"
-              style={{ paddingTop: '10%' }}
-            >
-              <span style={{ color: '#C5C6CC', fontSize: 13, fontFamily: 'Google Sans Flex' }}>
-                Sign here
-              </span>
+        {showSavedSignature ? (
+          <div className="w-full h-full rounded-[16px] bg-white flex flex-col items-center justify-center p-5 box-border">
+            <span className="mb-4 size-10 rounded-full bg-[#2FA301] text-white flex items-center justify-center" aria-hidden="true"><Check size={21} /></span>
+            <p className="m-0 text-[14px] font-bold text-[#2B3B63]">Signature saved</p>
+            <p className="m-0 mt-1 text-[11px] text-[#8A909D]">{workOrder.id} · {workOrder.customerName}</p>
+            <div className="mt-5 w-full flex-1 min-h-0 rounded-[14px] bg-[#F7F8FA] border border-[#E8E9F1] p-4 flex items-center justify-center overflow-hidden">
+              <img src={workOrder.signature} alt={`Saved signature for ${workOrder.customerName}`} className="max-w-full max-h-full object-contain" />
             </div>
-          )}
-          <canvas
-            ref={canvasRef}
-            width={720}
-            height={932}
-            onMouseDown={startDrawing}
-            onMouseMove={draw}
-            onMouseUp={stopDrawing}
-            onMouseLeave={stopDrawing}
-            onTouchStart={startDrawing}
-            onTouchMove={draw}
-            onTouchEnd={stopDrawing}
-            className="w-full h-full cursor-crosshair"
-            style={{ background: 'transparent', touchAction: 'none' }}
-          />
-        </div>
+          </div>
+        ) : (
+          <div className="w-full overflow-hidden relative bg-white rounded-[16px] h-full">
+            <div className="absolute left-[48px] right-[48px]" style={{ top: '55%', height: 1, background: '#E0E1E8', pointerEvents: 'none' }} />
+            {!hasStrokes && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ paddingTop: '10%' }}>
+                <span style={{ color: '#C5C6CC', fontSize: 13, fontFamily: 'Google Sans Flex' }}>Sign here</span>
+              </div>
+            )}
+            <canvas
+              ref={canvasRef}
+              width={720}
+              height={932}
+              onMouseDown={startDrawing}
+              onMouseMove={draw}
+              onMouseUp={stopDrawing}
+              onMouseLeave={stopDrawing}
+              onTouchStart={startDrawing}
+              onTouchMove={draw}
+              onTouchEnd={stopDrawing}
+              className="w-full h-full cursor-crosshair"
+              style={{ background: 'transparent', touchAction: 'none' }}
+            />
+          </div>
+        )}
       </div>
 
       {/* ── Buttons — always anchored at bottom, visible on screen ──── */}
       <div className="px-4 flex flex-col gap-[10px] mt-[12px] mb-[12px] shrink-0">
-        {/* Save */}
-        <button
-          onClick={saveSig}
-          className="w-full flex items-center justify-center border-none cursor-pointer active:scale-[0.98] transition-transform rounded-[16px]"
-          style={{
-            paddingTop: 17.5, paddingBottom: 17.5,
-            background: '#FF7048',
-            boxShadow: '0px 8px 20px rgba(255,112,72,0.35)',
-          }}
-        >
-          <span style={{ color: 'white', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Save</span>
-        </button>
-
-        {/* Clear */}
-        <button
-          onClick={clearCanvas}
-          className="w-full flex items-center justify-center border-none cursor-pointer active:scale-[0.98] transition-transform rounded-[16px]"
-          style={{ paddingTop: 17.5, paddingBottom: 17.5, background: '#D4D6DD' }}
-        >
-          <span style={{ color: '#2B3B63', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>Clear</span>
-        </button>
+        {showSavedSignature ? (
+          <>
+            <button onClick={() => navigate(-1)} className="w-full min-h-[56px] rounded-[16px] bg-[#2B3B63] text-white border-none text-[16px] font-semibold cursor-pointer">Done</button>
+            <button onClick={() => setIsReplacing(true)} className="w-full min-h-[56px] rounded-[16px] bg-white border border-[#D4D6DD] text-[#2B3B63] text-[16px] font-semibold flex items-center justify-center gap-2 cursor-pointer">
+              <PenLine size={18} /> Replace Signature
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={saveSig}
+              disabled={!hasStrokes}
+              className="w-full min-h-[56px] flex items-center justify-center border-none cursor-pointer active:scale-[0.98] transition-transform rounded-[16px] bg-[#FF7048] disabled:bg-[#D4D6DD] disabled:text-[#71727A]"
+            >
+              <span className="text-white text-[16px] font-semibold">{workOrder.signature ? 'Save New Signature' : 'Save Signature'}</span>
+            </button>
+            <button onClick={clearCanvas} className="w-full min-h-[56px] rounded-[16px] bg-[#D4D6DD] text-[#2B3B63] border-none text-[16px] font-semibold cursor-pointer">Clear</button>
+          </>
+        )}
       </div>
     </div>
   );

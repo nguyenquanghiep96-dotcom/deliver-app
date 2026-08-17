@@ -1,28 +1,12 @@
-import { ChevronRight, ChevronDown, ChevronUp, User, CheckCircle2, Flag } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, User, Flag, Navigation } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { cn } from "../lib/utils";
 import type { Stop } from "../mockData";
+import { ACTION_COLORS, TYPE_COLORS } from "../lib/workOrderStyles";
 
-// Color map for action dot labels (matching OPSHub website)
-const ACTION_COLORS: Record<string, string> = {
-  Pickup: '#3B82F6',   // Blue
-  Dropoff: '#F97316',  // Orange  
-  Visit: '#8B5CF6',    // Purple
-  Start: '#6B7280',    // Gray
-  End: '#6B7280',      // Gray
-};
-
-// Color for WO type badge
-const TYPE_COLORS: Record<string, string> = {
-  Delivery: '#2B3B63',
-  Repo: '#DC2626',
-  Repair: '#7C3AED',
-  'Lot Transfer': '#6B7280',
-  'Welfare Check': '#059669',
-  'Private Move': '#0891B2',
-  'Payment Collection': '#CA8A04',
-};
+// Temporarily hidden while the Stop card action hierarchy is being refined.
+const SHOW_STOP_CARD_NAVIGATION = false;
 
 interface UniversalStopCardProps {
   stop: Stop;
@@ -36,6 +20,7 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
   const isDone = stop.status === 'Done';
   const linkUrl = `/route/${routeId}/stop/${stop.id}`;
   const location = useLocation();
+  const navigate = useNavigate();
   const [showAllWOs, setShowAllWOs] = useState(false);
   
   // Filter out Start/End work orders for display
@@ -49,21 +34,17 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
 
   const cardContent = (
     <div className={cn(
-      "stop-card bg-white flex flex-col border-y border-black/5 relative overflow-hidden",
+      "stop-card flex flex-col relative overflow-hidden",
+      isDone ? "bg-[#2FA301]/10 border border-[#2FA301]/20" : "bg-white border-y border-black/5",
       className
     )}>
-      {isDone && (
-        <div className="bg-[#2FA301] w-full text-white text-[11px] font-bold py-[6px] text-center uppercase tracking-[0.1em]">
-          Completed
-        </div>
-      )}
-      <div className={cn("px-4 flex flex-col gap-3", isDone ? "pb-5 pt-3" : "py-5")}>
+      <div className={cn("px-4 flex flex-col gap-3", isDone ? "py-4" : hideAction ? "pt-4 pb-3" : "py-5")}>
       {title && (
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-[16px] font-bold text-[#2B3B63] m-0 font-['Google_Sans_Flex']">
             {title}
           </h3>
-          {title === 'Current Stop' && (
+          {title === 'Current Stop' && stop.status === 'Servicing' && (
             <div className="flex items-center gap-1.5">
               <span className="text-[11px] font-bold text-[#2fa301] uppercase tracking-wider">On Going</span>
               <span className="relative flex h-2 w-2">
@@ -86,12 +67,17 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
           {/* Address */}
           <h4 className="text-[#2B3B63] text-[16px] font-bold m-0 leading-snug font-['Google_Sans_Flex']">
             {stop.address}
+            {hideAction && stop.status === 'Servicing' && (
+              <span className="inline-flex align-middle ml-2 px-2 py-0.5 rounded-full bg-[#2563EB] text-white text-[10px] font-bold leading-4 whitespace-nowrap">
+                Arrived
+              </span>
+            )}
           </h4>
         </div>
       </div>
 
       {/* Work Orders section */}
-      <div className="flex flex-col mt-1 pt-3 border-t border-[#E8E9F1]">
+      <div className={cn("flex flex-col mt-1 pt-3 border-t", isDone ? "border-[#2FA301]/15" : "border-[#E8E9F1]")}>
         {visibleWOs.map((wo, i) => (
           <div key={wo.id} className={cn("flex flex-col gap-1.5 pb-3 border-b border-[#F2F4F7] last:border-0 last:pb-0", i > 0 && "pt-3")}>
             {/* Type badge */}
@@ -111,11 +97,14 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
               >
                 {wo.type}
               </span>
+              <span className="text-[11px] font-semibold text-[#8A909D] shrink-0">{wo.id}</span>
 
               <div className="flex-1" />
               
               {wo.status === 'Completed' && (
-                <CheckCircle2 size={16} className="text-[#2FA301] shrink-0" />
+                <span className="size-[18px] rounded-full bg-[#2FA301] text-white flex items-center justify-center shrink-0" aria-label="Completed">
+                  <Check size={12} strokeWidth={3} aria-hidden="true" />
+                </span>
               )}
               {wo.status === 'Failed' && (
                 <Flag size={16} className="text-[#f52525] shrink-0" />
@@ -140,7 +129,7 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
               e.stopPropagation();
               setShowAllWOs(!showAllWOs);
             }}
-            className="flex items-center gap-1 text-[#3B82F6] text-[13px] font-semibold font-['Google_Sans_Flex'] bg-transparent border-none cursor-pointer p-0 mt-0.5 active:opacity-70"
+            className={cn("flex items-center gap-1 text-[13px] font-semibold font-['Google_Sans_Flex'] bg-transparent border-none cursor-pointer p-0 mt-0.5 active:opacity-70", isDone ? "text-[#238000]" : "text-[#3B82F6]")}
           >
             {showAllWOs ? (
               <>
@@ -161,17 +150,45 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
           </button>
         )}
       </div>
+
+      {SHOW_STOP_CARD_NAVIGATION && hideAction && !isDone && (
+        <div>
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(stop.address)}`}
+            target="_blank"
+            rel="noreferrer"
+            onClick={event => event.stopPropagation()}
+            className="w-full min-h-[40px] px-3 rounded-[10px] bg-[#F4F5F8] border border-[#DFE2E7] text-[#2B3B63] text-[16px] font-semibold no-underline flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+            aria-label={`Navigate to Stop ${stop.num}`}
+            title="Navigate"
+          >
+            <Navigation size={16} fill="currentColor" className="text-[#FF7048]" />
+            Navigate
+          </a>
+        </div>
+      )}
     </div>
       
       {!hideAction && (
         <div className="sticky bottom-0 bg-white pt-2 pb-4 px-4 z-10 w-full mt-2">
-          <Link 
-            to={linkUrl} 
-            state={{ from: location.state ? (location.state as any).from : (location.pathname + location.search) }}
-            className="bg-[#FF7048] text-white py-[16px] px-6 rounded-[10px] text-[16px] font-semibold decoration-none flex justify-center items-center font-['Google_Sans_Flex'] active:scale-95 transition-transform w-full"
-          >
-            {stop.status === 'Pending' ? 'Navigate to Stop' : 'Resume Stop'}
-          </Link>
+          <div className={cn("grid gap-2", title === 'Suggested Stop' ? "grid-cols-2" : "grid-cols-1")}>
+            {title === 'Suggested Stop' && (
+              <Link
+                to={`/route/${routeId}`}
+                state={{ from: location.pathname + location.search }}
+                className="min-h-[52px] px-3 rounded-[10px] border border-[#D9DDE4] bg-white text-[#2B3B63] text-[16px] font-semibold decoration-none flex justify-center items-center text-center font-['Google_Sans_Flex'] active:scale-95 transition-transform"
+              >
+                All Stops
+              </Link>
+            )}
+            <Link
+              to={linkUrl}
+              state={{ from: location.state ? (location.state as any).from : (location.pathname + location.search) }}
+              className="min-h-[52px] bg-[#FF7048] text-white px-3 rounded-[10px] text-[16px] font-semibold decoration-none flex justify-center items-center text-center font-['Google_Sans_Flex'] active:scale-95 transition-transform"
+            >
+              <span className="whitespace-nowrap">{stop.status === 'Pending' ? 'View Stop' : 'Resume Stop'}</span>
+            </Link>
+          </div>
         </div>
       )}
     </div>
@@ -179,9 +196,17 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
 
   if (hideAction) {
     return (
-      <Link to={linkUrl} className="block decoration-none active:scale-[0.98] transition-transform">
+      <div
+        role="link"
+        tabIndex={0}
+        onClick={() => navigate(linkUrl, { state: { from: location.pathname + location.search } })}
+        onKeyDown={event => {
+          if (event.key === 'Enter' || event.key === ' ') navigate(linkUrl, { state: { from: location.pathname + location.search } });
+        }}
+        className="block cursor-pointer active:scale-[0.98] transition-transform"
+      >
         {cardContent}
-      </Link>
+      </div>
     );
   }
 

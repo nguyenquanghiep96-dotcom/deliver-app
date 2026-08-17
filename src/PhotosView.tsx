@@ -37,7 +37,7 @@ function Lightbox({
     >
       {/* Top bar */}
       <div
-        className="flex items-center justify-between px-4 pt-[66px] pb-4 shrink-0"
+        className="flex items-center justify-between px-4 pt-4 md:pt-[66px] pb-4 shrink-0"
         onClick={e => e.stopPropagation()}
       >
         <button
@@ -123,7 +123,7 @@ function Lightbox({
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function PhotosView() {
-  const { stopId } = useParams();
+  const { routeId, stopId } = useParams();
   const [searchParams] = useSearchParams();
   const woId = searchParams.get('woId');
   const navigate = useNavigate();
@@ -132,7 +132,7 @@ export default function PhotosView() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  const currentRoute = routes.find(r => r.stops.some(s => s.id === stopId));
+  const currentRoute = routes.find(r => r.id === routeId);
   const stop = currentRoute?.stops.find(s => s.id === stopId);
   const workOrder = stop?.workOrders.find(wo => wo.id === woId);
 
@@ -169,7 +169,7 @@ export default function PhotosView() {
     >
       {/* Header */}
       <header
-        className="flex items-center gap-[16px] px-4 pt-[66px] pb-3 shrink-0 sticky top-0 z-50"
+        className="flex items-center gap-[16px] px-4 pt-4 md:pt-[66px] pb-3 shrink-0 sticky top-0 z-50"
         style={{ background: '#E8E9F1' }}
       >
         <button

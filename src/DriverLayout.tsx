@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Outlet, useLocation, Link } from 'react-router';
+import { Outlet, useLocation, Link, useNavigate } from 'react-router';
 import { cn } from './lib/utils';
+import { useDriver } from './DriverContext';
 import svgPaths from './imports/ButtonContainer/svg-tdy7ks0he1';
 import imgAppBackground from './assets/app_background.jpg';
 
-import { Home, Calendar, Route } from 'lucide-react';
+import { Calendar, CloudUpload, RefreshCw, Route, WifiOff } from 'lucide-react';
+import DrivingModeOverlay from './components/DrivingModeOverlay';
 
 export default function DriverLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { prototypeStage, setPrototypeStage, isOnline, pendingSyncCount, isSyncing, isDrivingMode } = useDriver();
   const [time, setTime] = useState('1:47');
 
   // Real-time clock for the status bar
@@ -25,6 +29,23 @@ export default function DriverLayout() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const returnToActiveStop = () => {
+      if (document.visibilityState === 'hidden') return;
+      const returnPath = sessionStorage.getItem('opshub_return_to_stop');
+      if (!returnPath) return;
+      sessionStorage.removeItem('opshub_return_to_stop');
+      if (location.pathname !== returnPath) navigate(returnPath, { replace: true });
+    };
+
+    document.addEventListener('visibilitychange', returnToActiveStop);
+    window.addEventListener('pageshow', returnToActiveStop);
+    return () => {
+      document.removeEventListener('visibilitychange', returnToActiveStop);
+      window.removeEventListener('pageshow', returnToActiveStop);
+    };
+  }, [location.pathname, navigate]);
+
   // Determine active tab based on path and search params
   const searchParams = new URLSearchParams(location.search);
   const currentTab = searchParams.get('tab') || 'home';
@@ -41,7 +62,7 @@ export default function DriverLayout() {
   const showBottomNav = location.pathname !== '/login' && location.pathname !== '/';
 
   return (
-    <div className="min-h-[100dvh] bg-[#4B5563] flex flex-col md:flex-row gap-6 items-center justify-center p-0 md:p-4 select-none">
+    <div className="min-h-[100dvh] bg-[#4B5563] flex flex-col gap-4 items-center justify-center p-0 md:p-4 select-none">
       {/* iPhone Simulator Frame Container */}
       <div 
         className="w-full h-[100dvh] md:w-[393px] md:h-[852px] bg-white md:rounded-[50px] shadow-2xl overflow-hidden relative md:border-[8px] md:border-black flex flex-col shrink-0"
@@ -50,38 +71,6 @@ export default function DriverLayout() {
         
         {/* iOS Status Bar */}
         
-        {/* Mobile Version Toggle (Visible only on mobile) */}
-        <div className="md:hidden w-full bg-[#374151] p-2 flex gap-2 shadow-sm z-[100] absolute top-0 left-0 right-0 h-[48px] items-center justify-center">
-          <button 
-             onClick={() => {
-               const url = new URL(window.location.href);
-               url.searchParams.set('v', '1');
-               window.history.pushState({}, '', url);
-               window.dispatchEvent(new Event('popstate'));
-             }}
-             className={cn(
-               "flex-1 py-1.5 rounded-full text-[13px] font-bold transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none",
-               searchParams.get('v') !== '2' ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
-             )}
-          >
-            Version 1
-          </button>
-          <button 
-             onClick={() => {
-               const url = new URL(window.location.href);
-               url.searchParams.set('v', '2');
-               window.history.pushState({}, '', url);
-               window.dispatchEvent(new Event('popstate'));
-             }}
-             className={cn(
-               "flex-1 py-1.5 rounded-full text-[13px] font-bold transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none",
-               searchParams.get('v') === '2' ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
-             )}
-          >
-            Version 2
-          </button>
-        </div>
-
         <div className="hidden md:flex absolute top-0 left-0 right-0 h-[54px] z-[60] items-center justify-between px-7 pointer-events-none">
           {/* Time */}
           <span 
@@ -144,19 +133,56 @@ export default function DriverLayout() {
         <div 
           id="scroll-container"
           className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 relative bg-[#E8E9F1] no-scrollbar"
+          aria-hidden={isDrivingMode}
+          inert={isDrivingMode}
         >
-          <Outlet />
+          {!isDrivingMode && <Outlet />}
         </div>
 
+        <DrivingModeOverlay />
+
+      {/* Offline Banner */}
+      {!isOnline && (
+        <div className="bg-[#f52525] text-white text-[13px] font-bold py-2 px-4 flex items-center justify-center gap-2 sticky top-[60px] z-40 shadow-sm animate-in slide-in-from-top-2">
+          <WifiOff size={16} /> Offline Mode - Poor Connectivity
+        </div>
+      )}
+
+
+        {!isDrivingMode && (!isOnline || pendingSyncCount > 0 || isSyncing) && (
+          <div className={cn(
+            "absolute left-3 right-3 z-[70] min-h-[48px] rounded-[14px] px-3 py-2.5 flex items-center gap-2.5 border shadow-[0_6px_20px_rgba(43,59,99,0.14)] font-['Google_Sans_Flex']",
+            location.pathname.includes('/stop/') ? "bottom-[148px]" : "bottom-[80px]",
+            !isOnline ? "bg-[#2B3B63] border-white/10 text-white" : "bg-white border-[#DCE0E6] text-[#2B3B63]"
+          )}>
+            <span className={cn(
+              "size-8 rounded-full flex items-center justify-center shrink-0",
+              !isOnline ? "bg-white/12" : "bg-[#EFF6FF] text-[#2563EB]"
+            )}>
+              {!isOnline ? <WifiOff size={17} /> : isSyncing ? <RefreshCw size={17} className="animate-spin" /> : <CloudUpload size={17} />}
+            </span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-[12px] font-bold">
+                {!isOnline ? 'Offline mode' : isSyncing ? 'Syncing changes…' : 'Waiting to sync'}
+              </span>
+              <span className={cn("block text-[11px] mt-0.5 truncate", !isOnline ? "text-white/70" : "text-[#71727A]")}>
+                {pendingSyncCount > 0
+                  ? `${pendingSyncCount} ${pendingSyncCount === 1 ? 'change' : 'changes'} saved on this device`
+                  : 'New work will be saved on this device'}
+              </span>
+            </span>
+          </div>
+        )}
+
         {/* Bottom Tab Navigation */}
-        {showBottomNav && (
-          <div className="absolute bottom-0 left-0 w-full bg-white flex gap-[5px] items-center px-[6px] pt-[6px] pb-[40px] z-40 select-none" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.16)' }}>
+        {showBottomNav && !isDrivingMode && (
+          <div className="absolute bottom-0 left-0 w-full h-[72px] bg-white flex gap-[5px] items-center px-[8px] pt-[7px] pb-[9px] z-40 select-none" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.16)' }}>
             
             {/* My Routes */}
             <Link
               to="/home?tab=home"
               className={cn(
-                "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
+                "flex-1 min-w-0 h-full flex flex-col gap-[4px] items-center justify-center py-[5px] transition-all duration-200 decoration-none cursor-pointer",
                 isHomeActive 
                   ? "px-[8px] rounded-[15px] bg-[#f0f2f6] text-[#FF7048]" 
                   : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
@@ -170,7 +196,7 @@ export default function DriverLayout() {
             <Link
               to="/home?tab=schedule"
               className={cn(
-                "flex-1 min-w-0 flex flex-col gap-[8px] items-center justify-center py-[10px] transition-all duration-200 decoration-none cursor-pointer",
+                "flex-1 min-w-0 h-full flex flex-col gap-[4px] items-center justify-center py-[5px] transition-all duration-200 decoration-none cursor-pointer",
                 isScheduleActive 
                   ? "px-[8px] rounded-[15px] bg-[#f0f2f6] text-[#FF7048]" 
                   : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
@@ -184,40 +210,34 @@ export default function DriverLayout() {
         )}
 
         {/* Virtual iOS Home Indicator */}
-        <div className="hidden md:block absolute bottom-2 left-1/2 -translate-x-1/2 w-[144px] h-[5px] bg-black rounded-full z-50 pointer-events-none"></div>
+        <div className="hidden md:block absolute bottom-1 left-1/2 -translate-x-1/2 w-[120px] h-[4px] bg-black rounded-full z-50 pointer-events-none"></div>
       </div>
 
-      {/* Version Toggle Tabs */}
-      <div className="hidden md:flex bg-[#374151] rounded-full p-1.5 gap-2 shadow-lg">
-        <button 
-           onClick={() => {
-             const url = new URL(window.location.href);
-             url.searchParams.set('v', '1');
-             window.history.pushState({}, '', url);
-             window.dispatchEvent(new Event('popstate'));
-           }}
-           className={cn(
-             "px-6 py-2 rounded-full text-[14px] font-bold transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none",
-             searchParams.get('v') !== '2' ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
-           )}
-        >
-          Version 1
-        </button>
-        <button 
-           onClick={() => {
-             const url = new URL(window.location.href);
-             url.searchParams.set('v', '2');
-             window.history.pushState({}, '', url);
-             window.dispatchEvent(new Event('popstate'));
-           }}
-           className={cn(
-             "px-6 py-2 rounded-full text-[14px] font-bold transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none",
-             searchParams.get('v') === '2' ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
-           )}
-        >
-          Version 2
-        </button>
-      </div>
+      {/* Prototype stages */}
+      {!isDrivingMode && <div className="hidden md:flex fixed right-[calc(50%+431px)] top-1/2 -translate-y-1/2 w-[184px] flex-col bg-[#374151] rounded-[20px] p-1.5 gap-1 z-[100]">
+        {([1, 2, 3] as const).map(stage => (
+          <button
+            key={stage}
+            onClick={() => {
+              setPrototypeStage(stage);
+              navigate('/home?tab=home');
+            }}
+            title={stage === 1 ? 'Running route' : stage === 2 ? 'No route today' : 'Assigned route not started'}
+            className={cn(
+              "w-full min-h-[44px] px-3 py-2 rounded-[14px] flex items-center gap-3 text-left transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none outline-none",
+              prototypeStage === stage ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
+            )}
+          >
+            <span className="w-[52px] shrink-0 text-[13px] font-bold">Stage {stage}</span>
+            <span className={cn(
+              "text-[11px] font-medium leading-tight",
+              prototypeStage === stage ? "text-[#71727A]" : "text-white/55"
+            )}>
+              {stage === 1 ? 'Route Ongoing' : stage === 2 ? 'No Routes Today' : 'Route Not Started'}
+            </span>
+          </button>
+        ))}
+      </div>}
     </div>
   );
 }

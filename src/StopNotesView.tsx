@@ -26,13 +26,13 @@ const IconSendDisabled = () => (
 );
 
 export default function StopNotesView() {
-  const { stopId } = useParams();
+  const { routeId, stopId } = useParams();
   const [searchParams] = useSearchParams();
   const woId = searchParams.get('woId');
   const navigate = useNavigate();
   const { routes, addComment } = useDriver();
 
-  const currentRoute = routes.find(r => r.stops.some(s => s.id === stopId));
+  const currentRoute = routes.find(r => r.id === routeId);
   const stop = currentRoute?.stops.find(s => s.id === stopId);
   const workOrder = stop?.workOrders.find(wo => wo.id === woId);
 
@@ -88,7 +88,7 @@ export default function StopNotesView() {
     >
       {/* ── Header ── */}
       <header
-        className="shrink-0 flex items-center gap-[16px] px-4 pt-[66px] pb-3"
+        className="shrink-0 flex items-center gap-[16px] px-4 pt-4 md:pt-[66px] pb-3"
         style={{ background: '#E8E9F1' }}
       >
         <button

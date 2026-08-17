@@ -6,7 +6,9 @@ import { RouteSummaryCard } from './components/home/RouteSummaryCard';
 import { EmptyRouteState } from './components/home/EmptyRouteState';
 import { CompletedRouteState } from './components/home/CompletedRouteState';
 import { UpcomingRoutesSection } from './components/home/UpcomingRoutesSection';
-import { Bell, ChevronRight, User, Info, Clock, LogOut, CheckCircle2, AlertCircle, Phone, MapPin, Calendar as CalendarIcon, CircleUserRound, MessageSquare } from 'lucide-react';
+import { ScheduleView } from './components/schedule/ScheduleView';
+import { RouteUpdateNotice } from './components/RouteUpdateNotice';
+import { Bell, ChevronRight, User, Info, Clock, LogOut, CheckCircle2, AlertCircle, Phone, MapPin, Calendar as CalendarIcon, CircleUserRound, MessageSquare, X } from 'lucide-react';
 import { cn, cleanStopType, getStopHeader } from './lib/utils';
 
 import imgUserImage from './assets/3271fc3a53481ca6ba5eb96b8724359f747c54a3.png';
@@ -29,7 +31,7 @@ const getRemainingDistance = (routeId: string, stops: any[]) => {
   const remaining = totalCount - completedCount;
   if (remaining <= 0) return '0.0 mi';
   
-  if (routeId === 'R-001') {
+  if (routeId === 'RT-006') {
     const distances = ['0.0 mi', '3.8 mi', '8.5 mi', '13.2 mi', '18.4 mi', '24.5 mi'];
     return distances[remaining] || '0.0 mi';
   } else if (routeId === 'R-002') {
@@ -48,7 +50,9 @@ export default function Home() {
     drivers,
     routes,
     switchDriver,
-    resetData
+    resetData,
+    routeUpdates,
+    acknowledgeRouteUpdate
   } = useDriver();
 
   // Get active tab from query parameters
@@ -81,6 +85,7 @@ export default function Home() {
 
   // Find active route (En Route or Today's Planned route)
   const activeRoute = routes.find(r => r.status === 'En Route') || routes.find(r => r.status === 'Planned' && r.date === 'Today');
+  const activeRouteUpdate = routeUpdates.find(update => update.routeId === activeRoute?.id && !update.acknowledged);
 
   // Filter routes for the Routes Tab
   const upcomingRoutes = routes.filter(
@@ -136,7 +141,7 @@ export default function Home() {
       {currentTab === 'home' && (
         <div className="flex-1 flex flex-col">
           {/* Header */}
-          <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f0f2f6]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
+          <header className={`flex items-center justify-between px-4 pt-4 md:pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f0f2f6]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
             <h1 className="text-[28px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex'] m-0">My Route</h1>
             
             <div className="flex items-center gap-[10px]">
@@ -167,14 +172,9 @@ export default function Home() {
                   const totalStops = actualStops.length;
                   const completedStopsCount = actualStops.filter(s => s.status === 'Done').length;
                   
-                  const allWOs = actualStops.flatMap(s => s.workOrders);
-                  const totalWOs = allWOs.length;
-                  // For mock simplicity, let's say WOs inside a 'Done' stop are done.
-                  const completedWOsCount = actualStops.filter(s => s.status === 'Done').flatMap(s => s.workOrders).length;
-                  
-                  const progressPercentage = totalWOs > 0 ? (completedWOsCount / totalWOs) * 100 : 0;
+                  const progressPercentage = totalStops > 0 ? (completedStopsCount / totalStops) * 100 : 0;
                   const estCompletion = activeRoute.id === 'RT-006' ? '15 Aug' : 'TBD';
-                  const remainingDistanceStr = getRemainingDistance(activeRoute.id, stops);
+                  const remainingDistanceStr = getRemainingDistance(activeRoute.id, actualStops);
 
                   const nextStop = actualStops.find(s => s.status !== 'Done');
                   
@@ -185,18 +185,28 @@ export default function Home() {
                       {/* Section A: Route Summary Card */}
                       <RouteSummaryCard 
                         route={activeRoute}
-                        completedWOsCount={completedWOsCount}
-                        totalWOs={totalWOs}
+                        completedStopsCount={completedStopsCount}
+                        totalStops={totalStops}
                         progressPercentage={progressPercentage}
                         remainingDistanceStr={remainingDistanceStr}
                         onInfoClick={(note) => setSelectedNote(note)}
                       />
 
+                      {activeRouteUpdate && (
+                        <RouteUpdateNotice update={activeRouteUpdate} onAcknowledge={acknowledgeRouteUpdate} />
+                      )}
+
                       {/* Section B: Current Stop Detail and Upcoming */}
                       {nextStop ? (
                         <div className="flex flex-col">
-                          <div className="-mx-4">
-                            <StopCard stop={nextStop} routeId={activeRoute.id} title="Current Stop" hideAction={false} />
+                          <div className="pb-4">
+                            <StopCard
+                              stop={nextStop}
+                              routeId={activeRoute.id}
+                              title={nextStop.status === 'Servicing' ? 'Current Stop' : activeRoute.status === 'Planned' ? 'Suggested Stop' : 'Next Stop'}
+                              hideAction={false}
+                              className="rounded-[18px] border border-[#E3E5EA] shadow-[0_4px_14px_rgba(43,59,99,0.07)]"
+                            />
                           </div>
                           <UpcomingRoutesSection />
                         </div>
@@ -230,9 +240,19 @@ export default function Home() {
 
       {/* ── 2. SCHEDULE TAB VIEW ──────────────────────────────────────────────── */}
       {currentTab === 'schedule' && (
+        <div className="flex-1 flex flex-col bg-[#F4F5F8]">
+          <header className="flex items-center px-4 pt-4 md:pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 bg-[#F4F5F8]/95 backdrop-blur-md">
+            <h1 className="m-0 text-[28px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Schedule</h1>
+          </header>
+          <ScheduleView />
+        </div>
+      )}
+
+      {/* Legacy schedule retained temporarily while the new unified views are validated. */}
+      {false && currentTab === 'schedule' && (
         <div className="flex-1 flex flex-col bg-[#f8f9fe]">
           {/* Header */}
-          <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f8f9fe]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
+          <header className={`flex items-center justify-between px-4 pt-4 md:pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f8f9fe]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
             <div className="flex-1 flex flex-col justify-center text-[28px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Schedule</div>
           </header>
 
@@ -303,7 +323,7 @@ export default function Home() {
                                    <span className="text-[#71727A] text-[12px] font-semibold font-['Google_Sans_Flex'] leading-none">{monthDisplay}</span>
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                  <h4 className="text-[#2B3B63] font-bold text-[16px] m-0 font-['Google_Sans_Flex']">{route.id} - {route.name}</h4>
+                                  <h4 className="text-[#2B3B63] font-bold text-[16px] m-0 font-['Google_Sans_Flex']">{route.name}</h4>
                                   <span className="text-[#71727A] text-[13px] font-['Google_Sans_Flex']">
                                     {totalWOs} work orders &middot; {route.stops.length || route.stopsCount} stops
                                   </span>
@@ -355,7 +375,7 @@ export default function Home() {
                                    <span className="text-[#71727A] text-[12px] font-semibold font-['Google_Sans_Flex'] leading-none">{monthDisplay}</span>
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                  <h4 className="text-[#2B3B63] font-bold text-[16px] m-0 font-['Google_Sans_Flex']">{route.id} - {route.name}</h4>
+                                  <h4 className="text-[#2B3B63] font-bold text-[16px] m-0 font-['Google_Sans_Flex']">{route.name}</h4>
                                   <span className="text-[#71727A] text-[13px] font-['Google_Sans_Flex']">
                                     {totalWOs} work orders &middot; {route.stops?.length || route.stopsCount} stops
                                   </span>
@@ -591,7 +611,7 @@ export default function Home() {
                           </div>
                         </div>
                         <div className="flex-1 flex flex-col items-start gap-[4px]">
-                          <span style={{ color: '#2B3B63', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{route.id} - {route.name}</span>
+                          <span style={{ color: '#2B3B63', fontSize: 16, fontWeight: 600, fontFamily: 'Google Sans Flex' }}>{route.name}</span>
                           <span style={{ color: '#71727A', fontSize: 14, fontWeight: 400, fontFamily: 'Google Sans Flex' }} className="truncate self-stretch">{route.stops[0]?.address || route.startingAddress || 'No stops assigned'}</span>
                           <span style={{ color: '#71727A', fontSize: 12, fontWeight: 400, fontFamily: 'Google Sans Flex' }}>
                             {startStr !== endStr ? `${startStr}, ${route.startTime || '09:00 AM'} - ${endStr}, ${route.endTime || '07:00 PM'}` : `${route.startTime || '09:00 AM'} - ${route.endTime || '07:00 PM'}`}
@@ -630,7 +650,7 @@ export default function Home() {
       {currentTab === 'profile' && (
         <div className="flex-1 flex flex-col bg-[#f8f9fe]">
           {/* Header */}
-          <header className={`flex items-center justify-between px-4 pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f8f9fe]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
+          <header className={`flex items-center justify-between px-4 pt-4 md:pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#f8f9fe]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
             <div className="flex-1 flex flex-col justify-center text-[28px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Profile</div>
           </header>
 
@@ -709,20 +729,21 @@ export default function Home() {
           <div className="flex-1" onClick={() => setShowNotifications(false)} />
           
           {/* Notification Card Panel */}
-          <div className="bg-white rounded-t-[32px] p-5 max-h-[75%] flex flex-col space-y-4 border-t border-gray-150 animate-in slide-in-from-bottom duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+          <div className="bg-white rounded-t-[32px] p-5 h-[50%] min-h-[50%] max-h-[50%] flex flex-col gap-4 border-t border-gray-150 animate-in slide-in-from-bottom duration-150 overflow-hidden">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100 shrink-0">
               <h2 className="text-lg font-bold text-[#2B3B63] flex items-center gap-2 font-['Google_Sans_Flex']">
                 <span>🔔</span> Notifications Inbox
               </h2>
               <button 
                 onClick={() => setShowNotifications(false)}
-                className="text-gray-400 hover:text-gray-600 font-extrabold text-sm cursor-pointer border-none bg-transparent"
+                className="size-9 rounded-full bg-[#F2F4F7] text-[#71727A] hover:text-[#2B3B63] flex items-center justify-center cursor-pointer border-none active:scale-95 transition-transform"
+                aria-label="Close notifications"
               >
-                ✕ Close
+                <X size={18} strokeWidth={2.5} />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-3 pb-6 no-scrollbar">
+            <div className="flex-1 min-h-0 overflow-y-auto space-y-3 pb-6 no-scrollbar overscroll-contain">
               {mockNotifications.map(notification => (
                 <div key={notification.id} className="p-4 bg-[#F2F4F7] rounded-[20px] flex gap-3 items-start border border-black/[0.01]">
                   <div className={cn(
@@ -795,28 +816,43 @@ export default function Home() {
 
       {/* ── 6. ROUTE NOTE OVERLAY ───────────────────────── */}
       {selectedNote && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex flex-col justify-end select-none">
-          {/* Dismiss Click Area */}
-          <div className="flex-1" onClick={() => setSelectedNote(null)} />
-          
-          {/* Note Card Panel */}
-          <div className="bg-white rounded-t-[32px] p-5 flex flex-col space-y-4 border-t border-gray-150 animate-in slide-in-from-bottom duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h2 className="text-lg font-bold text-[#2B3B63] flex items-center gap-2 font-['Google_Sans_Flex']">
-                <Info size={20} className="text-[#FF7048]"/> Route Note
-              </h2>
-              <button 
+        <div className="fixed inset-0 bg-black/50 z-50 flex flex-col justify-end select-none">
+          <button
+            className="flex-1 bg-transparent border-none cursor-default"
+            onClick={() => setSelectedNote(null)}
+            aria-label="Close route note"
+          />
+
+          <div className="h-[50%] min-h-[50%] max-h-[50%] bg-white rounded-t-[28px] px-4 pt-4 pb-6 flex flex-col shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-[#ECEEF2] shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="size-9 rounded-full bg-[#FF7048]/10 flex items-center justify-center">
+                  <Info size={18} className="text-[#FF7048]" />
+                </div>
+                <div>
+                  <h2 className="text-[16px] font-bold text-[#2B3B63] m-0 font-['Google_Sans_Flex']">Route Note</h2>
+                  <p className="text-[11px] text-[#8A909D] m-0">Information from Dispatcher</p>
+                </div>
+              </div>
+              <button
                 onClick={() => setSelectedNote(null)}
-                className="text-gray-400 hover:text-gray-600 font-extrabold text-sm cursor-pointer border-none bg-transparent"
+                className="size-9 rounded-full bg-[#F2F4F7] text-[#71727A] border-none flex items-center justify-center cursor-pointer active:scale-95"
+                aria-label="Close"
               >
-                ✕ Close
+                <X size={18} />
               </button>
             </div>
-            <div className="pb-6">
-              <p className="text-[14px] text-[#2B3B63] font-['Google_Sans_Flex'] leading-relaxed whitespace-pre-wrap">
+            <div className="flex-1 min-h-0 overflow-y-auto py-4 no-scrollbar overscroll-contain">
+              <p className="text-[15px] text-[#2B3B63] font-['Google_Sans_Flex'] leading-relaxed m-0 whitespace-pre-wrap">
                 {selectedNote}
               </p>
             </div>
+            <button
+              onClick={() => setSelectedNote(null)}
+              className="w-full min-h-[50px] rounded-[14px] bg-white border border-[#D9DDE4] text-[#2B3B63] text-[15px] font-bold cursor-pointer active:scale-[0.98] transition-transform shrink-0"
+            >
+              OK, Got it!
+            </button>
           </div>
         </div>
       )}
