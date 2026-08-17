@@ -241,8 +241,25 @@ export default function Home() {
       {/* ── 2. SCHEDULE TAB VIEW ──────────────────────────────────────────────── */}
       {currentTab === 'schedule' && (
         <div className="flex-1 flex flex-col bg-[#F4F5F8]">
-          <header className="flex items-center px-4 pt-4 md:pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 bg-[#F4F5F8]/95 backdrop-blur-md">
+          <header className={`flex items-center justify-between px-4 pt-4 md:pt-[66px] pb-3 select-none shrink-0 sticky top-0 z-50 transition-all duration-150 ${isScrolled ? 'bg-[#F4F5F8]/95 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.04)]' : 'bg-transparent'}`}>
             <h1 className="m-0 text-[28px] font-semibold text-[#2B3B63] font-['Google_Sans_Flex']">Schedule</h1>
+            
+            <div className="flex items-center gap-[10px]">
+              <button 
+                onClick={() => setShowNotifications(true)}
+                className="relative flex items-center justify-center shrink-0 size-[44px] cursor-pointer border-none bg-transparent active:scale-95 transition-transform"
+              >
+                <Bell size={24} strokeWidth={2.5} className="text-[#71727A]" />
+                <div className="absolute bg-[#f52525] rounded-full size-[10px] top-[10px] right-[10px] border-2 border-[#f0f2f6]" />
+              </button>
+              
+              <Link 
+                to="/home?tab=profile"
+                className="relative flex items-center justify-center shrink-0 size-[44px] cursor-pointer border-none bg-transparent active:scale-95 transition-transform text-[#2B3B63]"
+              >
+                <CircleUserRound size={24} strokeWidth={2.5} className="text-[#71727A]" />
+              </Link>
+            </div>
           </header>
           <ScheduleView />
         </div>

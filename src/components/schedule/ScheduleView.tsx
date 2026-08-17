@@ -224,7 +224,7 @@ export function ScheduleView() {
               return (
               <section key={group.key} aria-label={showSupportLabel ? group.label : 'Scheduled Routes'}>
                 {showSupportLabel && <div className="flex items-center justify-between mb-2 mt-2">
-                  <h2 className="m-0 text-[26px] font-bold text-[#2B3B63]">{group.label}</h2>
+                  <h2 className="m-0 text-[16px] font-bold text-[#2B3B63]">{group.label}</h2>
                   <span className="text-[11px] font-semibold text-[#8A909D]">{group.routes.length} {group.routes.length === 1 ? 'Route' : 'Routes'}</span>
                 </div>}
                 <div className="space-y-2">
