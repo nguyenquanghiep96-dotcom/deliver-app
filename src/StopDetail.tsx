@@ -128,8 +128,8 @@ export default function StopDetail() {
   const activeService = routes.flatMap(route => route.stops.map(routeStop => ({ route, stop: routeStop })))
     .find(item => item.stop.status === 'Servicing' && !(item.route.id === currentRoute.id && item.stop.id === stop.id));
   const arrivedDisabled = isPending && !!activeService;
-  const isTodaysAssignedRoute = currentRoute.date === 'Today';
-  const showArrivedAction = isPending && (currentRoute.status === 'En Route' || isTodaysAssignedRoute);
+  // Planning remains available before departure; arrival and execution begin only after the Route starts.
+  const showArrivedAction = isPending && currentRoute.status === 'En Route';
 
   const handlePrimary = () => {
     if (arrivedDisabled) return;

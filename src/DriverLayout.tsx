@@ -188,7 +188,7 @@ export default function DriverLayout() {
                   : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
               )}
             >
-              <Route size={20} strokeWidth={2.5} className={isHomeActive ? "text-[#FF7048]" : "text-[#71727A]"} />
+              <Route size={20} strokeWidth={2} className={isHomeActive ? "text-[#FF7048]" : "text-[#71727A]"} />
               <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">My Routes</span>
             </Link>
 
@@ -202,7 +202,7 @@ export default function DriverLayout() {
                   : "px-[6px] rounded-[30px] text-[#71727A] hover:bg-gray-50"
               )}
             >
-              <Calendar size={20} strokeWidth={2.5} className={isScheduleActive ? "text-[#FF7048]" : "text-[#71727A]"} />
+              <Calendar size={20} strokeWidth={2} className={isScheduleActive ? "text-[#FF7048]" : "text-[#71727A]"} />
               <span className="self-stretch text-center font-medium text-[11px] font-['Google_Sans_Flex']">Schedule</span>
             </Link>
 
@@ -222,7 +222,7 @@ export default function DriverLayout() {
               setPrototypeStage(stage);
               navigate('/home?tab=home');
             }}
-            title={stage === 1 ? 'Running route' : stage === 2 ? 'No route today' : 'Assigned route not started'}
+            title={stage === 1 ? 'Assigned route not started' : stage === 2 ? 'Running route' : 'No route today'}
             className={cn(
               "w-full min-h-[44px] px-3 py-2 rounded-[14px] flex items-center gap-3 text-left transition-colors font-['Google_Sans_Flex'] cursor-pointer border-none outline-none",
               prototypeStage === stage ? "bg-white text-[#4B5563]" : "bg-transparent text-white/70 hover:text-white"
@@ -233,7 +233,7 @@ export default function DriverLayout() {
               "text-[11px] font-medium leading-tight",
               prototypeStage === stage ? "text-[#71727A]" : "text-white/55"
             )}>
-              {stage === 1 ? 'Route Ongoing' : stage === 2 ? 'No Routes Today' : 'Route Not Started'}
+              {stage === 1 ? 'Route Not Started' : stage === 2 ? 'Route Ongoing' : 'No Routes Today'}
             </span>
           </button>
         ))}

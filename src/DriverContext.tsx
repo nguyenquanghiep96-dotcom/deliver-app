@@ -86,13 +86,13 @@ const createPrototypeRoutes = (stage: 1 | 2 | 3): RouteData[] => initialRoutes.m
     })),
   };
 
-  if (route.id !== 'RT-006' || stage === 1) return clonedRoute;
-  if (stage === 2) {
+  if (route.id !== 'RT-006' || stage === 2) return clonedRoute;
+  if (stage === 3) {
     return {
       ...clonedRoute,
       status: 'Planned' as const,
-      date: 'Aug 18',
-      startDate: 'Aug 18',
+      date: 'Aug 22',
+      startDate: 'Aug 22',
       stops: clonedRoute.stops.map(stop => ({
         ...stop,
         status: 'Pending' as const,
@@ -104,6 +104,7 @@ const createPrototypeRoutes = (stage: 1 | 2 | 3): RouteData[] => initialRoutes.m
     ...clonedRoute,
     status: 'Planned' as const,
     date: 'Today',
+    startDate: 'Today',
     stops: clonedRoute.stops.map(stop => ({
       ...stop,
       status: 'Pending' as const,

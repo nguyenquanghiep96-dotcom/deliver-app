@@ -14,9 +14,10 @@ interface UniversalStopCardProps {
   hideAction?: boolean;
   className?: string;
   title?: string;
+  inlineActionLabel?: string;
 }
 
-export function StopCard({ stop, routeId, hideAction = false, className, title }: UniversalStopCardProps) {
+export function StopCard({ stop, routeId, hideAction = false, className, title, inlineActionLabel }: UniversalStopCardProps) {
   const isDone = stop.status === 'Done';
   const linkUrl = `/route/${routeId}/stop/${stop.id}`;
   const location = useLocation();
@@ -38,51 +39,41 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
       isDone ? "bg-[#2FA301]/10 border border-[#2FA301]/20" : "bg-white border-y border-black/5",
       className
     )}>
-      <div className={cn("px-4 flex flex-col gap-3", isDone ? "py-4" : hideAction ? "pt-4 pb-3" : "py-5")}>
+      <div className={cn("px-4 flex flex-col gap-3", isDone ? "py-4" : hideAction ? "py-4" : "py-5")}>
       {title && (
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-[16px] font-bold text-[#2B3B63] m-0 font-['Google_Sans_Flex']">
+        <div className="flex items-center justify-between mb-0">
+          <h3 className="text-[14px] font-semibold text-[#2B3B63] m-0 font-['Google_Sans_Flex'] flex items-center gap-2">
             {title}
+            {title === 'Current Stop' && <span className="relative size-2 rounded-full bg-[#2FA301]"><span className="absolute inset-0 rounded-full bg-[#2FA301] animate-ping opacity-50" /></span>}
           </h3>
-          {title === 'Current Stop' && stop.status === 'Servicing' && (
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold text-[#2fa301] uppercase tracking-wider">On Going</span>
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2fa301] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2fa301]"></span>
-              </span>
-            </div>
-          )}
         </div>
       )}
       {/* Number + Address */}
       <div className="flex items-center gap-3">
         <div className={cn(
-          "size-[32px] rounded-full flex items-center justify-center text-white shrink-0 mt-0.5",
+          "rounded-full flex items-center justify-center text-white shrink-0 mt-0.5",
+          isDone ? "size-[28px]" : "size-[32px]",
           isDone ? "bg-[#2FA301]" : "bg-[#2B3B63]"
         )}>
-          <span className="font-bold text-[14px]">{stop.num}</span>
+          <span className={cn("font-bold", isDone ? "text-[12px]" : "text-[14px]")}>{stop.num}</span>
         </div>
-        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           {/* Address */}
-          <h4 className="text-[#2B3B63] text-[16px] font-bold m-0 leading-snug font-['Google_Sans_Flex']">
-            {stop.address}
-            {hideAction && stop.status === 'Servicing' && (
-              <span className="inline-flex align-middle ml-2 px-2 py-0.5 rounded-full bg-[#2563EB] text-white text-[10px] font-bold leading-4 whitespace-nowrap">
-                Arrived
-              </span>
-            )}
+          <h4 className={cn("text-[#2B3B63] font-bold m-0 leading-snug font-['Google_Sans_Flex'] min-w-0", isDone ? "text-[14px]" : "text-[16px]")}>
+            <span style={{ fontWeight: 700, fontVariationSettings: "'wght' 700" }}>{stop.address}</span>
+            {stop.status === 'Servicing' && <span className="h-5 px-2 ml-1.5 rounded-full bg-[#2563EB] text-white text-[10px] font-semibold inline-flex align-middle items-center whitespace-nowrap">Arrived</span>}
+            {isDone && <span className="h-5 px-2 ml-1.5 rounded-full bg-[#2FA301] text-white text-[10px] font-semibold inline-flex align-middle items-center whitespace-nowrap">Done</span>}
           </h4>
+          {isDone && <ChevronDown size={22} strokeWidth={2.25} className="-rotate-90 text-[#7F8795] shrink-0 ml-auto" />}
         </div>
       </div>
 
       {/* Work Orders section */}
-      <div className={cn("flex flex-col mt-1 pt-3 border-t", isDone ? "border-[#2FA301]/15" : "border-[#E8E9F1]")}>
+      <div className={cn("flex flex-col mt-1 pt-3 border-t", isDone ? "hidden" : "border-[#E8E9F1]")}>
         {visibleWOs.map((wo, i) => (
-          <div key={wo.id} className={cn("flex flex-col gap-1.5 pb-3 border-b border-[#F2F4F7] last:border-0 last:pb-0", i > 0 && "pt-3")}>
-            {/* Type badge */}
-            <div className="flex items-center gap-2 text-[14px]">
-              <div className="flex items-center gap-1.5 bg-[#F8F9FA] border border-[#E5E7EB] pl-1.5 pr-2 py-[2px] rounded-full">
+          <div key={wo.id} className={cn("pb-3 border-b border-[#F2F4F7] last:border-0 last:pb-0", i > 0 && "pt-3")}>
+            <div className="text-[13px] leading-5 text-[#71727A] line-clamp-2">
+              <span className="inline-flex align-middle items-center gap-1.5 bg-[#F8F9FA] border border-[#E5E7EB] pl-1.5 pr-2 py-[2px] rounded-full mr-1.5">
                 <div 
                   className="size-[6px] rounded-full shrink-0" 
                   style={{ backgroundColor: ACTION_COLORS[wo.action] || '#6B7280' }}
@@ -90,56 +81,42 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
                 <span className="text-[#2B3B63] text-[11px] font-bold uppercase tracking-wider">
                   {wo.action}
                 </span>
-              </div>
+              </span>
               <span 
-                className="text-white text-[11px] font-bold px-2 py-[2px] rounded-[6px] shrink-0"
+                className="inline-flex align-middle text-white text-[11px] leading-5 font-bold px-2 py-[1px] rounded-[6px] mr-1.5"
                 style={{ backgroundColor: TYPE_COLORS[wo.type] || '#2B3B63' }}
               >
                 {wo.type}
               </span>
-              <span className="text-[11px] font-semibold text-[#8A909D] shrink-0">{wo.id}</span>
-
-              <div className="flex-1" />
-              
+              <span className="text-[11px] font-semibold text-[#8A909D] mr-1.5">{wo.id}</span>
+              {wo.action !== 'Pickup' && <span className="inline-flex align-middle items-center gap-1 text-[#2B3B63] font-semibold mr-1.5"><User size={13} />{wo.customerName}</span>}
+              {wo.unitInfo && (wo.unitInfo.size || wo.unitInfo.modelName) && <span>· {wo.unitInfo.size} {wo.unitInfo.modelName}</span>}
               {wo.status === 'Completed' && (
-                <span className="size-[18px] rounded-full bg-[#2FA301] text-white flex items-center justify-center shrink-0" aria-label="Completed">
+                <span className="inline-flex align-middle size-[18px] rounded-full bg-[#2FA301] text-white items-center justify-center ml-1" aria-label="Completed">
                   <Check size={12} strokeWidth={3} aria-hidden="true" />
                 </span>
               )}
               {wo.status === 'Failed' && (
-                <Flag size={16} className="text-[#f52525] shrink-0" />
-              )}
-            </div>
-            {/* Customer & Unit info */}
-            <div className="flex items-center gap-2 pl-[4px] text-[13px] text-[#71727A] overflow-hidden">
-              <User size={13} className="shrink-0"/>
-              <span className="text-[#2B3B63] font-semibold font-['Google_Sans_Flex'] truncate shrink-0 max-w-[120px]">{wo.customerName}</span>
-              {wo.unitInfo && (wo.unitInfo.size || wo.unitInfo.modelName) && (
-                <span className="truncate">· {wo.unitInfo.size} {wo.unitInfo.modelName}</span>
+                <Flag size={16} className="inline-block align-middle text-[#f52525] ml-1" />
               )}
             </div>
           </div>
         ))}
         
         {/* Show more/less toggle */}
-        {(hasMultipleWOs || (isDone && displayWOs.length > 0)) && (
+        {!isDone && hasMultipleWOs && (
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               setShowAllWOs(!showAllWOs);
             }}
-            className={cn("flex items-center gap-1 text-[13px] font-semibold font-['Google_Sans_Flex'] bg-transparent border-none cursor-pointer p-0 mt-0.5 active:opacity-70", isDone ? "text-[#238000]" : "text-[#3B82F6]")}
+            className={cn("flex items-center gap-1 text-[13px] font-semibold font-['Google_Sans_Flex'] bg-transparent border-none cursor-pointer p-0 mt-1 active:opacity-70", isDone ? "text-[#238000]" : "text-[#3B82F6]")}
           >
             {showAllWOs ? (
               <>
                 <ChevronUp size={14} />
                 Show less
-              </>
-            ) : isDone ? (
-              <>
-                <ChevronDown size={14} />
-                See work orders
               </>
             ) : (
               <>
@@ -167,10 +144,35 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
           </a>
         </div>
       )}
+      {inlineActionLabel && !isDone && (
+        <div className="flex items-center gap-2 mt-3">
+          <button
+            type="button"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              navigate(linkUrl, { state: { from: location.pathname + location.search } });
+            }}
+            className={cn("flex-1 min-h-[52px] rounded-[14px] text-[16px] font-semibold cursor-pointer active:scale-[0.99]", inlineActionLabel === 'Continue Stop' ? "bg-[#FF7048] border border-[#FF7048] text-white" : "bg-[#F1F3F7] border border-[#E1E4E9] text-[#2B3B63]")}
+          >
+            {inlineActionLabel}
+          </button>
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(stop.address)}`}
+            target="_blank"
+            rel="noreferrer"
+            onClick={event => event.stopPropagation()}
+            className="size-[52px] rounded-[14px] bg-white border border-[#D9DDE4] text-[#FF7048] flex items-center justify-center shrink-0 decoration-none active:scale-95"
+            aria-label={`Navigate to Stop ${stop.num}`}
+          >
+            <Navigation size={19} fill="currentColor" />
+          </a>
+        </div>
+      )}
     </div>
       
       {!hideAction && (
-        <div className="sticky bottom-0 bg-white pt-2 pb-4 px-4 z-10 w-full mt-2">
+        <div className="sticky bottom-0 bg-white pt-0 pb-4 px-4 z-10 w-full">
           <div className={cn("grid gap-2", title === 'Suggested Stop' ? "grid-cols-2" : "grid-cols-1")}>
             {title === 'Suggested Stop' && (
               <Link
@@ -186,7 +188,7 @@ export function StopCard({ stop, routeId, hideAction = false, className, title }
               state={{ from: location.state ? (location.state as any).from : (location.pathname + location.search) }}
               className="min-h-[52px] bg-[#FF7048] text-white px-3 rounded-[10px] text-[16px] font-semibold decoration-none flex justify-center items-center text-center font-['Google_Sans_Flex'] active:scale-95 transition-transform"
             >
-              <span className="whitespace-nowrap">{stop.status === 'Pending' ? 'View Stop' : 'Resume Stop'}</span>
+              <span className="whitespace-nowrap">{stop.status === 'Pending' ? 'View Stop' : 'Continue Stop'}</span>
             </Link>
           </div>
         </div>

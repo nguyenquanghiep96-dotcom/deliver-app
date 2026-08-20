@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronLeft, Phone, MapPin, ListFilter, Calendar as CalendarIcon, Info, House, X, Check, WandSparkles, ArrowUp, ArrowDown, AlertTriangle } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, Phone, MapPin, Navigation, ListFilter, Info, House, X, Check, WandSparkles, ArrowUp, ArrowDown, AlertTriangle } from "lucide-react";
 import { useNavigate, useParams, useLocation } from "react-router";
 import { useDriver } from "./DriverContext";
 import { cn } from "./lib/utils";
@@ -25,17 +25,40 @@ export default function RouteDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const backUrl = location.state?.from || "/home?tab=home";
-  const { routes, routeUpdates, acknowledgeRouteUpdate } = useDriver();
+  const { routes, routeUpdates, acknowledgeRouteUpdate, startRoute } = useDriver();
   
   const [isRearranging, setIsRearranging] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [noteExpanded, setNoteExpanded] = useState(false);
   const [orderedStopIds, setOrderedStopIds] = useState<string[]>([]);
   const [showOwnerEntities, setShowOwnerEntities] = useState(false);
   const [showRouteNoteSheet, setShowRouteNoteSheet] = useState(false);
+  const [showStartRouteConfirm, setShowStartRouteConfirm] = useState(false);
+  const [showStickyStart, setShowStickyStart] = useState(false);
   const [rearrangeMessage, setRearrangeMessage] = useState('');
+  const inlineStartRef = useRef<HTMLButtonElement>(null);
+  const pageScrollRef = useRef<HTMLDivElement>(null);
 
   const route = routes.find((r) => r.id === routeId);
   const routeUpdate = routeUpdates.find(update => update.routeId === routeId && !update.acknowledged);
+
+  useEffect(() => {
+    const scrollContainer = pageScrollRef.current;
+    if (!scrollContainer || !route || route.status !== 'Planned') {
+      setShowStickyStart(false);
+      return;
+    }
+    const updateStickyState = () => {
+      const button = inlineStartRef.current;
+      if (!button) return;
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const buttonRect = button.getBoundingClientRect();
+      setShowStickyStart(buttonRect.bottom < containerRect.top + 8);
+    };
+    scrollContainer.addEventListener('scroll', updateStickyState, { passive: true });
+    updateStickyState();
+    return () => scrollContainer.removeEventListener('scroll', updateStickyState);
+  }, [route?.status, routeId]);
 
   if (!route) {
     return (
@@ -61,6 +84,8 @@ export default function RouteDetail() {
     : [route.ownerEntity || route.dealerName].filter(Boolean);
   const completedStopsCount = actualStops.filter(stop => stop.status === 'Done').length;
   const progressPercentage = totalStops > 0 ? (completedStopsCount / totalStops) * 100 : 0;
+  const activeRoute = routes.find(candidate => candidate.status === 'En Route');
+  const hasAnotherActiveRoute = Boolean(activeRoute && activeRoute.id !== route.id);
 
   const remainingDistance = getRemainingDistance(route.id, actualStops);
 
@@ -177,13 +202,9 @@ export default function RouteDetail() {
   };
 
   return (
-    <div className="relative flex-1 flex flex-col overflow-y-auto select-none h-full pb-[72px] no-scrollbar bg-[#F4F5F8] font-['Google_Sans_Flex']">
-      
-      {/* Route overview */}
-      <div className="bg-white px-4 pt-4 md:pt-[66px] pb-5 rounded-b-[28px] text-[#2B3B63] relative z-10 shadow-[0_6px_24px_rgba(43,59,99,0.06)]">
-        
-        {/* Top bar */}
-        <header className="flex items-center gap-3 mb-4">
+    <div ref={pageScrollRef} className="relative flex-1 flex flex-col overflow-y-auto select-none h-full pb-[148px] no-scrollbar bg-[#F4F5F8] font-['Google_Sans_Flex']">
+      {/* Sticky top bar */}
+        <header className="sticky top-0 z-50 bg-white px-4 pt-4 md:pt-[66px] pb-3 flex items-center gap-3 border-b border-[#ECEEF2]">
           <button
             onClick={() => navigate(backUrl)}
             className="size-11 bg-[#F4F5F8] rounded-full flex items-center justify-center border-none cursor-pointer active:scale-95 transition-all shrink-0 text-[#2B3B63]"
@@ -194,125 +215,128 @@ export default function RouteDetail() {
           <h1 className="text-[17px] font-semibold m-0 text-[#2B3B63]">
             Route Details
           </h1>
+          <button className="h-11 ml-auto px-3 bg-[#F4F5F8] rounded-full flex items-center justify-center gap-1.5 border-none text-[#2B3B63] cursor-pointer active:scale-95" aria-label="Call Dispatcher">
+            <Phone size={17} strokeWidth={2} className="text-[#2FA301]" />
+            <span className="text-[11px] font-semibold">Call Dispatcher</span>
+          </button>
         </header>
 
-        {/* Status Badge & Route ID */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
+      {/* Route overview */}
+      <div className="bg-white px-4 pt-2 pb-5 rounded-b-[28px] text-[#2B3B63] relative z-10 shadow-[0_6px_24px_rgba(43,59,99,0.06)]">
+
+        {/* Route Name & Status */}
+        <div className="flex items-center gap-2.5 mb-3 min-w-0">
+          <h2 className="text-[30px] font-bold leading-tight m-0 text-[#2B3B63] tracking-tight truncate">
+            {route.name}
+          </h2>
             <div className={cn(
-              "px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0 flex items-center gap-1.5",
-              route.status === 'Completed' ? "bg-[#2FA301]/20 text-[#4ADE80]" :
+              "h-6 px-2.5 rounded-full text-[11px] font-semibold shrink-0 flex items-center",
+              route.status === 'Completed' ? "bg-[#2FA301] text-white" :
               route.status === 'En Route' ? "bg-[#2563eb] text-white" :
               "bg-[#7C3AED] text-white"
             )}>
-              {route.status === 'En Route' && (
-                <div className="w-1.5 h-1.5 rounded-full bg-white" />
-              )}
               {route.status === 'En Route' ? 'In Progress' : route.status === 'Planned' ? 'Scheduled' : 'Completed'}
             </div>
-          </div>
-        </div>
-
-        {/* Route Name */}
-        <h2 className="text-[30px] font-bold leading-tight m-0 mb-2 text-[#2B3B63] tracking-tight">
-          {route.name}
-        </h2>
-
-        {/* Schedule and route owner summary */}
-        <div className="flex flex-col gap-2 mb-4">
-          <div className="flex items-center gap-2 text-[#71727A]">
-            <CalendarIcon size={16} className="text-[#9CA3AF] shrink-0" />
-            <span className="text-[13px] shrink-0">Scheduled</span>
-            <span className="text-[13px] font-bold text-[#2B3B63] truncate">{route.startDate || route.date} · {route.startTime}</span>
-          </div>
-          <div className="flex items-center gap-2 text-[#71727A] min-w-0">
-            <House size={16} className="text-[#9CA3AF] shrink-0" strokeWidth={2} />
-            <span className="text-[13px] shrink-0">Owner Entities</span>
-            <span className="text-[13px] font-bold text-[#2B3B63] truncate min-w-0">{ownerEntities[0]}</span>
-            {ownerEntities.length > 1 && (
+            {route.routeNote && (
               <button
-                onClick={() => setShowOwnerEntities(true)}
-                className="text-[12px] font-bold text-[#FF7048] bg-transparent border-none p-0 shrink-0 cursor-pointer active:opacity-60"
+                type="button"
+                onClick={() => setShowRouteNoteSheet(true)}
+                className="relative size-10 ml-auto rounded-full bg-[#F1F3F7] border border-[#E1E4E9] text-[#71727A] flex items-center justify-center shrink-0 cursor-pointer active:scale-95"
+                aria-label="View Route note"
               >
-                See {ownerEntities.length - 1} more
+                <Info size={19} />
+                <span className="absolute top-1 right-1 size-2.5 rounded-full bg-[#FF7048] border-2 border-[#F1F3F7]" />
               </button>
             )}
-          </div>
         </div>
 
-        {/* Progress Card */}
-        <div className="bg-[#2B3B63] rounded-[24px] p-4 flex flex-col gap-3 border border-[#2B3B63]">
-          <div className="flex items-center justify-between text-[13px] font-['Google_Sans_Flex']">
-            <span className="text-white/65">Progress</span>
-            <span className="font-semibold text-white">{completedStopsCount}/{totalStops} Stops done</span>
-          </div>
-          <div
-            className="w-full bg-white/15 h-[8px] rounded-full overflow-hidden"
-            role="progressbar"
-            aria-label="Route progress"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={Math.round(progressPercentage)}
-            aria-valuetext={`${completedStopsCount} of ${totalStops} Stops completed`}
-          >
-            <div 
-              className="h-full bg-[#FF7048] transition-all duration-500 rounded-full" 
-              style={{ width: `${progressPercentage}%` }} 
-            />
-          </div>
-          <div className="flex items-center justify-between mt-0.5 text-white/65 text-[13px] font-['Google_Sans_Flex']">
-            <div className="flex items-center gap-2">
-              <MapPin size={14} className="text-white/60"/>
-              <span>{remainingDistance} remaining</span>
-            </div>
-            <button 
-              onClick={() => route.routeNote && setShowRouteNoteSheet(true)}
-              className="relative size-11 text-white bg-white/10 border border-white/15 rounded-full flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
-              aria-label={route.routeNote ? 'Show route note' : 'Route information'}
-            >
-              <Info size={18} strokeWidth={1.5} aria-hidden="true" />
-              {route.routeNote && (
-                <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-[#FF7048] border-2 border-[#2B3B63]" />
+        {route.routeNote && !bannerDismissed && (
+          <div className={cn("mb-3 bg-[#FFF7F3] border border-[#FF7048]/15 rounded-[14px] px-1.5 py-1.5 flex gap-1.5", noteExpanded ? "items-start" : "items-center min-h-[36px]")}>
+            <Info size={16} className="text-[#FF7048] shrink-0" />
+            <div className="min-w-0 flex-1 text-[12px] leading-relaxed text-[#4B5563]">
+              {noteExpanded ? (
+                <p className="m-0">
+                  {route.routeNote}{' '}
+                  <button type="button" onClick={() => setNoteExpanded(false)} className="inline text-[11px] font-semibold text-[#E85D35] bg-transparent border-none p-0 cursor-pointer">See less</button>
+                </p>
+              ) : (
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="truncate flex-1">{route.routeNote}</span>
+                  <button type="button" onClick={() => setNoteExpanded(true)} className="text-[11px] font-semibold text-[#E85D35] bg-transparent border-none p-0 shrink-0 cursor-pointer">See more</button>
+                </div>
               )}
-            </button>
+            </div>
+            <button type="button" onClick={() => setBannerDismissed(true)} className="size-7 rounded-full bg-transparent border-none text-[#9CA3AF] flex items-center justify-center shrink-0 cursor-pointer" aria-label="Dismiss Route note"><X size={15} /></button>
+          </div>
+        )}
+
+        {/* Compact route summary */}
+        <div className="grid grid-cols-3 py-1.5">
+          <div className="pr-2 min-w-0">
+            <span className="block text-[11px] text-[#8A909D] mb-1">Scheduled</span>
+            <span className="block text-[14px] font-semibold text-[#2B3B63] truncate">{route.startDate || route.date}</span>
+            <span className="block text-[11px] text-[#71727A] truncate">{route.startTime}</span>
+          </div>
+          <button type="button" onClick={() => ownerEntities.length > 1 && setShowOwnerEntities(true)} className="px-2 min-w-0 border-0 border-l border-r border-solid border-y-0 border-[#E5E7EB] bg-transparent text-left cursor-pointer">
+            <span className="block text-[11px] text-[#8A909D] mb-1">Owner</span>
+            <span className="block text-[14px] font-semibold text-[#2B3B63] truncate">{ownerEntities[0]}</span>
+            {ownerEntities.length > 1 && <span className="block text-[11px] font-semibold text-[#FF7048]">+{ownerEntities.length - 1} more</span>}
+          </button>
+          <div className="pl-2 min-w-0">
+            <span className="block text-[11px] text-[#8A909D] mb-1">Progress</span>
+            <span className="block text-[14px] font-semibold text-[#2B3B63]">{completedStopsCount}/{totalStops} Stops</span>
+            <div
+              className="w-full bg-[#D9DDE5] h-1 rounded-full overflow-hidden mt-2"
+              role="progressbar"
+              aria-label="Route progress"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(progressPercentage)}
+            >
+              <div className="h-full bg-[#FF7048] rounded-full" style={{ width: `${progressPercentage}%` }} />
+            </div>
           </div>
         </div>
 
+        {/* Distance and route navigation */}
+        <div className="min-h-[52px] mt-[6px] border-t border-[#E5E7EB] flex items-center justify-between gap-3">
+          <div className="min-w-0 flex items-baseline gap-1.5">
+            <span className="text-[12px] text-[#71727A] whitespace-nowrap">Total Distance</span>
+            <span className="text-[15px] font-bold text-[#2B3B63] truncate">{route.totalDistance || remainingDistance}</span>
+          </div>
+          <a href={buildMapsUrl()} target="_blank" rel="noreferrer" className="h-10 px-3 rounded-[12px] bg-white border border-[#D9DDE5] text-[#2B3B63] text-[13px] font-semibold flex items-center justify-center gap-1.5 decoration-none shrink-0 active:scale-[0.98]">
+            <MapPin size={16} className="text-[#FF7048]" />
+            Open Maps
+          </a>
+        </div>
+
+        {route.status === 'Planned' && !hasAnotherActiveRoute && (
+          <button
+            ref={inlineStartRef}
+            type="button"
+            onClick={() => setShowStartRouteConfirm(true)}
+            className="w-full min-h-[52px] mt-3 rounded-[14px] border-none bg-[#FF7048] text-white text-[16px] font-semibold cursor-pointer active:scale-[0.98] transition-transform"
+          >
+            Start Route
+          </button>
+        )}
       </div>
 
       {/* Note and dispatcher action */}
-      <div className="px-4 pt-4 pb-2 flex flex-col gap-3 relative z-0">
+      <div className="px-4 pt-2 pb-0 flex flex-col gap-3 relative z-0">
         {routeUpdate && (
           <RouteUpdateNotice update={routeUpdate} onAcknowledge={acknowledgeRouteUpdate} />
         )}
-        {route.routeNote && !bannerDismissed && (
-          <div className="bg-[#FFF7F3] border border-[#FF7048]/15 rounded-[16px] p-3.5 flex items-start gap-3 relative">
-            <div className="size-8 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm">
-              <Info size={17} className="text-[#FF7048]" />
-            </div>
-            <div className="flex-1 pr-6">
-              <h3 className="text-[13px] font-bold text-[#E85D35] m-0 mb-1">Route Note</h3>
-              <p className="text-[12px] text-[#4B5563] m-0 leading-relaxed">
-                {route.routeNote}
-              </p>
-            </div>
-            <button 
-              onClick={() => setBannerDismissed(true)}
-              className="absolute top-2.5 right-2.5 size-8 rounded-full text-[#9CA3AF] bg-transparent border-none cursor-pointer flex items-center justify-center active:scale-95"
-              aria-label="Dismiss route note"
-            >
-              <X size={17} strokeWidth={2.5} />
-            </button>
+        {route.status === 'Planned' && hasAnotherActiveRoute && (
+          <div className="rounded-[14px] bg-[#FFF7ED] border border-[#F3C987] px-3.5 py-3 flex items-start gap-2.5" role="status">
+            <AlertTriangle size={18} className="text-[#C67A00] shrink-0 mt-0.5" />
+            <p className="m-0 text-[13px] font-medium leading-relaxed text-[#765019]">You’re currently working on {activeRoute?.name}. Complete that Route before starting this one.</p>
           </div>
         )}
-        <button className="w-full bg-white text-[#2B3B63] px-4 py-3 rounded-[14px] font-bold text-[14px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform border border-[#E1E4E9] cursor-pointer shadow-sm">
-          <Phone size={17} className="text-[#2FA301]" />
-          Call Dispatcher
-        </button>
       </div>
 
       {/* Stops and route actions */}
-      <div className="px-4 pt-4 pb-6 flex flex-col gap-3 relative z-0">
+      <div id="route-stops" className="px-4 pt-3 pb-6 flex flex-col gap-3 relative z-0">
         {route.status === 'Completed' && (
           <button
             type="button"
@@ -330,7 +354,7 @@ export default function RouteDetail() {
                 {actualStops.length}
               </span>
             </div>
-            <button 
+            {false && <button
               onClick={() => {
                 setIsRearranging(!isRearranging);
                 setRearrangeMessage('');
@@ -339,11 +363,7 @@ export default function RouteDetail() {
             >
               {isRearranging ? <Check size={14} /> : <ListFilter size={14} />}
               {isRearranging ? 'Done' : 'Rearrange'}
-            </button>
-          </div>
-          <div className="text-center py-0.5">
-            <span className="text-[13px] text-[#8A909D]">Total Distance</span>
-            <span className="text-[15px] font-bold text-[#2B3B63] ml-2">{route.totalDistance || remainingDistance}</span>
+            </button>}
           </div>
           {isRearranging ? (
             <div>
@@ -362,29 +382,20 @@ export default function RouteDetail() {
                 </div>
               )}
             </div>
-          ) : (
-            <a
-              href={buildMapsUrl()}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full min-h-[52px] bg-[#FF7048] text-white px-5 py-3 rounded-[10px] font-semibold text-[16px] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform decoration-none cursor-pointer"
-            >
-              <MapPin size={18} />
-              Open Full Route in Maps
-            </a>
-          )}
+          ) : null}
         </div>
 
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2.5 -mt-1.5">
           {/* Start Card */}
-          <div className="bg-[#E1E4E9] rounded-[13px] px-3 py-2.5 flex gap-2.5 items-center">
+          <div className="py-3 border-b border-[#D9DDE4] flex gap-2.5 items-center">
             <div className="size-7 flex items-center justify-center shrink-0">
-              <MapPin size={15} className="text-[#9AA0AC]" />
+              <span className="material-symbols-outlined text-[#9AA0AC]" style={{ fontSize: 19 }}>location_on</span>
             </div>
             <div className="flex flex-col flex-1">
               <span className="text-[#8A909D] text-[10px] font-bold uppercase tracking-wider mb-0.5">Start</span>
-              <span className="text-[#5F6572] text-[12px] font-medium font-['Google_Sans_Flex'] leading-tight">{route.startingAddress || "123 Main St, Dallas, TX 75201"}</span>
+              <span className="text-[#5F6572] text-[14px] font-medium font-['Google_Sans_Flex'] leading-tight">{route.startingAddress || "123 Main St, Dallas, TX 75201"}</span>
             </div>
+            <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(route.startingAddress || "123 Main St, Dallas, TX 75201")}`} target="_blank" rel="noreferrer" className="size-10 rounded-[12px] bg-white border border-[#D5D9E0] text-[#FF7048] flex items-center justify-center shrink-0 decoration-none active:scale-95" aria-label="Navigate to Route start"><Navigation size={17} fill="currentColor" /></a>
           </div>
 
           {displayStops.map((stop) => {
@@ -423,25 +434,39 @@ export default function RouteDetail() {
                   hideAction={true} 
                   className={cn(
                     "rounded-[18px] shadow-[0_2px_8px_rgba(43,59,99,0.05)]",
-                    stop.status === "Done" ? "overflow-hidden" : "border border-[#E3E5EA]"
+                    stop.status === "Done" ? "overflow-hidden" : stop.status === 'Servicing' ? "border-2 border-[#2563EB]" : "border border-[#E3E5EA]"
                   )}
+                  inlineActionLabel={route.status === 'En Route' && stop.status === 'Servicing' ? 'Continue Stop' : route.status === 'En Route' && stop.status === 'Pending' ? 'View Stop' : undefined}
                 />
               </div>
             </div>
           )})}
 
           {/* End Card */}
-          <div className="bg-[#E1E4E9] rounded-[13px] px-3 py-2.5 flex gap-2.5 items-center">
+          <div className="py-3 border-t border-[#D9DDE4] flex gap-2.5 items-center">
             <div className="size-7 flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-[#9AA0AC]" style={{ fontSize: 16 }}>flag</span>
+              <span className="material-symbols-outlined text-[#9AA0AC]" style={{ fontSize: 20 }}>flag</span>
             </div>
             <div className="flex flex-col flex-1">
               <span className="text-[#8A909D] text-[10px] font-bold uppercase tracking-wider mb-0.5">End</span>
-              <span className="text-[#5F6572] text-[12px] font-medium font-['Google_Sans_Flex'] leading-tight">{route.endAddress || route.startingAddress || 'Route end address'}</span>
+              <span className="text-[#5F6572] text-[14px] font-medium font-['Google_Sans_Flex'] leading-tight">{route.endAddress || route.startingAddress || 'Route end address'}</span>
             </div>
+            <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(route.endAddress || route.startingAddress || 'Route end address')}`} target="_blank" rel="noreferrer" className="size-10 rounded-[12px] bg-white border border-[#D5D9E0] text-[#FF7048] flex items-center justify-center shrink-0 decoration-none active:scale-95" aria-label="Navigate to Route end"><Navigation size={17} fill="currentColor" /></a>
           </div>
         </div>
       </div>
+
+      {route.status === 'Planned' && !hasAnotherActiveRoute && showStickyStart && (
+        <div className="fixed left-4 right-4 bottom-[82px] md:left-1/2 md:right-auto md:w-[345px] md:-translate-x-1/2 z-[55]">
+          <button
+            type="button"
+            onClick={() => setShowStartRouteConfirm(true)}
+            className="w-full min-h-[52px] rounded-[14px] border-none bg-[#FF7048] text-white text-[16px] font-semibold cursor-pointer shadow-[0_6px_18px_rgba(43,59,99,0.18)] active:scale-[0.98]"
+          >
+            Start Route
+          </button>
+        </div>
+      )}
 
       {showOwnerEntities && (
         <div className="fixed inset-0 z-[100] bg-black/50 flex flex-col justify-end">
@@ -518,6 +543,23 @@ export default function RouteDetail() {
             >
               OK, Got it!
             </button>
+          </div>
+        </div>
+      )}
+
+      {showStartRouteConfirm && (
+        <div className="fixed inset-0 z-[120] bg-black/50 flex flex-col justify-end">
+          <button className="flex-1 bg-transparent border-none" onClick={() => setShowStartRouteConfirm(false)} aria-label="Cancel starting route" />
+          <div className="bg-white rounded-t-[28px] px-4 pt-5 pb-7 shadow-2xl">
+            <div className="size-11 rounded-full bg-[#FFF0EB] flex items-center justify-center mb-3">
+              <AlertTriangle size={21} className="text-[#FF7048]" />
+            </div>
+            <h2 className="m-0 text-[20px] font-bold text-[#2B3B63]">Start {route.name}?</h2>
+            <p className="m-0 mt-2 text-[14px] leading-relaxed text-[#71727A]">The Route status will change to In Progress. Confirm only when you are ready to begin this Route.</p>
+            <div className="grid grid-cols-2 gap-2.5 mt-5">
+              <button type="button" onClick={() => setShowStartRouteConfirm(false)} className="min-h-[52px] rounded-[14px] bg-white border border-[#D9DDE4] text-[#2B3B63] text-[16px] font-semibold">Not Yet</button>
+              <button type="button" onClick={() => { startRoute(route.id); setShowStartRouteConfirm(false); }} className="min-h-[52px] rounded-[14px] bg-[#FF7048] border-none text-white text-[16px] font-semibold">Start Route</button>
+            </div>
           </div>
         </div>
       )}

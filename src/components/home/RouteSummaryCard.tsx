@@ -1,14 +1,16 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { ChevronRight, MapPin, Info } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useDriver } from '../../DriverContext';
 
 interface RouteSummaryCardProps {
   route: any;
   completedStopsCount: number;
   totalStops: number;
   progressPercentage: number;
-  remainingDistanceStr: string;
+  totalDistanceStr: string;
   onInfoClick: (note: string) => void;
+  connectedToStop?: boolean;
 }
 
 export function RouteSummaryCard({
@@ -16,11 +18,17 @@ export function RouteSummaryCard({
   completedStopsCount,
   totalStops,
   progressPercentage,
-  remainingDistanceStr,
-  onInfoClick
+  totalDistanceStr,
+  onInfoClick,
+  connectedToStop = false,
 }: RouteSummaryCardProps) {
+  const navigate = useNavigate();
+  const { startRoute } = useDriver();
   return (
-    <div className="route-summary-card bg-[#2B3B63] rounded-[24px] p-4 flex flex-col gap-3 border border-[#2B3B63] relative z-10">
+    <div className={cn(
+      "route-summary-card bg-[#2B3B63] px-4 pt-4 pb-5 flex flex-col gap-3 border border-[#2B3B63] relative z-10",
+      "rounded-[20px]"
+    )}>
       {/* Header: Route ID + Status */}
       <div className="flex items-center justify-between">
          <Link to={`/route/${route.id}`} className="route-summary-title flex items-center gap-1.5 decoration-none group active:scale-95 transition-transform">
@@ -30,14 +38,11 @@ export function RouteSummaryCard({
            <ChevronRight size={20} className="text-white/45 group-hover:text-[#FFB39D] transition-colors" />
          </Link>
          <div className={cn(
-           "route-summary-status px-3 py-1.5 rounded-full text-[12px] font-bold shrink-0 flex items-center gap-1.5",
+           "route-summary-status h-6 px-2.5 rounded-full text-[11px] font-semibold shrink-0 flex items-center",
            route.status === 'Completed' ? "bg-[#2FA301] text-white" :
            route.status === 'En Route' ? "bg-[#2563EB] text-white" :
            "bg-[#7C3AED] text-white"
          )}>
-           {route.status === 'En Route' && (
-             <div className="w-1.5 h-1.5 rounded-full bg-white" />
-           )}
            {route.status === 'En Route' ? 'In Progress' : route.status === 'Planned' ? 'Scheduled' : 'Completed'}
          </div>
       </div>
@@ -70,16 +75,29 @@ export function RouteSummaryCard({
       <div className="flex items-center justify-between mt-1 text-white/65 text-[13px] font-['Google_Sans_Flex']">
          <div className="flex items-center gap-2">
            <MapPin size={14} className="text-white/50"/>
-           <span>{remainingDistanceStr} remaining</span>
+           <span className="text-[14px] font-semibold text-white">Total Distance · {totalDistanceStr}</span>
          </div>
          <button 
            onClick={() => onInfoClick(route.routeNote || 'No notes available for this route.')}
-           className="size-11 text-white bg-white/10 rounded-full flex items-center justify-center active:scale-95 transition-transform cursor-pointer border border-white/15"
+           className="relative size-10 text-white bg-white/10 rounded-full flex items-center justify-center active:scale-95 transition-transform cursor-pointer border border-white/15"
            aria-label="Show Route note"
          >
            <Info size={18} strokeWidth={1.5} aria-hidden="true" />
+           {route.routeNote && <span className="absolute top-1 right-1 size-2.5 rounded-full bg-[#FF7048] border-2 border-[#2B3B63]" />}
          </button>
       </div>
+      {route.status === 'Planned' && (
+        <button
+          type="button"
+          onClick={() => {
+            startRoute(route.id);
+            navigate(`/route/${route.id}`, { state: { from: '/home?tab=home' } });
+          }}
+          className="w-full min-h-[52px] rounded-[14px] border-none bg-[#FF7048] text-white text-[16px] font-semibold flex items-center justify-center decoration-none active:scale-[0.99] transition-transform cursor-pointer"
+        >
+          Start Route
+        </button>
+      )}
     </div>
   );
 }

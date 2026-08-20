@@ -4,7 +4,6 @@ import { useDriver } from '../../DriverContext';
 
 export function UpcomingRoutesSection() {
   const { routes } = useDriver();
-  const activeRoute = routes.find(route => route.status === 'En Route') || routes.find(route => route.status === 'Planned' && route.date === 'Today');
   
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const today = new Date();
@@ -18,47 +17,53 @@ export function UpcomingRoutesSection() {
     return month >= 0 && Number.isFinite(day) ? new Date(today.getFullYear(), month, day) : null;
   };
 
-  const upcoming = routes
+  const scheduledRoutes = routes
     .filter(route => {
-      if (route.status !== 'Planned' || route.id === activeRoute?.id) return false;
+      if (route.status === 'Completed') return false;
       const routeDate = parseRouteDate(route.startDate || route.date);
-      return routeDate && routeDate.getTime() >= todayStart.getTime();
+      return routeDate && routeDate.getMonth() === 7;
     })
     .sort((a, b) => {
+      const aCompleted = a.status === 'Completed';
+      const bCompleted = b.status === 'Completed';
+      if (aCompleted !== bCompleted) return aCompleted ? 1 : -1;
       const dateA = parseRouteDate(a.startDate || a.date);
       const dateB = parseRouteDate(b.startDate || b.date);
       return (dateA?.getTime() || 0) - (dateB?.getTime() || 0);
-    })
-    .slice(0, 2);
+    });
 
   return (
     <div className="-mx-4 bg-white px-4 pb-5 pt-[20px] border-b border-black/5">
       <div className="flex items-center justify-between mb-3 mt-2">
         <Link to="/home?tab=schedule" className="flex items-center gap-1 decoration-none active:opacity-70">
           <h3 className="text-[20px] font-bold text-[#2B3B63] m-0 font-['Google_Sans_Flex']">
-            Upcoming
+            Schedule Routes
           </h3>
           <ChevronRight size={22} strokeWidth={2.5} className="text-[#2B3B63] mt-[2px]" />
         </Link>
       </div>
       
       <div className="flex flex-col gap-2">
-        {upcoming.map(route => {
+        {scheduledRoutes.map(route => {
+          const isCompleted = route.status === 'Completed';
           const businessStops = route.stops?.filter(stop => !stop.workOrders?.some(wo => wo.action === 'Start' || wo.action === 'End')) || [];
           const stopsCount = businessStops.length || route.stopsCount || 0;
           const startDate = route.startDate || 'Jun 26';
           const startParts = startDate.split(' ');
-          const dayDisplay = startParts[1] || startDate;
-          const monthDisplay = startParts[0] || 'Jun';
+          const dayDisplay = startDate === 'Today' ? String(today.getDate()).padStart(2, '0') : (startParts[1] || startDate);
+          const monthDisplay = startDate === 'Today' ? MONTHS[today.getMonth()] : (startParts[0] || 'Jun');
           return (
-            <Link key={route.id} to={`/route/${route.id}`} state={{ from: '/home?tab=home' }} className="w-full min-h-[76px] bg-white rounded-[18px] p-[12px] flex justify-between items-center decoration-none active:scale-[0.98] transition-transform border border-[#E1E4E9]">
+            <Link key={route.id} to={`/route/${route.id}`} state={{ from: '/home?tab=home' }} className={`w-full min-h-[76px] rounded-[18px] p-[12px] flex justify-between items-center decoration-none active:scale-[0.98] transition-transform border ${isCompleted ? 'bg-[#F1FAEF] border-[#2FA301]/20' : 'bg-white border-[#E1E4E9]'}`}>
               <div className="flex items-center gap-[12px]">
-                <div className="size-[52px] bg-[#2B3B63] rounded-[13px] flex flex-col items-center justify-center shrink-0 text-white">
+                <div className={`size-[52px] rounded-[13px] flex flex-col items-center justify-center shrink-0 text-white ${isCompleted ? 'bg-[#2FA301]' : 'bg-[#2B3B63]'}`}>
                    <span className="text-[17px] font-bold font-['Google_Sans_Flex'] leading-5">{dayDisplay}</span>
                    <span className="text-white/80 text-[11px] font-semibold font-['Google_Sans_Flex']">{monthDisplay}</span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <h4 className="text-[#2B3B63] font-bold text-[16px] m-0 font-['Google_Sans_Flex']">{route.name}</h4>
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-[#2B3B63] font-bold text-[16px] m-0 font-['Google_Sans_Flex']">{route.name}</h4>
+                    {isCompleted && <span className="h-6 px-2.5 rounded-full bg-[#2FA301] text-white text-[11px] font-semibold flex items-center">Completed</span>}
+                  </div>
                   <span className="text-[#71727A] text-[13px] font-['Google_Sans_Flex']">
                     {route.startTime || 'Time TBD'} &middot; {stopsCount} {stopsCount === 1 ? 'Stop' : 'Stops'}
                   </span>

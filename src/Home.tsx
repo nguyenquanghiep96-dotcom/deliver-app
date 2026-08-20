@@ -149,7 +149,7 @@ export default function Home() {
                 onClick={() => setShowNotifications(true)}
                 className="relative flex items-center justify-center shrink-0 size-[44px] cursor-pointer border-none bg-transparent active:scale-95 transition-transform"
               >
-                <Bell size={24} strokeWidth={2.5} className="text-[#71727A]" />
+                <Bell size={24} strokeWidth={2} className="text-[#71727A]" />
                 <div className="absolute bg-[#f52525] rounded-full size-[10px] top-[10px] right-[10px] border-2 border-[#f0f2f6]" />
               </button>
               
@@ -157,7 +157,7 @@ export default function Home() {
                 to="/home?tab=profile"
                 className="relative flex items-center justify-center shrink-0 size-[44px] cursor-pointer border-none bg-transparent active:scale-95 transition-transform text-[#2B3B63]"
               >
-                <CircleUserRound size={24} strokeWidth={2.5} className="text-[#71727A]" />
+                <CircleUserRound size={24} strokeWidth={2} className="text-[#71727A]" />
               </Link>
             </div>
           </header>
@@ -174,13 +174,13 @@ export default function Home() {
                   
                   const progressPercentage = totalStops > 0 ? (completedStopsCount / totalStops) * 100 : 0;
                   const estCompletion = activeRoute.id === 'RT-006' ? '15 Aug' : 'TBD';
-                  const remainingDistanceStr = getRemainingDistance(activeRoute.id, actualStops);
+                  const totalDistanceStr = activeRoute.totalDistance || getRemainingDistance(activeRoute.id, actualStops);
 
                   const nextStop = actualStops.find(s => s.status !== 'Done');
                   
                   return (
                     /* Section A & B */
-                    <div className="flex flex-col gap-[20px] w-full">
+                    <div className="flex flex-col w-full">
                       
                       {/* Section A: Route Summary Card */}
                       <RouteSummaryCard 
@@ -188,31 +188,38 @@ export default function Home() {
                         completedStopsCount={completedStopsCount}
                         totalStops={totalStops}
                         progressPercentage={progressPercentage}
-                        remainingDistanceStr={remainingDistanceStr}
+                        totalDistanceStr={totalDistanceStr}
                         onInfoClick={(note) => setSelectedNote(note)}
+                        connectedToStop={activeRoute.status === 'En Route' && Boolean(nextStop)}
                       />
 
-                      {activeRouteUpdate && (
-                        <RouteUpdateNotice update={activeRouteUpdate} onAcknowledge={acknowledgeRouteUpdate} />
-                      )}
-
                       {/* Section B: Current Stop Detail and Upcoming */}
-                      {nextStop ? (
+                      {activeRoute.status === 'En Route' && nextStop ? (
                         <div className="flex flex-col">
-                          <div className="pb-4">
+                          <div className="-mt-5 pt-5 mb-5 bg-white rounded-b-[20px] overflow-hidden">
                             <StopCard
                               stop={nextStop}
                               routeId={activeRoute.id}
-                              title={nextStop.status === 'Servicing' ? 'Current Stop' : activeRoute.status === 'Planned' ? 'Suggested Stop' : 'Next Stop'}
+                              title={nextStop.status === 'Servicing' ? 'Current Stop' : 'Next Stop'}
                               hideAction={false}
-                              className="rounded-[18px] border border-[#E3E5EA] shadow-[0_4px_14px_rgba(43,59,99,0.07)]"
+                              className="rounded-t-none rounded-b-[20px] border-none shadow-none"
                             />
                           </div>
+                          {activeRouteUpdate && (
+                            <div className="pb-4"><RouteUpdateNotice update={activeRouteUpdate} onAcknowledge={acknowledgeRouteUpdate} /></div>
+                          )}
+                          <UpcomingRoutesSection />
+                        </div>
+                      ) : activeRoute.status === 'Completed' ? (
+                        <div className="flex flex-col">
+                          <CompletedRouteState routeId={activeRoute.id} />
                           <UpcomingRoutesSection />
                         </div>
                       ) : (
-                        <div className="flex flex-col">
-                          <CompletedRouteState routeId={activeRoute.id} />
+                        <div className="flex flex-col pt-5">
+                          {activeRouteUpdate && (
+                            <div className="pt-4"><RouteUpdateNotice update={activeRouteUpdate} onAcknowledge={acknowledgeRouteUpdate} /></div>
+                          )}
                           <UpcomingRoutesSection />
                         </div>
                       )}
@@ -249,7 +256,7 @@ export default function Home() {
                 onClick={() => setShowNotifications(true)}
                 className="relative flex items-center justify-center shrink-0 size-[44px] cursor-pointer border-none bg-transparent active:scale-95 transition-transform"
               >
-                <Bell size={24} strokeWidth={2.5} className="text-[#71727A]" />
+                <Bell size={24} strokeWidth={2} className="text-[#71727A]" />
                 <div className="absolute bg-[#f52525] rounded-full size-[10px] top-[10px] right-[10px] border-2 border-[#f0f2f6]" />
               </button>
               
@@ -257,7 +264,7 @@ export default function Home() {
                 to="/home?tab=profile"
                 className="relative flex items-center justify-center shrink-0 size-[44px] cursor-pointer border-none bg-transparent active:scale-95 transition-transform text-[#2B3B63]"
               >
-                <CircleUserRound size={24} strokeWidth={2.5} className="text-[#71727A]" />
+                <CircleUserRound size={24} strokeWidth={2} className="text-[#71727A]" />
               </Link>
             </div>
           </header>

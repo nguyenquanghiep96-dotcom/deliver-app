@@ -36,7 +36,7 @@ function RouteRow({ route, scheduledDate }: { route: RouteData; scheduledDate: D
     <Link
       to={`/route/${route.id}`}
       state={{ from: location.pathname + location.search }}
-      className={`min-h-[76px] p-3 rounded-[18px] border flex items-center gap-3 no-underline active:scale-[0.99] transition-transform ${route.status === 'En Route' ? 'bg-[#EFF6FF] border-[#BFDBFE]' : 'bg-white border-[#E1E4E9]'}`}
+      className={`min-h-[76px] p-3 rounded-[18px] border flex items-center gap-3 no-underline active:scale-[0.99] transition-transform ${route.status === 'Completed' ? 'bg-[#F1FAEF] border-[#2FA301]/20' : route.status === 'En Route' ? 'bg-[#EFF6FF] border-[#BFDBFE]' : 'bg-white border-[#E1E4E9]'}`}
     >
       <div className={`size-[52px] rounded-[13px] flex flex-col items-center justify-center shrink-0 text-white ${route.status === 'Completed' ? 'bg-[#2FA301]' : 'bg-[#2B3B63]'}`}>
         <span className="text-[17px] leading-5 font-bold">{scheduledDate?.getDate() || '—'}</span>
@@ -46,7 +46,7 @@ function RouteRow({ route, scheduledDate }: { route: RouteData; scheduledDate: D
         <div className="flex items-center gap-2">
           <h3 className="m-0 text-[16px] font-bold text-[#2B3B63] truncate">{route.name}</h3>
           {route.status === 'En Route' && (
-            <span className="px-2.5 py-1 rounded-full bg-[#2563EB] text-white text-[10px] font-bold shrink-0">
+            <span className="h-6 px-2.5 rounded-full bg-[#2563EB] text-white text-[11px] font-semibold shrink-0 flex items-center">
               In Progress
             </span>
           )}
@@ -74,8 +74,7 @@ export function ScheduleView() {
     if (statusFilter === 'Completed') return route.status === 'Completed';
     if (route.status === 'En Route') return route.id === activeRouteId;
     if (route.status !== 'Planned') return false;
-    const scheduledDate = parseRouteDate(route, visibleMonth.getFullYear(), today);
-    return Boolean(scheduledDate && scheduledDate.getTime() >= todayStart.getTime());
+    return route.status === 'Planned';
   });
   const filteredRoutes = viewMode === 'calendar' ? routes : agendaRoutes;
   const routeDates = new Map(filteredRoutes.map(route => [route.id, parseRouteDate(route, visibleMonth.getFullYear(), today)]));
@@ -141,7 +140,7 @@ export function ScheduleView() {
     if (!routeDate || routeDate.getMonth() !== visibleMonth.getMonth() || routeDate.getFullYear() !== visibleMonth.getFullYear()) return counts;
     if (route.status === 'Completed') counts.Completed += 1;
     else if (route.status === 'En Route' && route.id === activeRouteId) counts.Assigned += 1;
-    else if (route.status === 'Planned' && routeDate.getTime() >= todayStart.getTime()) counts.Assigned += 1;
+    else if (route.status === 'Planned') counts.Assigned += 1;
     return counts;
   }, { Assigned: 0, Completed: 0 });
 
@@ -155,7 +154,7 @@ export function ScheduleView() {
     const key = route.status === 'En Route' ? 'in-progress' : statusFilter === 'Assigned' ? 'upcoming' : routeDate ? dateKey(routeDate) : 'unscheduled';
     let label = 'Date not set';
     if (route.status === 'En Route') label = 'In Progress';
-    else if (statusFilter === 'Assigned') label = 'Upcoming Routes';
+    else if (statusFilter === 'Assigned') label = 'Assigned Routes';
     else if (routeDate) label = routeDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     const existing = groups.find(group => group.key === key);
     if (existing) existing.routes.push(route);
@@ -181,7 +180,7 @@ export function ScheduleView() {
 
       {viewMode === 'agenda' ? (
         <div className="pt-4">
-          <div className="flex items-center justify-between gap-3 mb-3">
+          <div className="flex items-center justify-between gap-2 mb-3">
             <label className="relative min-h-[44px] flex items-center gap-1.5 cursor-pointer">
               <select
                 aria-label="Select month"
@@ -198,9 +197,7 @@ export function ScheduleView() {
               <span className="text-[20px] font-bold text-[#2B3B63]">{MONTH_NAMES[visibleMonth.getMonth()]} {visibleMonth.getFullYear()}</span>
               <ChevronDown size={18} className="text-[#71727A]" />
             </label>
-            <span className="text-[12px] font-semibold text-[#8A909D] shrink-0">{listRoutes.length} {listRoutes.length === 1 ? 'Route' : 'Routes'}</span>
-          </div>
-          <div className="mb-3 grid grid-cols-2 gap-1 rounded-[12px] bg-[#E8E9F1] p-1" role="tablist" aria-label="Agenda Route status">
+            <div className="flex gap-0.5 rounded-full bg-[#E8E9F1] p-0.5 shrink-0" role="tablist" aria-label="Agenda Route status">
             {(['Assigned', 'Completed'] as const).map(filter => (
               <button
                 key={filter}
@@ -209,18 +206,19 @@ export function ScheduleView() {
                 onClick={() => {
                   setStatusFilter(filter);
                 }}
-                className={`min-h-[40px] rounded-[9px] border-none px-3 flex items-center justify-center gap-2 text-[13px] font-semibold cursor-pointer transition-colors ${statusFilter === filter ? 'bg-white text-[#2B3B63]' : 'bg-transparent text-[#71727A]'}`}
+                className={`h-8 rounded-full border-none px-2.5 flex items-center justify-center gap-1 text-[11px] font-semibold cursor-pointer transition-colors ${statusFilter === filter ? 'bg-white text-[#2B3B63]' : 'bg-transparent text-[#71727A]'}`}
               >
                 <span>{filter}</span>
-                <span className={`min-w-5 h-5 px-1 rounded-full flex items-center justify-center text-[10px] font-bold ${statusFilter === filter ? 'bg-[#E9EBF1] text-[#2B3B63]' : 'bg-transparent text-[#9CA3AF]'}`}>
+                <span className={`min-w-4 h-4 px-1 rounded-full flex items-center justify-center text-[9px] font-bold ${statusFilter === filter ? 'bg-[#E9EBF1] text-[#2B3B63]' : 'bg-transparent text-[#9CA3AF]'}`}>
                   {statusCounts[filter]}
                 </span>
               </button>
             ))}
+            </div>
           </div>
           <div className="space-y-3">
             {agendaGroups.length ? agendaGroups.map(group => {
-              const showSupportLabel = group.key === 'in-progress' || group.key === 'upcoming';
+              const showSupportLabel = group.key === 'in-progress';
               return (
               <section key={group.key} aria-label={showSupportLabel ? group.label : 'Scheduled Routes'}>
                 {showSupportLabel && <div className="flex items-center justify-between mb-2 mt-2">
