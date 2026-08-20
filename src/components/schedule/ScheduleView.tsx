@@ -180,7 +180,7 @@ export function ScheduleView() {
 
       {viewMode === 'agenda' ? (
         <div className="pt-4">
-          <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="flex items-center justify-center mb-2">
             <label className="relative min-h-[44px] flex items-center gap-1.5 cursor-pointer">
               <select
                 aria-label="Select month"
@@ -197,7 +197,9 @@ export function ScheduleView() {
               <span className="text-[20px] font-bold text-[#2B3B63]">{MONTH_NAMES[visibleMonth.getMonth()]} {visibleMonth.getFullYear()}</span>
               <ChevronDown size={18} className="text-[#71727A]" />
             </label>
-            <div className="flex gap-0.5 rounded-full bg-[#E8E9F1] p-0.5 shrink-0" role="tablist" aria-label="Agenda Route status">
+          </div>
+          <div className="flex justify-center mb-4">
+            <div className="flex gap-0.5 rounded-full bg-[#E8E9F1] p-0.5" role="tablist" aria-label="Agenda Route status">
             {(['Assigned', 'Completed'] as const).map(filter => (
               <button
                 key={filter}
@@ -218,7 +220,7 @@ export function ScheduleView() {
           </div>
           <div className="space-y-3">
             {agendaGroups.length ? agendaGroups.map(group => {
-              const showSupportLabel = group.key === 'in-progress';
+              const showSupportLabel = false;
               return (
               <section key={group.key} aria-label={showSupportLabel ? group.label : 'Scheduled Routes'}>
                 {showSupportLabel && <div className="flex items-center justify-between mb-2 mt-2">
